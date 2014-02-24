@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Naite 강사"
+            id="kr.namoosori.naite.ri.plugin.teacher">
+      </category>
+      <view
+            name="강의(강사)"
+            icon="icons/sample.gif"
+            category="kr.namoosori.naite.ri.plugin.teacher"
+            class="kr.namoosori.naite.ri.plugin.teacher.views.TeacherLectureView"
+            id="kr.namoosori.naite.ri.plugin.teacher.views.TeacherLectureView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               ratio="0.6"
+               relative="org.eclipse.jdt.ui.PackageExplorer"
+               relationship="bottom"
+               id="kr.namoosori.naite.ri.plugin.teacher.views.TeacherLectureView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+
+</plugin>

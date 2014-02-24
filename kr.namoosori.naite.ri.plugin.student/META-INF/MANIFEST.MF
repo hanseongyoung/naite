@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: StudentPlugin
+Bundle-SymbolicName: kr.namoosori.naite.ri.plugin.student;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: kr.namoosori.naite.ri.plugin.student.StudentPlugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ kr.namoosori.naite.ri.plugin.core;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
