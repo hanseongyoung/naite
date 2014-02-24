@@ -41,6 +41,7 @@ public class MulticastClient {
 	public static void main(String[] args) throws IOException {
 
 		MulticastSocket socket = new MulticastSocket(4446);
+		System.out.println("client:"+socket.getLocalAddress().getHostAddress());
 		// The multicast addresses are in the range 224.0.0.0 through 239.255.255.255.
 		// http://www.iana.org/assignments/multicast-addresses/multicast-addresses.xml
 		InetAddress address = InetAddress.getByName("230.0.0.1");

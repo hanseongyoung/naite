@@ -31,8 +31,8 @@ package kr.namoosori.naite.ri.plugin.teacher.network.multicast;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public class MulticastServer {
+public class MulticastServer1 {
 	public static void main(String[] args) throws java.io.IOException {
-		new MulticastServerThread().start();
+		new MulticastServerThread1().start();
 	}
 }

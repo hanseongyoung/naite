@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import kr.namoosori.naite.ri.plugin.core.CoreConstants;
+import kr.namoosori.naite.ri.plugin.core.CoreContext;
 import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
 import kr.namoosori.naite.ri.plugin.core.util.NaiteFileUtils;
 
@@ -41,7 +41,8 @@ public class NaiteContents {
 	public void download(String localDownloadPath, String serverPath, String serverFileName) throws NaiteException {
 		//
 		String encodedFileName = encode(serverFileName, true);
-		byte[] contents = getHttpContentsArray(CoreConstants.TEACHER_SERVER_URL + serverPath + encodedFileName);
+		String serverUrl = CoreContext.getInstance().getServerUrl();
+		byte[] contents = getHttpContentsArray(serverUrl + serverPath + encodedFileName);
 		NaiteFileUtils.saveFile(localDownloadPath, contents);
 	}
 	
@@ -49,12 +50,14 @@ public class NaiteContents {
 	public InputStream getInputStream(String serverPath, String serverFileName) throws NaiteException {
 		//
 		String encodedFileName = encode(serverFileName, true);
-		return getHttpContentsInputStream(CoreConstants.TEACHER_SERVER_URL + serverPath + encodedFileName);
+		String serverUrl = CoreContext.getInstance().getServerUrl();
+		return getHttpContentsInputStream(serverUrl + serverPath + encodedFileName);
 	}
 	
 	public String getContentsString(String uri) throws NaiteException {
 		//
-		byte[] contentsArray = getHttpContentsArray(CoreConstants.TEACHER_SERVER_URL + uri);
+		String serverUrl = CoreContext.getInstance().getServerUrl();
+		byte[] contentsArray = getHttpContentsArray(serverUrl + uri);
 		String contentsString = new String(contentsArray);
 		System.out.println(contentsString);
 		return contentsString;
@@ -62,8 +65,9 @@ public class NaiteContents {
 	
 	public void doPost(String uri, Map<String, String> params) throws NaiteException {
 		//
+		String serverUrl = CoreContext.getInstance().getServerUrl();
 		HttpClient httpClient = new DefaultHttpClient();
-		HttpPost request = new HttpPost(CoreConstants.TEACHER_SERVER_URL + uri);
+		HttpPost request = new HttpPost(serverUrl + uri);
 		request.setHeader(HttpHeaders.USER_AGENT, USER_AGENT_TYPE);
 		if (params != null && !params.isEmpty()) {
 			try {
@@ -95,8 +99,9 @@ public class NaiteContents {
 	
 	public void doMultipartPost(String uri, Map<String, String> params, Map<String, File> fileParams) throws NaiteException {
 		//
+		String serverUrl = CoreContext.getInstance().getServerUrl();
 		HttpClient httpClient = new DefaultHttpClient();
-		HttpPost request = new HttpPost(CoreConstants.TEACHER_SERVER_URL + uri);
+		HttpPost request = new HttpPost(serverUrl + uri);
 		request.setHeader(HttpHeaders.USER_AGENT, USER_AGENT_TYPE);
 		
 		MultipartEntity multipartEntity = new MultipartEntity();

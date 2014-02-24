@@ -38,11 +38,11 @@ import java.util.Date;
 
 import kr.namoosori.naite.ri.plugin.teacher.network.quote.QuoteServerThread;
 
-public class MulticastServerThread extends QuoteServerThread {
+public class MulticastServerThread1 extends QuoteServerThread {
 
-	private long FIVE_SECONDS = 5000;
+	private long TEN_SECONDS = 10000;
 
-	public MulticastServerThread() throws IOException {
+	public MulticastServerThread1() throws IOException {
 		super("MulticastServerThread");
 	}
 
@@ -68,7 +68,7 @@ public class MulticastServerThread extends QuoteServerThread {
 
 				// sleep for a while
 				try {
-					sleep((long) (Math.random() * FIVE_SECONDS));
+					sleep((long) (Math.random() * TEN_SECONDS));
 				} catch (InterruptedException e) {
 				}
 			} catch (IOException e) {

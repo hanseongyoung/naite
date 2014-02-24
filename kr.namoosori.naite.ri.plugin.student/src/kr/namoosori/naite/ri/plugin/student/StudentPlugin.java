@@ -1,6 +1,14 @@
 package kr.namoosori.naite.ri.plugin.student;
 
+import java.net.URL;
+
+import kr.namoosori.naite.ri.plugin.student.network.MulticastClientThread;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -28,6 +36,11 @@ public class StudentPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
+		StudentContext.init();
+		
+		MulticastClientThread thread = new MulticastClientThread();
+		thread.run();
 	}
 
 	/*
@@ -57,5 +70,24 @@ public class StudentPlugin extends AbstractUIPlugin {
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+	
+	public static final String IMG_HELP_TOPIC = "helpTopic"; //$NON-NLS-1$
+	
+	protected void initializeImageRegistry(ImageRegistry registry) {
+		registerImage(registry, IMG_HELP_TOPIC, "help_topic.gif"); //$NON-NLS-1$
+	}
+
+	private void registerImage(ImageRegistry registry, String key,
+			String fileName) {
+		try {
+			IPath path = new Path("icons/" + fileName); //$NON-NLS-1$
+			URL url = FileLocator.find(getBundle(), path, null);
+			if (url!=null) {
+				ImageDescriptor desc = ImageDescriptor.createFromURL(url);
+				registry.put(key, desc);
+			}
+		} catch (Exception e) {
+		}
 	}
 }

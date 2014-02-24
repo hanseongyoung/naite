@@ -4,6 +4,7 @@ import java.net.URL;
 
 import kr.namoosori.naite.ri.plugin.core.project.NaiteWorkspace;
 import kr.namoosori.naite.ri.plugin.core.util.NaiteFileUtils;
+import kr.namoosori.naite.ri.plugin.teacher.network.MulticastServerThread;
 import kr.namoosori.naite.ri.plugin.teacher.server.NaiteServer;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -41,8 +42,13 @@ public class TeacherPlugin extends AbstractUIPlugin {
 		
 		NaiteServer server = NaiteServer.getInstance();
 		server.setResourceBase(getTeacherWorkspace());
-		//server.registerServlet(TestServlet.class, "/date");
 		server.start();
+		
+		TeacherContext.init();
+		
+		MulticastServerThread multi = new MulticastServerThread();
+		multi.setServeString(TeacherContext.getInstance().getServerIp());
+		multi.start();
 	}
 	
 	private String getTeacherWorkspace() {

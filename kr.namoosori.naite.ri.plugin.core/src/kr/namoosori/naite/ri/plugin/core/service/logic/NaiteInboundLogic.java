@@ -18,7 +18,7 @@ import org.apache.commons.lang.StringUtils;
 public class NaiteInboundLogic implements NaiteService {
 	//
 	private NaiteContents naiteContents = new NaiteContents();
-
+	
 	@Override
 	public Lecture getCurrentLecture() throws NaiteException {
 		//
