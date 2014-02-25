@@ -57,8 +57,9 @@ public class NaiteContents {
 	public String getContentsString(String uri) throws NaiteException {
 		//
 		String serverUrl = CoreContext.getInstance().getServerUrl();
-		byte[] contentsArray = getHttpContentsArray(serverUrl + uri);
-		String contentsString = new String(contentsArray);
+		//byte[] contentsArray = getHttpContentsArray(serverUrl + uri);
+		//String contentsString = new String(contentsArray);
+		String contentsString = getHttpContentsString(serverUrl + uri);
 		System.out.println(contentsString);
 		return contentsString;
 	}
@@ -183,6 +184,37 @@ public class NaiteContents {
 			throw new NaiteException("HTTP 통신 요청중 오류가 발생했습니다 URL:" + request.getURI(), e);
 		} catch (IOException e) {
 			throw new NaiteException("HTTP 통신 요청중 오류가 발생했습니다 URL:" + request.getURI(), e);
+		}
+		
+		String errorFormat = getErrorFormatIfNoneContents(statusLine.getStatusCode());
+		throw new NaiteException(String.format(errorFormat, request.getURI(), statusLine.getStatusCode(), statusLine.getReasonPhrase()));
+	}
+	
+	private String getHttpContentsString(String url) throws NaiteException {
+		//
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpGet request = new HttpGet(url);
+		
+		HttpEntity entity = null;
+		StatusLine statusLine = null;
+		try {
+			HttpResponse response = httpClient.execute(request);
+			statusLine = response.getStatusLine();
+			entity = response.getEntity();
+			if (entity != null && statusLine.getStatusCode() == HttpStatus.SC_OK) {
+				String stringContents = EntityUtils.toString(entity, "UTF-8");
+				return stringContents;
+			}
+		} catch (ClientProtocolException e) {
+			throw new NaiteException("HTTP 통신 요청중 오류가 발생했습니다 URL:" + request.getURI(), e);
+		} catch (IOException e) {
+			throw new NaiteException("HTTP 통신 요청중 오류가 발생했습니다 URL:" + request.getURI(), e);
+		} finally {
+			try {
+				EntityUtils.consume(entity);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		String errorFormat = getErrorFormatIfNoneContents(statusLine.getStatusCode());
