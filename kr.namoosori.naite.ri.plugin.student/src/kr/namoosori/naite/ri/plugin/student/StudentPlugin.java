@@ -39,7 +39,7 @@ public class StudentPlugin extends AbstractUIPlugin {
 		
 		StudentContext.init();
 		
-		MulticastClientThread thread = new MulticastClientThread();
+		MulticastClientThread thread = MulticastClientThread.getInstance();
 		thread.start();
 	}
 

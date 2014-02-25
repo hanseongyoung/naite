@@ -46,8 +46,8 @@ public class TeacherPlugin extends AbstractUIPlugin {
 		
 		TeacherContext.init();
 		
-		MulticastServerThread multi = new MulticastServerThread();
-		multi.setServeString(TeacherContext.getInstance().getServerIp());
+		MulticastServerThread multi = MulticastServerThread.getInstance();
+		multi.setDefaultServeString("ip:"+TeacherContext.getInstance().getServerIp());
 		multi.start();
 	}
 	

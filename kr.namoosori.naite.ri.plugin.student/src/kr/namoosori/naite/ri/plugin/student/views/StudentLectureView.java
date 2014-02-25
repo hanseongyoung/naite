@@ -6,8 +6,9 @@ import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
-import kr.namoosori.naite.ri.plugin.student.StudentContext;
 import kr.namoosori.naite.ri.plugin.student.StudentPlugin;
+import kr.namoosori.naite.ri.plugin.student.event.RefreshEventListener;
+import kr.namoosori.naite.ri.plugin.student.event.TeacherEventHandler;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -27,7 +28,7 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.part.ViewPart;
 
-public class StudentLectureView extends ViewPart {
+public class StudentLectureView extends ViewPart implements RefreshEventListener {
 	//
 	public static final String ID = StudentLectureView.class.getName();
 	
@@ -39,26 +40,40 @@ public class StudentLectureView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		//
-		if (!StudentContext.getInstance().hasServerUrl()) {
-			createBlankPartControl(parent);
-			return;
-		}
+		createBlankPartControl(parent);
+		TeacherEventHandler.getInstance().addRefreshEventListener(this);
 		
+//		lecture = getCurrentLecture();
+//		
+//		toolkit = new FormToolkit(getSite().getShell().getDisplay());
+//		
+//		// scrolled form
+//		form = toolkit.createScrolledForm(parent);
+//		TableWrapLayout layout = new TableWrapLayout();
+//		layout.numColumns = 1;
+//		form.getBody().setLayout(layout);
+//		form.setText(lecture.getName());
+//		toolkit.decorateFormHeading(form.getForm());
+
+	}
+	
+	@Override
+	public void refresh() {
+		//
+		System.out.println("***************** refresh...."+ID);
 		lecture = getCurrentLecture();
 		
-		toolkit = new FormToolkit(getSite().getShell().getDisplay());
+		for(Control child : form.getChildren()) {
+			child.dispose();
+		}
 		
-		// scrolled form
-		form = toolkit.createScrolledForm(parent);
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.numColumns = 1;
-		form.getBody().setLayout(layout);
 		form.setText(lecture.getName());
-		toolkit.decorateFormHeading(form.getForm());
 		
 		// section
 		createBookSection(form);
 		createExampleSection(form);
+		
+		form.getParent().layout();
 	}
 	
 	private void createBlankPartControl(Composite parent) {
@@ -206,6 +221,7 @@ public class StudentLectureView extends ViewPart {
 	@Override
 	public void dispose() {
 		//
+		TeacherEventHandler.getInstance().removeRefreshEventListener(this);
 		toolkit.dispose();
 		super.dispose();
 	}

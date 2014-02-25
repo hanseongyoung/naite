@@ -9,21 +9,37 @@ import kr.namoosori.naite.ri.plugin.core.CoreConstants;
 
 public class MulticastServerThread extends Thread {
 	//
+	private static MulticastServerThread instance;
+	
+	public static MulticastServerThread getInstance() throws IOException {
+		//
+		if (instance == null) {
+			instance = new MulticastServerThread();
+		}
+		return instance;
+	}
+	
 	private long TEN_SECONDS = 10000;
 	
 	private DatagramSocket socket;
 	
 	private boolean continueServe;
 	
+	private String defaultServeString = "check";	
 	private String serveString;
 	
-	public MulticastServerThread() throws IOException {
+	private MulticastServerThread() throws IOException {
+		//
 		super("MulticastServerThread");
 		socket = new DatagramSocket(CoreConstants.MULTICAST_PORT);
-		System.out.println("server:"+socket.getLocalAddress().getHostAddress());
 		continueServe = true;
 	}
 	
+	public void setDefaultServeString(String defaultServeString) {
+		//
+		this.defaultServeString = defaultServeString;
+	}
+
 	public void setServeString(String serveString) {
 		//
 		this.serveString = serveString;
@@ -35,7 +51,10 @@ public class MulticastServerThread extends Thread {
 		System.out.println("start... MulticastServerThread");
 		while(continueServe) {
 			if (serveString != null) {
-				multicast();
+				multicast(serveString);
+				serveString = null;
+			} else {
+				multicast(defaultServeString);
 			}
 			
 			sleepForWhile();
@@ -52,20 +71,20 @@ public class MulticastServerThread extends Thread {
 	private void sleepForWhile() {
 		//
 		try {
-			sleep((long) (Math.random() * TEN_SECONDS));
+			sleep((long) (Math.random() * TEN_SECONDS * 3));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void multicast() {
+	private void multicast(String data) {
 		//
 		try {
-			byte[] buf = serveString.getBytes();
+			byte[] buf = data.getBytes();
 			InetAddress group = InetAddress.getByName(CoreConstants.MULTICAST_GROUP_IP);
 			DatagramPacket packet = new DatagramPacket(buf, buf.length, group, CoreConstants.MULTICAST_PORT);
 			socket.send(packet);
-			System.out.println("send..."+serveString);
+			System.out.println("send..."+data);
 		} catch (IOException e) {
 			e.printStackTrace();
 			end();
