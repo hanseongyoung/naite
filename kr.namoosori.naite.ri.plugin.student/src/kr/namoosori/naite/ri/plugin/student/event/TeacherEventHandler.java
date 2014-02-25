@@ -3,6 +3,8 @@ package kr.namoosori.naite.ri.plugin.student.event;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.swt.widgets.Display;
+
 public class TeacherEventHandler extends Thread {
 	//
 	private static TeacherEventHandler instance = new TeacherEventHandler();
@@ -47,9 +49,15 @@ public class TeacherEventHandler extends Thread {
 		if (this.listeners.size() <= 0) {
 			return;
 		}
-		for (RefreshEventListener listener : listeners) {
-			listener.refresh();
-		}
+		
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				for (RefreshEventListener listener : listeners) {
+					listener.refresh();
+				}
+			}
+		});
 	}
 
 	private void sleepForWhile() {
