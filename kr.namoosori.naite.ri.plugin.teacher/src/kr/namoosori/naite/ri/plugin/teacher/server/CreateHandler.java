@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -33,6 +34,9 @@ public class CreateHandler extends AbstractHandler {
 			baseRequest.setHandled(true);
 			String id = request.getParameter("id");
 			String name = request.getParameter("name");
+			String current = request.getParameter("current");
+			
+			
 			System.out.println("*********************************");
 			System.out.println("createHandler:"+target + ", id:"+id + ", name:"+name);
 			System.out.println("  - resourceBase:"+resourceBase);
@@ -42,8 +46,15 @@ public class CreateHandler extends AbstractHandler {
 			String textFileLoc = resourceBase + textFileUri;
 			System.out.println("textFileLoc:"+textFileLoc);
 			
+			StringBuffer sb = new StringBuffer();
+			sb.append(id);
+			sb.append(";").append(name);
+			if (StringUtils.isNotEmpty(current)) {
+				sb.append(";").append(current);
+			}
+			
 			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(textFileLoc, true)));
-			out.println(id + ";" + name);
+			out.println(sb.toString());
 			out.close();
 		}
 	}

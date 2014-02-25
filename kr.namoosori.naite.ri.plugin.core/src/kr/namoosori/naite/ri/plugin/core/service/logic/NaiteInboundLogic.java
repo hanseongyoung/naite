@@ -39,37 +39,77 @@ public class NaiteInboundLogic implements NaiteService {
 		}
 		
 		List<Textbook> books = findTextbooks(current.getId());
-		for (Textbook textbook : books) {
-			current.addTextbook(textbook);
+		if (books != null) {
+			for (Textbook textbook : books) {
+				current.addTextbook(textbook);
+			}
 		}
 		
 		List<ExerciseProject> projects = findExerciseProjects(current.getId());
-		for (ExerciseProject exerciseProject : projects) {
-			current.addExerciseProject(exerciseProject);
+		if (projects != null) {
+			for (ExerciseProject exerciseProject : projects) {
+				current.addExerciseProject(exerciseProject);
+			}
 		}
 		
 		return current;
 	}
 	
-	private List<Lecture> findLectures() throws NaiteException {
+	@Override
+	public void createLecture(String name) throws NaiteException {
 		//
-		String str = naiteContents.getContentsString("lectures.txt");
-		List<Lecture> lectures = Lecture.createDomains(str);
-		return lectures;
+		List<Lecture> exists = findLectures();
+		System.out.println("lectures:"+exists);
+		
+		String id = null;
+		if (exists == null) {
+			id = "1";
+		} else {
+			id = "" + (exists.size() + 1);
+		}
+		
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("id", id);
+		params.put("name", name);
+		params.put("current", "true");
+		naiteContents.doPost("lectures/create", params);
+	}
+	
+	
+	private List<Lecture> findLectures() throws NaiteException {
+		// TODO : StatusCode=404 인 경우 정상으로 처리할 것 - 강의가 없는 경우임
+		try {
+			String str = naiteContents.getContentsString("lectures.txt");
+			List<Lecture> lectures = Lecture.createDomains(str);
+			return lectures;
+		} catch (NaiteException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	private List<Textbook> findTextbooks(String lectureId) throws NaiteException {
-		//
-		String str = naiteContents.getContentsString("lectures/"+lectureId+"/textbooks.txt");
-		List<Textbook> textbooks = Textbook.createDomains(str);
-		return textbooks;
+		// TODO : StatusCode=404 인 경우 정상으로 처리할 것
+		try {
+			String str = naiteContents.getContentsString("lectures/"+lectureId+"/textbooks.txt");
+			List<Textbook> textbooks = Textbook.createDomains(str);
+			return textbooks;
+		} catch (NaiteException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	private List<ExerciseProject> findExerciseProjects(String lectureId) throws NaiteException {
-		//
-		String str = naiteContents.getContentsString("lectures/"+lectureId+"/projects.txt");
-		List<ExerciseProject> projects = ExerciseProject.createDomains(str);
-		return projects;
+		// TODO : StatusCode=404 인 경우 정상으로 처리할 것
+		try {
+			String str = naiteContents.getContentsString("lectures/"+lectureId+"/projects.txt");
+			List<ExerciseProject> projects = ExerciseProject.createDomains(str);
+			return projects;
+		} catch (NaiteException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	//--------------------------------------------------------------------------
@@ -125,6 +165,7 @@ public class NaiteInboundLogic implements NaiteService {
 		naiteProject.create("lectures/" + lectureId + "/projects/", serverFileName, projectName);
 		
 	}
+
 	
 	
 }

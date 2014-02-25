@@ -37,6 +37,10 @@ public class ExerciseProject {
 	}
 	public static List<ExerciseProject> createDomains(String str) {
 		//
+		if (str == null || str.length() <= 0) {
+			return null;
+		}
+		
 		List<ExerciseProject> projects = new ArrayList<ExerciseProject>();
 		String[] strArr = str.split("\n");
 		for (String line : strArr) {

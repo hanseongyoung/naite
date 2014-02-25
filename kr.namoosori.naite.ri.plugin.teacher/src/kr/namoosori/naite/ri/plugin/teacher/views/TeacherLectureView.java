@@ -10,6 +10,8 @@ import kr.namoosori.naite.ri.plugin.teacher.TeacherPlugin;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -46,16 +48,27 @@ public class TeacherLectureView extends ViewPart {
 	public TeacherLectureView() {
 	}
 	
-	class TmpAction extends Action {
-		public TmpAction() {
-			setId("tmpAction");
+	class AddLectureAction extends Action {
+		public AddLectureAction() {
+			setId("addLectureAction");
 			setImageDescriptor(TeacherPlugin.getDefault().getImageRegistry().getDescriptor(TeacherPlugin.IMG_HELP_TOPIC));
-			setToolTipText("테스트");
+			setToolTipText("강의등록");
 		}
 
 		@Override
 		public void run() {
-			System.out.println("테스트");
+			InputDialog dialog = new InputDialog(getSite().getShell(), 
+					"강의등록", "등록할 강의명을 입력하세요.", null, null);
+			if (dialog.open() == Window.OK) {
+				String lectureTitle = dialog.getValue();
+				NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+				try {
+					service.createLecture(lectureTitle);
+					refresh();
+				} catch (NaiteException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 	}
@@ -72,6 +85,32 @@ public class TeacherLectureView extends ViewPart {
 		// section
 		createBookSection(form);
 		createExampleSection(form);
+	}
+	
+	public void refresh() {
+		//
+		lecture = getCurrentLecture();
+		
+		if (bookSection != null && !bookSection.isDisposed()) {
+			bookSection.dispose();
+		}
+		if (exampleSection != null && !exampleSection.isDisposed()) {
+			exampleSection.dispose();
+		}
+		
+		if (lecture == null) {
+			form.setText("진행중인 강의가 없습니다.");
+			form.getParent().layout();
+			return;
+		}
+		
+		form.setText(lecture.getName());
+		
+		// section
+		createBookSection(form);
+		createExampleSection(form);
+		
+		form.getParent().layout();
 	}
 	
 	private void createForm(Composite parent) {
@@ -92,7 +131,7 @@ public class TeacherLectureView extends ViewPart {
 		toolkit.decorateFormHeading(form.getForm());
 		
 		ToolBarManager toolbarManager = (ToolBarManager) form.getToolBarManager();
-		toolbarManager.add(new TmpAction());
+		toolbarManager.add(new AddLectureAction());
 		toolbarManager.update(true);
 	}
 	
@@ -206,18 +245,20 @@ public class TeacherLectureView extends ViewPart {
 			}
 		});
 	}
+	
+	private Section exampleSection;
 
 	private void createExampleSection(ScrolledForm parentForm) {
 		//
-		Section section = toolkit.createSection(parentForm.getBody(), Section.TWISTIE | Section.DESCRIPTION | Section.TITLE_BAR);
+		exampleSection = toolkit.createSection(parentForm.getBody(), Section.TWISTIE | Section.DESCRIPTION | Section.TITLE_BAR);
 		//toolkit.createCompositeSeparator(section);
-		section.setText("실습예제");
-		section.setDescription("실습예제를 프로젝트 환경에 설치합니다.");
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		section.setExpanded(true);
+		exampleSection.setText("실습예제");
+		exampleSection.setDescription("실습예제를 프로젝트 환경에 설치합니다.");
+		exampleSection.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		exampleSection.setExpanded(true);
 		
-		Composite client = createExampleSectionClient(section);
-		section.setClient(client);
+		Composite client = createExampleSectionClient(exampleSection);
+		exampleSection.setClient(client);
 	}
 
 	private Composite createExampleSectionClient(Section section) {

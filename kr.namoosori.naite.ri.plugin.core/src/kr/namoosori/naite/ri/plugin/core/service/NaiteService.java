@@ -8,6 +8,7 @@ import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
 public interface NaiteService {
 	//
 	public Lecture getCurrentLecture() throws NaiteException;
+	public void createLecture(String name) throws NaiteException;
 	
 	//--------------------------------------------------------------------------
 	// file service

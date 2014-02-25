@@ -31,6 +31,9 @@ public class Textbook {
 	
 	public static List<Textbook> createDomains(String str) {
 		//
+		if (str == null || str.length() <= 0) {
+			return null;
+		}
 		List<Textbook> textbooks = new ArrayList<Textbook>();
 		String[] strArr = str.split("\n");
 		for (String line : strArr) {
