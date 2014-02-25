@@ -63,8 +63,11 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 		System.out.println("***************** refresh...."+ID);
 		lecture = getCurrentLecture();
 		
-		for(Control child : form.getChildren()) {
-			child.dispose();
+		if (bookSection != null && !bookSection.isDisposed()) {
+			bookSection.dispose();
+		}
+		if (exampleSection != null && !exampleSection.isDisposed()) {
+			exampleSection.dispose();
 		}
 		
 		form.setText(lecture.getName());
@@ -164,17 +167,19 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 		});
 	}
 	
+	private Section exampleSection;
+	
 	private void createExampleSection(ScrolledForm parentForm) {
 		//
-		Section section = toolkit.createSection(parentForm.getBody(), Section.TWISTIE | Section.DESCRIPTION | Section.TITLE_BAR);
+		exampleSection = toolkit.createSection(parentForm.getBody(), Section.TWISTIE | Section.DESCRIPTION | Section.TITLE_BAR);
 		//toolkit.createCompositeSeparator(section);
-		section.setText("실습예제");
-		section.setDescription("실습예제를 프로젝트 환경에 설치합니다.");
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		section.setExpanded(true);
+		exampleSection.setText("실습예제");
+		exampleSection.setDescription("실습예제를 프로젝트 환경에 설치합니다.");
+		exampleSection.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		exampleSection.setExpanded(true);
 		
-		Composite client = createExampleSectionClient(section);
-		section.setClient(client);
+		Composite client = createExampleSectionClient(exampleSection);
+		exampleSection.setClient(client);
 	}
 
 	private Composite createExampleSectionClient(Section section) {
