@@ -2,6 +2,7 @@ package kr.namoosori.naite.ri.plugin.student;
 
 import java.net.URL;
 
+import kr.namoosori.naite.ri.plugin.student.event.TeacherEventHandler;
 import kr.namoosori.naite.ri.plugin.student.network.MulticastClientThread;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -41,6 +42,9 @@ public class StudentPlugin extends AbstractUIPlugin {
 		
 		MulticastClientThread thread = MulticastClientThread.getInstance();
 		thread.start();
+		
+		TeacherEventHandler teacher = TeacherEventHandler.getInstance();
+		teacher.start();
 	}
 
 	/*
