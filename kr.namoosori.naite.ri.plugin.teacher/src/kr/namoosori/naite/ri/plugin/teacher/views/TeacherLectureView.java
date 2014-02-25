@@ -67,21 +67,33 @@ public class TeacherLectureView extends ViewPart {
 		
 		toolkit = new FormToolkit(getSite().getShell().getDisplay());
 		
+		createForm(parent);
+		
+		// section
+		createBookSection(form);
+		createExampleSection(form);
+	}
+	
+	private void createForm(Composite parent) {
+		//
+		String title = null;
+		if (lecture == null) {
+			title = "진행중인 강의가 없습니다.";
+		} else {
+			title = lecture.getName();
+		}
+		
 		// scrolled form
 		form = toolkit.createScrolledForm(parent);
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 1;
 		form.getBody().setLayout(layout);
-		form.setText(lecture.getName());
+		form.setText(title);
 		toolkit.decorateFormHeading(form.getForm());
 		
 		ToolBarManager toolbarManager = (ToolBarManager) form.getToolBarManager();
 		toolbarManager.add(new TmpAction());
 		toolbarManager.update(true);
-		
-		// section
-		createBookSection(form);
-		createExampleSection(form);
 	}
 	
 	private Lecture getCurrentLecture() {
@@ -105,7 +117,9 @@ public class TeacherLectureView extends ViewPart {
 		bookSection.setDescription("아래 링크를 선택하여 다운로드 하세요.");
 		bookSection.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		bookSection.setExpanded(true);
-		bookSection.setTextClient(createBookSectionToolbar(parentForm, bookSection));
+		if (lecture != null) {
+			bookSection.setTextClient(createBookSectionToolbar(parentForm, bookSection));
+		}
 		
 		Composite client = createBookSectionClient(bookSection);
 		bookSection.setClient(client);
@@ -146,8 +160,10 @@ public class TeacherLectureView extends ViewPart {
 		Composite composite = toolkit.createComposite(section);
 		composite.setLayout(new GridLayout(2, false));
 		
-		for (Textbook textbook : lecture.getTextbooks()) {
-			createTextbookLink(composite, textbook);
+		if (lecture != null) {
+			for (Textbook textbook : lecture.getTextbooks()) {
+				createTextbookLink(composite, textbook);
+			}
 		}
 		
 		return composite;
@@ -209,8 +225,10 @@ public class TeacherLectureView extends ViewPart {
 		Composite composite = toolkit.createComposite(section);
 		composite.setLayout(new GridLayout(2, false));
 		
-		for (ExerciseProject exerciseProject : lecture.getExerciseProjects()) {
-			createExerciseProjectLink(composite, exerciseProject);
+		if (lecture != null) {
+			for (ExerciseProject exerciseProject : lecture.getExerciseProjects()) {
+				createExerciseProjectLink(composite, exerciseProject);
+			}
 		}
 		
 		return composite;

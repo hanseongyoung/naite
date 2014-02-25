@@ -40,21 +40,10 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 	@Override
 	public void createPartControl(Composite parent) {
 		//
-		createBlankPartControl(parent);
-		TeacherEventHandler.getInstance().addRefreshEventListener(this);
+		toolkit = new FormToolkit(getSite().getShell().getDisplay());
 		
-//		lecture = getCurrentLecture();
-//		
-//		toolkit = new FormToolkit(getSite().getShell().getDisplay());
-//		
-//		// scrolled form
-//		form = toolkit.createScrolledForm(parent);
-//		TableWrapLayout layout = new TableWrapLayout();
-//		layout.numColumns = 1;
-//		form.getBody().setLayout(layout);
-//		form.setText(lecture.getName());
-//		toolkit.decorateFormHeading(form.getForm());
-
+		createForm(parent, "강사가 준비중입니다.");
+		TeacherEventHandler.getInstance().addRefreshEventListener(this);
 	}
 	
 	@Override
@@ -70,6 +59,12 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 			exampleSection.dispose();
 		}
 		
+		if (lecture == null) {
+			form.setText("진행중인 강의가 없습니다.");
+			form.getParent().layout();
+			return;
+		}
+		
 		form.setText(lecture.getName());
 		
 		// section
@@ -79,16 +74,14 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 		form.getParent().layout();
 	}
 	
-	private void createBlankPartControl(Composite parent) {
+	private void createForm(Composite parent, String formTitle) {
 		//
-		toolkit = new FormToolkit(getSite().getShell().getDisplay());
-		
 		// scrolled form
 		form = toolkit.createScrolledForm(parent);
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 1;
 		form.getBody().setLayout(layout);
-		form.setText("강사가 준비중입니다.");
+		form.setText(formTitle);
 		toolkit.decorateFormHeading(form.getForm());
 	}
 
