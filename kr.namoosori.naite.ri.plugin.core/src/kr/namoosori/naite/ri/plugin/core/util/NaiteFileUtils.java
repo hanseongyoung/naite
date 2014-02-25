@@ -14,9 +14,9 @@ import org.apache.commons.io.FileUtils;
 public class NaiteFileUtils {
 	
 	/**
-	 * µğ·ºÅä¸® Á¸Àç¿©ºÎ Ã¼Å©ÇÏ¿© ¾ø´Â °æ¿ì »ı¼ºÇÔ.
-	 * µğ·ºÅä¸®°¡ Á¸ÀçÇÒ °æ¿ì true¸¦ ¸®ÅÏÇÏ°í
-	 * µğ·ºÅä¸®°¡ Á¸ÀçÇÏÁö ¾ÊÀ» °æ¿ì ÇØ´ç µğ·ºÅä¸®¸¦ »ı¼º ÈÄ false¸¦ ¸®ÅÏÇÑ´Ù.
+	 * ë””ë ‰í† ë¦¬ ì¡´ì¬ì—¬ë¶€ ì²´í¬í•˜ì—¬ ì—†ëŠ” ê²½ìš° ìƒì„±í•¨.
+	 * ë””ë ‰í† ë¦¬ê°€ ì¡´ì¬í•  ê²½ìš° trueë¥¼ ë¦¬í„´í•˜ê³ 
+	 * ë””ë ‰í† ë¦¬ê°€ ì¡´ì¬í•˜ì§€ ì•Šì„ ê²½ìš° í•´ë‹¹ ë””ë ‰í† ë¦¬ë¥¼ ìƒì„± í›„ falseë¥¼ ë¦¬í„´í•œë‹¤.
 	 * @param string
 	 */
 	public static boolean checkDir(String dirPath) {
@@ -45,9 +45,9 @@ public class NaiteFileUtils {
 			}
 			System.out.println("***** Done!!!");
 		} catch (FileNotFoundException e) {
-			throw new NaiteException("ÆÄÀÏ ÀúÀåÁß ¿À·ù", e);
+			throw new NaiteException("íŒŒì¼ ì €ì¥ì¤‘ ì˜¤ë¥˜", e);
 		} catch (IOException e) {
-			throw new NaiteException("ÆÄÀÏ ÀúÀåÁß ¿À·ù", e);
+			throw new NaiteException("íŒŒì¼ ì €ì¥ì¤‘ ì˜¤ë¥˜", e);
 		} finally {
 			try {
 				if (in != null) {
@@ -65,7 +65,7 @@ public class NaiteFileUtils {
 	public static void saveFile(String saveFilePathName, byte[] fileContents) throws NaiteException {
 		//
 		if (saveFilePathName == null) {
-			throw new NaiteException("ÆÄÀÏ¸íÀÌ ¾ø¾î ÆÄÀÏÀ» ÀúÀåÇÒ ¼ö ¾ø½À´Ï´Ù.");
+			throw new NaiteException("íŒŒì¼ëª…ì´ ì—†ì–´ íŒŒì¼ì„ ì €ì¥í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
 		}
 
 		File file = null;
@@ -76,7 +76,7 @@ public class NaiteFileUtils {
 			fos.write(fileContents);
 			fos.flush();
 		} catch (Exception e) {
-			throw new NaiteException("ÆÄÀÏ ÀúÀåÁß ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù.", e);
+			throw new NaiteException("íŒŒì¼ ì €ì¥ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤.", e);
 		} finally {
 			try {
 				fos.close();

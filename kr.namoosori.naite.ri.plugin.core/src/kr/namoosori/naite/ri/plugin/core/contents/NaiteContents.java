@@ -46,7 +46,7 @@ public class NaiteContents {
 		NaiteFileUtils.saveFile(localDownloadPath, contents);
 	}
 	
-	// ÁÖÀÇ : »ç¿ëÈÄ ¹İµå½Ã InputStreamÀ» ´İÀ» °Í.
+	// ì£¼ì˜ : ì‚¬ìš©í›„ ë°˜ë“œì‹œ InputStreamì„ ë‹«ì„ ê²ƒ.
 	public InputStream getInputStream(String serverPath, String serverFileName) throws NaiteException {
 		//
 		String encodedFileName = encode(serverFileName, true);
@@ -73,7 +73,7 @@ public class NaiteContents {
 			try {
 				request.setEntity(new UrlEncodedFormEntity(this.createNameValuePairs(params), "UTF-8"));
 			} catch (UnsupportedEncodingException e) {
-				throw new NaiteException("Áö¿øÇÏÁö ¾Ê´Â ÀÎÄÚµù Å¸ÀÔÀÔ´Ï´Ù. charset : " + "UTF-8", e);
+				throw new NaiteException("ì§€ì›í•˜ì§€ ì•ŠëŠ” ì¸ì½”ë”© íƒ€ì…ì…ë‹ˆë‹¤. charset : " + "UTF-8", e);
 			}
 		}
 		
@@ -84,13 +84,13 @@ public class NaiteContents {
 			statusLine = response.getStatusLine();
 			entity = response.getEntity();
 			if (entity != null && statusLine.getStatusCode() == HttpStatus.SC_OK) {
-				System.out.println("doPost ¼º°ø");
+				System.out.println("doPost ì„±ê³µ");
 				return;
 			}
 		} catch (ClientProtocolException e) {
-			throw new NaiteException("HTTP Åë½Å ¿äÃ»Áß ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù URL:" + request.getURI(), e);
+			throw new NaiteException("HTTP í†µì‹  ìš”ì²­ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤ URL:" + request.getURI(), e);
 		} catch (IOException e) {
-			throw new NaiteException("HTTP Åë½Å ¿äÃ»Áß ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù URL:" + request.getURI(), e);
+			throw new NaiteException("HTTP í†µì‹  ìš”ì²­ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤ URL:" + request.getURI(), e);
 		}
 		
 		String errorFormat = getErrorFormatIfNoneContents(statusLine.getStatusCode());
@@ -114,7 +114,7 @@ public class NaiteContents {
 					}
 				}
 			} catch (UnsupportedEncodingException e) {
-				throw new NaiteException("Áö¿øÇÏÁö ¾Ê´Â ÀÎÄÚµù Å¸ÀÔÀÔ´Ï´Ù. charset : " + "UTF-8", e);
+				throw new NaiteException("ì§€ì›í•˜ì§€ ì•ŠëŠ” ì¸ì½”ë”© íƒ€ì…ì…ë‹ˆë‹¤. charset : " + "UTF-8", e);
 			}
 		}
 		
@@ -133,13 +133,13 @@ public class NaiteContents {
 			statusLine = response.getStatusLine();
 			entity = response.getEntity();
 			if (entity != null && statusLine.getStatusCode() == HttpStatus.SC_OK) {
-				System.out.println("doMultipartPost ¼º°ø");
+				System.out.println("doMultipartPost ì„±ê³µ");
 				return;
 			}
 		} catch (ClientProtocolException e) {
-			throw new NaiteException("HTTP Åë½Å ¿äÃ»Áß ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù URL:" + request.getURI(), e);
+			throw new NaiteException("HTTP í†µì‹  ìš”ì²­ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤ URL:" + request.getURI(), e);
 		} catch (IOException e) {
-			throw new NaiteException("HTTP Åë½Å ¿äÃ»Áß ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù URL:" + request.getURI(), e);
+			throw new NaiteException("HTTP í†µì‹  ìš”ì²­ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤ URL:" + request.getURI(), e);
 		}
 		
 		String errorFormat = getErrorFormatIfNoneContents(statusLine.getStatusCode());
@@ -164,7 +164,7 @@ public class NaiteContents {
 		}
 	}
 	
-	// ÁÖÀÇ : »ç¿ëÈÄ ¹İµå½Ã InputStreamÀ» ´İÀ»°Í.
+	// ì£¼ì˜ : ì‚¬ìš©í›„ ë°˜ë“œì‹œ InputStreamì„ ë‹«ì„ê²ƒ.
 	private InputStream getHttpContentsInputStream(String url) throws NaiteException {
 		//
 		HttpClient httpClient = new DefaultHttpClient();
@@ -180,9 +180,9 @@ public class NaiteContents {
 				return entity.getContent();
 			}
 		} catch (ClientProtocolException e) {
-			throw new NaiteException("HTTP Åë½Å ¿äÃ»Áß ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù URL:" + request.getURI(), e);
+			throw new NaiteException("HTTP í†µì‹  ìš”ì²­ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤ URL:" + request.getURI(), e);
 		} catch (IOException e) {
-			throw new NaiteException("HTTP Åë½Å ¿äÃ»Áß ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù URL:" + request.getURI(), e);
+			throw new NaiteException("HTTP í†µì‹  ìš”ì²­ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤ URL:" + request.getURI(), e);
 		}
 		
 		String errorFormat = getErrorFormatIfNoneContents(statusLine.getStatusCode());
@@ -205,9 +205,9 @@ public class NaiteContents {
 				return byteContents;
 			}
 		} catch (ClientProtocolException e) {
-			throw new NaiteException("HTTP Åë½Å ¿äÃ»Áß ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù URL:" + request.getURI(), e);
+			throw new NaiteException("HTTP í†µì‹  ìš”ì²­ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤ URL:" + request.getURI(), e);
 		} catch (IOException e) {
-			throw new NaiteException("HTTP Åë½Å ¿äÃ»Áß ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù URL:" + request.getURI(), e);
+			throw new NaiteException("HTTP í†µì‹  ìš”ì²­ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤ URL:" + request.getURI(), e);
 		} finally {
 			try {
 				EntityUtils.consume(entity);
@@ -224,9 +224,9 @@ public class NaiteContents {
 		//
 		String errorFormat;
 		if (statusCode >= HttpStatus.SC_BAD_REQUEST) {
-			errorFormat = "³ªÀÌÅ× »çÀÌÆ® Á¢¼Ó ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù.:[URL=%1$s][StatusCode=%2$d]%3$s";
+			errorFormat = "ë‚˜ì´í…Œ ì‚¬ì´íŠ¸ ì ‘ì† ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤.:[URL=%1$s][StatusCode=%2$d]%3$s";
 		} else {
-			errorFormat = "³ªÀÌÅ× »çÀÌÆ®¿¡¼­ ÇØ´ç³»¿ëÀ» Á¦´ë·Î °¡Á®¿ÀÁö ¸øÇß½À´Ï´Ù.:[URL=%1$s][StatusCode=%2$d]%3$s";
+			errorFormat = "ë‚˜ì´í…Œ ì‚¬ì´íŠ¸ì—ì„œ í•´ë‹¹ë‚´ìš©ì„ ì œëŒ€ë¡œ ê°€ì ¸ì˜¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.:[URL=%1$s][StatusCode=%2$d]%3$s";
 		}
 		return errorFormat;
 	}
@@ -239,7 +239,7 @@ public class NaiteContents {
 		try {
 			return URLEncoder.encode(str, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			throw new NaiteException("URL ÀÎÄÚµå ¿À·ù\n", e);
+			throw new NaiteException("URL ì¸ì½”ë“œ ì˜¤ë¥˜\n", e);
 		}
 	}
 }

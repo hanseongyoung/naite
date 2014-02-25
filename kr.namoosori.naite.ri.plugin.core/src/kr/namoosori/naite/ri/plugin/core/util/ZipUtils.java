@@ -28,22 +28,22 @@ public class ZipUtils {
 	}
 
 	/**
-	 * ÁöÁ¤µÈ Æú´õ¸¦ Zip ÆÄÀÏ·Î ¾ĞÃàÇÑ´Ù.
-	 * @param sourcePath ¾ĞÃà ´ë»ó µğ·ºÅä¸®
-	 * @param saveFileName ÀúÀå zip ÆÄÀÏ ÀÌ¸§
+	 * ì§€ì •ëœ í´ë”ë¥¼ Zip íŒŒì¼ë¡œ ì••ì¶•í•œë‹¤.
+	 * @param sourcePath ì••ì¶• ëŒ€ìƒ ë””ë ‰í† ë¦¬
+	 * @param saveFileName ì €ì¥ zip íŒŒì¼ ì´ë¦„
 	 * @throws Exception
 	 */
 	public static void zip(String sourcePath, String saveFileName) throws IOException {
 
-		// ¾ĞÃà ´ë»ó(sourcePath)ÀÌ µğ·ºÅä¸®³ª ÆÄÀÏÀÌ ¾Æ´Ï¸é ¿¹¿Ü.
+		// ì••ì¶• ëŒ€ìƒ(sourcePath)ì´ ë””ë ‰í† ë¦¬ë‚˜ íŒŒì¼ì´ ì•„ë‹ˆë©´ ì˜ˆì™¸.
 		File sourceFile = new File(sourcePath);
 		if (!sourceFile.isFile() && !sourceFile.isDirectory()) {
-			throw new RuntimeException("¾ĞÃà ´ë»óÀÇ ÆÄÀÏÀ» Ã£À» ¼ö°¡ ¾ø½À´Ï´Ù.");
+			throw new RuntimeException("ì••ì¶• ëŒ€ìƒì˜ íŒŒì¼ì„ ì°¾ì„ ìˆ˜ê°€ ì—†ìŠµë‹ˆë‹¤.");
 		}
 
-		// output ÀÇ È®ÀåÀÚ°¡ zip,cdbx,cdb °¡ ¾Æ´Ï¸é ¿¹¿Ü.
+		// output ì˜ í™•ì¥ìê°€ zip,cdbx,cdb ê°€ ì•„ë‹ˆë©´ ì˜ˆì™¸.
 		if (StringUtils.isBlank(saveFileName) || !ZIP_EXTENSIONS.contains(StringUtils.substringAfterLast(saveFileName, "."))) {
-			throw new RuntimeException("ÀúÀå ÆÄÀÏ¸íÀ» È®ÀÎÇØÁÖ¼¼¿ä.");
+			throw new RuntimeException("ì €ì¥ íŒŒì¼ëª…ì„ í™•ì¸í•´ì£¼ì„¸ìš”.");
 		}
 
 		FileOutputStream fos = null;
@@ -53,8 +53,8 @@ public class ZipUtils {
 			fos = new FileOutputStream(saveFileName); // FileOutputStream
 			bos = new BufferedOutputStream(fos); // BufferedStream
 			zos = new ZipOutputStream(bos); // ZipOutputStream
-			zos.setLevel(COMPRESSION_LEVEL); // ¾ĞÃà ·¹º§ - ÃÖ´ë ¾ĞÃà·üÀº 9, µğÆúÆ® 8
-			zipEntry(sourceFile, sourcePath, zos); // Zip ÆÄÀÏ »ı¼º
+			zos.setLevel(COMPRESSION_LEVEL); // ì••ì¶• ë ˆë²¨ - ìµœëŒ€ ì••ì¶•ë¥ ì€ 9, ë””í´íŠ¸ 8
+			zipEntry(sourceFile, sourcePath, zos); // Zip íŒŒì¼ ìƒì„±
 			zos.finish(); // ZipOutputStream finish
 		} finally {
 			IOUtils.closeQuietly(zos);
@@ -64,23 +64,23 @@ public class ZipUtils {
 	}
 
 	/**
-	 * ¾ĞÃà
+	 * ì••ì¶•
 	 * @param sourceFile
 	 * @param sourcePath
 	 * @param zos
 	 * @throws Exception
 	 */
 	private static void zipEntry(File sourceFile, String sourcePath, ZipOutputStream zos) throws IOException {
-		// sourceFile ÀÌ µğ·ºÅä¸®ÀÎ °æ¿ì ÇÏÀ§ ÆÄÀÏ ¸®½ºÆ® °¡Á®¿Í Àç±ÍÈ£Ãâ
+		// sourceFile ì´ ë””ë ‰í† ë¦¬ì¸ ê²½ìš° í•˜ìœ„ íŒŒì¼ ë¦¬ìŠ¤íŠ¸ ê°€ì ¸ì™€ ì¬ê·€í˜¸ì¶œ
 		if (sourceFile.isDirectory()) {
-			if (sourceFile.getName().equalsIgnoreCase(".metadata")) { // .metadata µğ·ºÅä¸® return
+			if (sourceFile.getName().equalsIgnoreCase(".metadata")) { // .metadata ë””ë ‰í† ë¦¬ return
 				return;
 			}
-			File[] fileArray = sourceFile.listFiles(); // sourceFile ÀÇ ÇÏÀ§ ÆÄÀÏ ¸®½ºÆ®
+			File[] fileArray = sourceFile.listFiles(); // sourceFile ì˜ í•˜ìœ„ íŒŒì¼ ë¦¬ìŠ¤íŠ¸
 			for (int i = 0; i < fileArray.length; i++) {
-				zipEntry(fileArray[i], sourcePath, zos); // Àç±Í È£Ãâ
+				zipEntry(fileArray[i], sourcePath, zos); // ì¬ê·€ í˜¸ì¶œ
 			}
-		} else { // sourcehFile ÀÌ µğ·ºÅä¸®°¡ ¾Æ´Ñ °æ¿ì
+		} else { // sourcehFile ì´ ë””ë ‰í† ë¦¬ê°€ ì•„ë‹Œ ê²½ìš°
 			BufferedInputStream bis = null;
 			try {
 				String sFilePath = sourceFile.getPath();
@@ -104,11 +104,11 @@ public class ZipUtils {
 	}
 
 	/**
-	 * Zip ÆÄÀÏÀÇ ¾ĞÃàÀ» Ç¬´Ù.
+	 * Zip íŒŒì¼ì˜ ì••ì¶•ì„ í‘¼ë‹¤.
 	 *
-	 * @param zipFile - ¾ĞÃà Ç® Zip ÆÄÀÏ
-	 * @param targetDir - ¾ĞÃà Ç¬ ÆÄÀÏÀÌ µé¾î°£ µğ·ºÅä¸®
-	 * @param fileNameToLowerCase - ÆÄÀÏ¸íÀ» ¼Ò¹®ÀÚ·Î ¹Ù²ÜÁö ¿©ºÎ
+	 * @param zipFile - ì••ì¶• í’€ Zip íŒŒì¼
+	 * @param targetDir - ì••ì¶• í‘¼ íŒŒì¼ì´ ë“¤ì–´ê°„ ë””ë ‰í† ë¦¬
+	 * @param fileNameToLowerCase - íŒŒì¼ëª…ì„ ì†Œë¬¸ìë¡œ ë°”ê¿€ì§€ ì—¬ë¶€
 	 * @throws Exception
 	 */
 	public static void unzip(File zipFile, File targetDir, boolean fileNameToLowerCase) throws IOException {
@@ -125,10 +125,10 @@ public class ZipUtils {
 				}
 
 				File targetFile = new File(targetDir, fileNameToUnzip);
-				if (zentry.isDirectory()) {// Directory ÀÎ °æ¿ì
-					FileUtils.forceMkdir(targetFile); // µğ·ºÅä¸® »ı¼º
-				} else { // File ÀÎ °æ¿ì
-					// parent Directory »ı¼º
+				if (zentry.isDirectory()) {// Directory ì¸ ê²½ìš°
+					FileUtils.forceMkdir(targetFile); // ë””ë ‰í† ë¦¬ ìƒì„±
+				} else { // File ì¸ ê²½ìš°
+					// parent Directory ìƒì„±
 					FileUtils.forceMkdir(targetFile.getParentFile());
 					unzipEntry(zis, targetFile);
 				}
@@ -151,10 +151,10 @@ public class ZipUtils {
 				}
 
 				File targetFile = new File(targetDir, fileNameToUnzip);
-				if (zentry.isDirectory()) {// Directory ÀÎ °æ¿ì
-					FileUtils.forceMkdir(targetFile); // µğ·ºÅä¸® »ı¼º
-				} else { // File ÀÎ °æ¿ì
-					// parent Directory »ı¼º
+				if (zentry.isDirectory()) {// Directory ì¸ ê²½ìš°
+					FileUtils.forceMkdir(targetFile); // ë””ë ‰í† ë¦¬ ìƒì„±
+				} else { // File ì¸ ê²½ìš°
+					// parent Directory ìƒì„±
 					FileUtils.forceMkdir(targetFile.getParentFile());
 					unzipEntry(zis, targetFile);
 				}
@@ -166,10 +166,10 @@ public class ZipUtils {
 	}
 
 	/**
-	 * Zip ÆÄÀÏÀÇ ÇÑ °³ ¿£Æ®¸®ÀÇ ¾ĞÃàÀ» Ç¬´Ù.
+	 * Zip íŒŒì¼ì˜ í•œ ê°œ ì—”íŠ¸ë¦¬ì˜ ì••ì¶•ì„ í‘¼ë‹¤.
 	 *
 	 * @param zis - Zip Input Stream
-	 * @param filePath - ¾ĞÃà Ç®¸° ÆÄÀÏÀÇ °æ·Î
+	 * @param filePath - ì••ì¶• í’€ë¦° íŒŒì¼ì˜ ê²½ë¡œ
 	 * @return
 	 * @throws Exception
 	 */

@@ -30,7 +30,7 @@ public class NetworkUtils {
 			
 			String line = null;
 			while ((line = output.readLine()) != null) {
-				if (line.startsWith("³×Æ®¿öÅ©") == true) {
+				if (line.startsWith("ë„¤íŠ¸ì›Œí¬") == true) {
 					line = output.readLine();
 					break;
 				}

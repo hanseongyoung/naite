@@ -50,12 +50,12 @@ public class TeacherLectureView extends ViewPart {
 		public TmpAction() {
 			setId("tmpAction");
 			setImageDescriptor(TeacherPlugin.getDefault().getImageRegistry().getDescriptor(TeacherPlugin.IMG_HELP_TOPIC));
-			setToolTipText("Å×½ºÆ®");
+			setToolTipText("í…ŒìŠ¤íŠ¸");
 		}
 
 		@Override
 		public void run() {
-			System.out.println("Å×½ºÆ®");
+			System.out.println("í…ŒìŠ¤íŠ¸");
 		}
 		
 	}
@@ -100,9 +100,9 @@ public class TeacherLectureView extends ViewPart {
 	private void createBookSection(ScrolledForm parentForm) {
 		//
 		bookSection = toolkit.createSection(parentForm.getBody(), Section.TWISTIE | Section.DESCRIPTION | Section.TITLE_BAR);
-		//toolkit.createCompositeSeparator(section); ¼½¼Ç ÇÏ´Ü¿¡ ¶óÀÎ »ı¼º
-		bookSection.setText("°­ÀÇ±³Àç");
-		bookSection.setDescription("¾Æ·¡ ¸µÅ©¸¦ ¼±ÅÃÇÏ¿© ´Ù¿î·Îµå ÇÏ¼¼¿ä.");
+		//toolkit.createCompositeSeparator(section); ì„¹ì…˜ í•˜ë‹¨ì— ë¼ì¸ ìƒì„±
+		bookSection.setText("ê°•ì˜êµì¬");
+		bookSection.setDescription("ì•„ë˜ ë§í¬ë¥¼ ì„ íƒí•˜ì—¬ ë‹¤ìš´ë¡œë“œ í•˜ì„¸ìš”.");
 		bookSection.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		bookSection.setExpanded(true);
 		bookSection.setTextClient(createBookSectionToolbar(parentForm, bookSection));
@@ -117,15 +117,15 @@ public class TeacherLectureView extends ViewPart {
 		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
 		toolbar.setCursor(handCursor);
 		ToolItem item = new ToolItem(toolbar, SWT.PUSH);
-		item.setToolTipText("°­ÀÇ±³Àç µî·Ï");
+		item.setToolTipText("ê°•ì˜êµì¬ ë“±ë¡");
 		item.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_HELP_TOPIC));
 		item.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog fileDialog = new FileDialog(getSite().getShell(), SWT.OPEN);
                 fileDialog.setFilterExtensions(new String[] { "*.pdf", "*.*" });
-                fileDialog.setFilterNames(new String[] { "PDF ÆÄÀÏ", "All Files" });
-                fileDialog.setText("µî·ÏÇÒ °­ÀÇ±³Àç ¼±ÅÃ");
+                fileDialog.setFilterNames(new String[] { "PDF íŒŒì¼", "All Files" });
+                fileDialog.setText("ë“±ë¡í•  ê°•ì˜êµì¬ ì„ íƒ");
                 String fileSelected = fileDialog.open();
                 if (fileSelected == null || fileSelected.length() <= 0) return;
                 NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
@@ -176,7 +176,7 @@ public class TeacherLectureView extends ViewPart {
 				FileDialog fileDialog = new FileDialog(getSite().getShell(), SWT.SAVE);
                 fileDialog.setFilterExtensions(new String[] { "*.*" });
                 fileDialog.setFilterNames(new String[] { "All Files" });
-                fileDialog.setText("°­ÀÇ±³Àç ÀúÀå");
+                fileDialog.setText("ê°•ì˜êµì¬ ì €ì¥");
                 fileDialog.setFileName(textbook.getName());
                 String fileSelected = fileDialog.open();
                 if (fileSelected == null || fileSelected.length() <= 0) return;
@@ -195,8 +195,8 @@ public class TeacherLectureView extends ViewPart {
 		//
 		Section section = toolkit.createSection(parentForm.getBody(), Section.TWISTIE | Section.DESCRIPTION | Section.TITLE_BAR);
 		//toolkit.createCompositeSeparator(section);
-		section.setText("½Ç½À¿¹Á¦");
-		section.setDescription("½Ç½À¿¹Á¦¸¦ ÇÁ·ÎÁ§Æ® È¯°æ¿¡ ¼³Ä¡ÇÕ´Ï´Ù.");
+		section.setText("ì‹¤ìŠµì˜ˆì œ");
+		section.setDescription("ì‹¤ìŠµì˜ˆì œë¥¼ í”„ë¡œì íŠ¸ í™˜ê²½ì— ì„¤ì¹˜í•©ë‹ˆë‹¤.");
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		section.setExpanded(true);
 		

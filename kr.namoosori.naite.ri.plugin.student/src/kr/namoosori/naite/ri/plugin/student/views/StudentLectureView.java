@@ -88,7 +88,7 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 1;
 		form.getBody().setLayout(layout);
-		form.setText("°­»ç°¡ ÁØºñÁßÀÔ´Ï´Ù.");
+		form.setText("ê°•ì‚¬ê°€ ì¤€ë¹„ì¤‘ì…ë‹ˆë‹¤.");
 		toolkit.decorateFormHeading(form.getForm());
 	}
 
@@ -108,8 +108,8 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 	private void createBookSection(ScrolledForm parentForm) {
 		//
 		bookSection = toolkit.createSection(parentForm.getBody(), Section.TWISTIE | Section.DESCRIPTION | Section.TITLE_BAR);
-		bookSection.setText("°­ÀÇ±³Àç");
-		bookSection.setDescription("¾Æ·¡ ¸µÅ©¸¦ ¼±ÅÃÇÏ¿© ´Ù¿î·Îµå ÇÏ¼¼¿ä.");
+		bookSection.setText("ê°•ì˜êµì¬");
+		bookSection.setDescription("ì•„ë˜ ë§í¬ë¥¼ ì„ íƒí•˜ì—¬ ë‹¤ìš´ë¡œë“œ í•˜ì„¸ìš”.");
 		bookSection.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		bookSection.setExpanded(true);
 		
@@ -152,7 +152,7 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 				FileDialog fileDialog = new FileDialog(getSite().getShell(), SWT.SAVE);
                 fileDialog.setFilterExtensions(new String[] { "*.*" });
                 fileDialog.setFilterNames(new String[] { "All Files" });
-                fileDialog.setText("°­ÀÇ±³Àç ÀúÀå");
+                fileDialog.setText("ê°•ì˜êµì¬ ì €ì¥");
                 fileDialog.setFileName(textbook.getName());
                 String fileSelected = fileDialog.open();
                 if (fileSelected == null || fileSelected.length() <= 0) return;
@@ -173,8 +173,8 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 		//
 		exampleSection = toolkit.createSection(parentForm.getBody(), Section.TWISTIE | Section.DESCRIPTION | Section.TITLE_BAR);
 		//toolkit.createCompositeSeparator(section);
-		exampleSection.setText("½Ç½À¿¹Á¦");
-		exampleSection.setDescription("½Ç½À¿¹Á¦¸¦ ÇÁ·ÎÁ§Æ® È¯°æ¿¡ ¼³Ä¡ÇÕ´Ï´Ù.");
+		exampleSection.setText("ì‹¤ìŠµì˜ˆì œ");
+		exampleSection.setDescription("ì‹¤ìŠµì˜ˆì œë¥¼ í”„ë¡œì íŠ¸ í™˜ê²½ì— ì„¤ì¹˜í•©ë‹ˆë‹¤.");
 		exampleSection.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		exampleSection.setExpanded(true);
 		

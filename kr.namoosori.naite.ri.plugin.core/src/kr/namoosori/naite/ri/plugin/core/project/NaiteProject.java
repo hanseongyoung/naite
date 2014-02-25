@@ -32,14 +32,14 @@ public class NaiteProject {
 			try {
 				project.create(new NullProgressMonitor());
 			} catch (CoreException e) {
-				throw new NaiteException("ÇÁ·ÎÁ§Æ® »ı¼ºÁß ¹®Á¦¹ß»ı", e);
+				throw new NaiteException("í”„ë¡œì íŠ¸ ìƒì„±ì¤‘ ë¬¸ì œë°œìƒ", e);
 			}
 		}
 		
 		try {
 			project.open(new NullProgressMonitor());
 		} catch (CoreException e) {
-			throw new NaiteException("ÇÁ·ÎÁ§Æ® ¿ÀÇÂÁß ¹®Á¦¹ß»ı", e);
+			throw new NaiteException("í”„ë¡œì íŠ¸ ì˜¤í”ˆì¤‘ ë¬¸ì œë°œìƒ", e);
 		}
 	}
 
@@ -50,7 +50,7 @@ public class NaiteProject {
 		try {
 			ZipUtils.unzip(inputStream, targetDir, false);
 		} catch (IOException e) {
-			throw new NaiteException("Unzip µµÁß ¹®Á¦¹ß»ı", e);
+			throw new NaiteException("Unzip ë„ì¤‘ ë¬¸ì œë°œìƒ", e);
 		}
 	}
 }
