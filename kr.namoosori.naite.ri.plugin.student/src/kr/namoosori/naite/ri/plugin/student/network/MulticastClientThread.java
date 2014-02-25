@@ -68,6 +68,11 @@ public class MulticastClientThread extends Thread {
 				TeacherEventHandler.getInstance().setRequiredRefresh(true);
 			}
 		}
+		if (arr[0].equals("cmd")) {
+			if (arr[1].equals("refresh")) {
+				TeacherEventHandler.getInstance().setRequiredRefresh(true);
+			}
+		}
 	}
 
 	public void end() {

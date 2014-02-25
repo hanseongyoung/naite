@@ -1,8 +1,9 @@
 package kr.namoosori.naite.ri.plugin.teacher.server;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
@@ -30,6 +31,9 @@ public class CreateHandler extends AbstractHandler {
 	public void handle(String target, Request baseRequest,
 			HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
+		//
+		request.setCharacterEncoding("UTF-8");
+		
 		if (target.endsWith("create")) {
 			baseRequest.setHandled(true);
 			String id = request.getParameter("id");
@@ -53,7 +57,15 @@ public class CreateHandler extends AbstractHandler {
 				sb.append(";").append(current);
 			}
 			
-			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(textFileLoc, true)));
+			//PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(textFileLoc, true)));
+			// Mac과 호환을 위하여 UTF-8로 인코딩하여 파일로 저장한다.
+			PrintWriter out = new PrintWriter(
+					new BufferedWriter(
+							new OutputStreamWriter(
+									new FileOutputStream(textFileLoc, true),
+									"UTF-8")
+							)
+					);
 			out.println(sb.toString());
 			out.close();
 		}

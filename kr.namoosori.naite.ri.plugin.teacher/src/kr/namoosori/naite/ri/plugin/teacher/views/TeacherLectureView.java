@@ -1,5 +1,7 @@
 package kr.namoosori.naite.ri.plugin.teacher.views;
 
+import java.io.IOException;
+
 import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
@@ -7,6 +9,7 @@ import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherPlugin;
+import kr.namoosori.naite.ri.plugin.teacher.network.MulticastServerThread;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
@@ -65,6 +68,11 @@ public class TeacherLectureView extends ViewPart {
 				try {
 					service.createLecture(lectureTitle);
 					refresh();
+					try {
+						MulticastServerThread.getInstance().setServeString("cmd:refresh");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				} catch (NaiteException e) {
 					e.printStackTrace();
 				}
