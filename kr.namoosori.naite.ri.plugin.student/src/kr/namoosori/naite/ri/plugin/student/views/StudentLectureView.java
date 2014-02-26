@@ -72,6 +72,8 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 		createExampleSection(form);
 		
 		form.getParent().layout();
+		bookSection.getParent().layout();
+		exampleSection.getParent().layout();
 	}
 	
 	private void createForm(Composite parent, String formTitle) {

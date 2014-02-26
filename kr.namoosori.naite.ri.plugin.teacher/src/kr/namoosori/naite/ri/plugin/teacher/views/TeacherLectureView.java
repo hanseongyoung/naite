@@ -119,6 +119,8 @@ public class TeacherLectureView extends ViewPart {
 		createExampleSection(form);
 		
 		form.getParent().layout();
+		bookSection.getParent().layout();
+		exampleSection.getParent().layout();
 	}
 	
 	private void createForm(Composite parent) {
