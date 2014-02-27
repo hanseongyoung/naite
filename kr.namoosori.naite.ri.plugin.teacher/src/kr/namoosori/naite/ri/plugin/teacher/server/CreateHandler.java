@@ -40,7 +40,8 @@ public class CreateHandler extends AbstractHandler {
 			baseRequest.setHandled(true);
 			String id = request.getParameter("id");
 			String name = request.getParameter("name");
-			String current = request.getParameter("current");
+			String current = request.getParameter("current"); // for Lecture
+			String projectName = request.getParameter("projectName"); // for ExciseProject
 			
 			
 			System.out.println("*********************************");
@@ -57,6 +58,9 @@ public class CreateHandler extends AbstractHandler {
 			sb.append(";").append(name);
 			if (StringUtils.isNotEmpty(current)) {
 				sb.append(";").append(current);
+			}
+			if (StringUtils.isNotEmpty(projectName)) {
+				sb.append(";").append(projectName);
 			}
 			
 			// check dir exist

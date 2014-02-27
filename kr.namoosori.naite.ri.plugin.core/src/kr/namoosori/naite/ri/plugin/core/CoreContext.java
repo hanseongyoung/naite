@@ -1,5 +1,7 @@
 package kr.namoosori.naite.ri.plugin.core;
 
+import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
+
 
 public abstract class CoreContext {
 	//
@@ -10,6 +12,8 @@ public abstract class CoreContext {
 	public static CoreContext getInstance() {
 		return instance;
 	}
+	
+	public static Lecture CURRENT_LECTURE;
 
 	public abstract String getServerUrl();
 	public abstract boolean hasServerUrl();

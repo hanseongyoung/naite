@@ -53,7 +53,7 @@ public class TeacherPlugin extends AbstractUIPlugin {
 	
 	private String getTeacherWorkspace() {
 		//
-		String workspacePath = NaiteWorkspace.getRootLocation();
+		String workspacePath = NaiteWorkspace.getInstance().getRootLocation();
 		String teacherWorkspace = workspacePath + TeacherConstants.TEACHER_WORKSPACE;
 		NaiteFileUtils.checkDir(teacherWorkspace);
 		return teacherWorkspace;

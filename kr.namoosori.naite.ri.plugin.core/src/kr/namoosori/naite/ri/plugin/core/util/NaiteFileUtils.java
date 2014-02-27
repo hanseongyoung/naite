@@ -69,6 +69,44 @@ public class NaiteFileUtils {
 		}
 	}
 	
+	// 입력스트림에서 처음 2바이트는 스킵한다.
+	public static void saveFileWithFirst2BytesSkip(String saveFilePathName, InputStream in) throws NaiteException {
+		//
+		checkDir(saveFilePathName);
+		
+		OutputStream out = null;
+		try {
+			out = new FileOutputStream(new File(saveFilePathName));
+			int read = 0;
+			byte[] bytes = new byte[1024];
+			boolean isFirst = true;
+			while((read = in.read(bytes)) != -1) {
+				if (isFirst) {
+					out.write(bytes, 2, read - 2);
+					isFirst = false;
+				} else {
+					out.write(bytes, 0, read);
+				}
+			}
+			System.out.println("***** Done!!!");
+		} catch (FileNotFoundException e) {
+			throw new NaiteException("파일 저장중 오류", e);
+		} catch (IOException e) {
+			throw new NaiteException("파일 저장중 오류", e);
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+				if (out != null) {
+					out.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public static void saveFile(String saveFilePathName, byte[] fileContents) throws NaiteException {
 		//
 		if (saveFilePathName == null) {

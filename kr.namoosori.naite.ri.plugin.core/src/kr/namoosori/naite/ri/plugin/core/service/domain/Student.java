@@ -62,7 +62,8 @@ public class Student {
 				id = eleId;
 			}
 		}
-		return String.valueOf(id++);
+		id++;
+		return String.valueOf(id);
 	}
 	
 }

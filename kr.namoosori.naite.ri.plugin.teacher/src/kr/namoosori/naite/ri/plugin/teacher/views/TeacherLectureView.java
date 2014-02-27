@@ -3,12 +3,15 @@ package kr.namoosori.naite.ri.plugin.teacher.views;
 import java.io.IOException;
 
 import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
+import kr.namoosori.naite.ri.plugin.core.project.NaiteProject;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
+import kr.namoosori.naite.ri.plugin.teacher.TeacherContext;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherPlugin;
+import kr.namoosori.naite.ri.plugin.teacher.dialogs.TeacherProjectUploadDialog;
 import kr.namoosori.naite.ri.plugin.teacher.network.MulticastServerThread;
 
 import org.eclipse.jface.action.Action;
@@ -46,13 +49,15 @@ public class TeacherLectureView extends ViewPart {
 	private FormToolkit toolkit;
 	private ScrolledForm form;
 	
-	private Lecture lecture;
+	//private Lecture lecture;
 
 	public TeacherLectureView() {
 	}
 	
 	class AddLectureAction extends Action {
+		//
 		public AddLectureAction() {
+			//
 			setId("addLectureAction");
 			setImageDescriptor(TeacherPlugin.getDefault().getImageRegistry().getDescriptor(TeacherPlugin.IMG_HELP_TOPIC));
 			setToolTipText("강의등록");
@@ -60,6 +65,7 @@ public class TeacherLectureView extends ViewPart {
 
 		@Override
 		public void run() {
+			//
 			InputDialog dialog = new InputDialog(getSite().getShell(), 
 					"강의등록", "등록할 강의명을 입력하세요.", null, null);
 			if (dialog.open() == Window.OK) {
@@ -80,7 +86,7 @@ public class TeacherLectureView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		//
-		lecture = getCurrentLecture();
+		TeacherContext.CURRENT_LECTURE = getCurrentLecture();
 		
 		toolkit = new FormToolkit(getSite().getShell().getDisplay());
 		
@@ -102,7 +108,7 @@ public class TeacherLectureView extends ViewPart {
 
 	public void refresh() {
 		//
-		lecture = getCurrentLecture();
+		TeacherContext.CURRENT_LECTURE = getCurrentLecture();
 		
 		if (bookSection != null && !bookSection.isDisposed()) {
 			bookSection.dispose();
@@ -111,13 +117,13 @@ public class TeacherLectureView extends ViewPart {
 			exampleSection.dispose();
 		}
 		
-		if (lecture == null) {
+		if (TeacherContext.CURRENT_LECTURE == null) {
 			form.setText("진행중인 강의가 없습니다.");
 			form.getParent().layout();
 			return;
 		}
 		
-		form.setText(lecture.getName());
+		form.setText(TeacherContext.CURRENT_LECTURE.getName());
 		
 		// section
 		createBookSection(form);
@@ -131,10 +137,10 @@ public class TeacherLectureView extends ViewPart {
 	private void createForm(Composite parent) {
 		//
 		String title = null;
-		if (lecture == null) {
+		if (TeacherContext.CURRENT_LECTURE == null) {
 			title = "진행중인 강의가 없습니다.";
 		} else {
-			title = lecture.getName();
+			title = TeacherContext.CURRENT_LECTURE.getName();
 		}
 		
 		// scrolled form
@@ -171,7 +177,7 @@ public class TeacherLectureView extends ViewPart {
 		bookSection.setDescription("아래 링크를 선택하여 다운로드 하세요.");
 		bookSection.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		bookSection.setExpanded(true);
-		if (lecture != null) {
+		if (TeacherContext.CURRENT_LECTURE != null) {
 			bookSection.setTextClient(createBookSectionToolbar(parentForm, bookSection));
 		}
 		
@@ -181,6 +187,7 @@ public class TeacherLectureView extends ViewPart {
 
 	private Control createBookSectionToolbar(ScrolledForm parentForm,
 			Section section) {
+		//
 		ToolBar toolbar = new ToolBar(section, SWT.FLAT | SWT.HORIZONTAL);
 		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
 		toolbar.setCursor(handCursor);
@@ -198,8 +205,8 @@ public class TeacherLectureView extends ViewPart {
                 if (fileSelected == null || fileSelected.length() <= 0) return;
                 NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 				try {
-					service.createTextbook(fileSelected, lecture.getId());
-					lecture = getCurrentLecture();
+					service.createTextbook(fileSelected, TeacherContext.CURRENT_LECTURE.getId());
+					TeacherContext.CURRENT_LECTURE = getCurrentLecture();
 					refreshBookSectionClient();
 					refreshStudents();
 				} catch (NaiteException e1) {
@@ -215,8 +222,8 @@ public class TeacherLectureView extends ViewPart {
 		Composite composite = toolkit.createComposite(section);
 		composite.setLayout(new GridLayout(2, false));
 		
-		if (lecture != null) {
-			for (Textbook textbook : lecture.getTextbooks()) {
+		if (TeacherContext.CURRENT_LECTURE != null) {
+			for (Textbook textbook : TeacherContext.CURRENT_LECTURE.getTextbooks()) {
 				createTextbookLink(composite, textbook);
 			}
 		}
@@ -272,9 +279,35 @@ public class TeacherLectureView extends ViewPart {
 		exampleSection.setDescription("실습예제를 프로젝트 환경에 설치합니다.");
 		exampleSection.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		exampleSection.setExpanded(true);
+		if (TeacherContext.CURRENT_LECTURE != null) {
+			exampleSection.setTextClient(createExampleSectionToolbar(parentForm, exampleSection));
+		}
 		
 		Composite client = createExampleSectionClient(exampleSection);
 		exampleSection.setClient(client);
+	}
+
+	private Control createExampleSectionToolbar(ScrolledForm parentForm,
+			Section section) {
+		//
+		ToolBar toolbar = new ToolBar(section, SWT.FLAT | SWT.HORIZONTAL);
+		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		toolbar.setCursor(handCursor);
+		ToolItem item = new ToolItem(toolbar, SWT.PUSH);
+		item.setToolTipText("실습예제 등록");
+		item.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_HELP_TOPIC));
+		item.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TeacherProjectUploadDialog dialog = new TeacherProjectUploadDialog(getSite().getShell());
+				if (dialog.open() == Window.OK) {
+					TeacherContext.CURRENT_LECTURE = getCurrentLecture();
+					refreshExampleSectionClient();
+					refreshStudents();
+				}
+			}
+		});
+		return toolbar;
 	}
 
 	private Composite createExampleSectionClient(Section section) {
@@ -282,31 +315,39 @@ public class TeacherLectureView extends ViewPart {
 		Composite composite = toolkit.createComposite(section);
 		composite.setLayout(new GridLayout(2, false));
 		
-		if (lecture != null) {
-			for (ExerciseProject exerciseProject : lecture.getExerciseProjects()) {
-				createExerciseProjectLink(composite, exerciseProject);
+		if (TeacherContext.CURRENT_LECTURE != null) {
+			for (ExerciseProject exerciseProject : TeacherContext.CURRENT_LECTURE.getExerciseProjects()) {
+				createExerciseProjectLink(composite, new NaiteProject(exerciseProject));
 			}
 		}
 		
 		return composite;
 	}
+	
+	private void refreshExampleSectionClient() {
+		//
+		Control client = exampleSection.getClient();
+		client.dispose();
+		Composite newClient = createExampleSectionClient(exampleSection);
+		exampleSection.setClient(newClient);
+		exampleSection.getParent().layout();
+	}
 
 	private void createExerciseProjectLink(Composite composite,
-			final ExerciseProject exerciseProject) {
+			final NaiteProject project) {
 		//
 		ImageHyperlink image = toolkit.createImageHyperlink(composite, SWT.NONE);
 		image.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJ_PROJECT));
 		
-		Hyperlink link = toolkit.createHyperlink(composite, exerciseProject.getProjectName(), SWT.WRAP);
+		Hyperlink link = toolkit.createHyperlink(composite, project.getName(), SWT.WRAP);
 	
 		link.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		link.addHyperlinkListener(new HyperlinkAdapter(){
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				//
-				NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 				try {
-					service.projectCreate(exerciseProject);
+					project.create();
 				} catch (NaiteException e1) {
 					e1.printStackTrace();
 				}
@@ -323,7 +364,9 @@ public class TeacherLectureView extends ViewPart {
 	@Override
 	public void dispose() {
 		//
-		toolkit.dispose();
+		if (toolkit != null) {
+			toolkit.dispose();
+		}
 		super.dispose();
 	}
 

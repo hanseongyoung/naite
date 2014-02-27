@@ -6,8 +6,13 @@ import java.io.InputStream;
 
 import kr.namoosori.naite.ri.plugin.core.contents.NaiteContents;
 import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
+import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
+import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
+import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
+import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 import kr.namoosori.naite.ri.plugin.core.util.ZipUtils;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -17,15 +22,55 @@ public class NaiteProject {
 	//
 	private NaiteContents contents = new NaiteContents();
 	
-	public void create(String serverPath, String zipFileName, String projectName) throws NaiteException {
+	private IProject project;
+	private ExerciseProject exerciseProject;
+	
+	public NaiteProject(){}
+	
+	public NaiteProject(ExerciseProject exerciseProject) {
 		//
-		createProjectContents(serverPath, zipFileName);
-		createProject(projectName);
+		this.exerciseProject = exerciseProject;
+		this.project = ResourcesPlugin.getWorkspace().getRoot().getProject(exerciseProject.getProjectName());
+	}
+	
+	public NaiteProject(IProject project, Lecture lecture) {
+		//
+		this.project = project;
+		this.exerciseProject = new ExerciseProject(project.getName());
+		this.exerciseProject.setLecture(lecture);
+	}
+	
+	public String getName() {
+		//
+		if (project == null) {
+			return null;
+		}
+		return project.getName();
+	}
+	
+	public IProject getResource() {
+		//
+		return project;
+	}
+	
+	public void create() throws NaiteException {
+		//
+		String serverPath = "lectures/" + exerciseProject.getLectureId() + "/projects/";
+		createProjectContents(serverPath);
+		createProject();
+	}
+	
+	public void export() throws NaiteException {
+		//
+		//String serverPath = "lectures/" + exerciseProject.getLectureId() + "/projects/";
+		String packedFilePathName = packProjectContents();
+		
+		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+		service.createExerciseProject(packedFilePathName, project.getName(), exerciseProject.getLectureId());
 	}
 
-	private void createProject(String projectName) throws NaiteException {
+	private void createProject() throws NaiteException {
 		//
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		if (project.exists()) {
 			//
 		} else {
@@ -43,14 +88,50 @@ public class NaiteProject {
 		}
 	}
 
-	private void createProjectContents(String serverPath, String zipFileName) throws NaiteException {
+	private void createProjectContents(String serverPath) throws NaiteException {
 		//
+		String zipFileName = exerciseProject.getFileName();
 		InputStream inputStream = contents.getInputStream(serverPath, zipFileName);
-		File targetDir = NaiteWorkspace.getRootLocationAsFile();
+		File workspaceDir = NaiteWorkspace.getInstance().getRootLocationAsFile();
+		File targetDir = new File(workspaceDir, project.getName());
+		//File targetDir = project.getLocation().toFile();
+		System.out.println("targetDir:"+targetDir);
+		if (targetDir.exists()) {
+			throw new NaiteException("프로젝트가 이미 존재합니다.");
+		}
+		
+		try {
+			FileUtils.forceMkdir(targetDir);
+		} catch (IOException e1) {
+			throw new NaiteException("프로젝트 생성 도중 문제발생", e1);
+		}
+		
 		try {
 			ZipUtils.unzip(inputStream, targetDir, false);
 		} catch (IOException e) {
 			throw new NaiteException("Unzip 도중 문제발생", e);
 		}
 	}
+	
+	private String packProjectContents() throws NaiteException {
+		String projectPath = project.getLocation().toString();
+		System.out.println(projectPath);
+		String fileName = project.getName() + ".zip";
+		exerciseProject.setFileName(fileName);
+		System.out.println(fileName);
+		String tempZipFilePathName = FileUtils.getTempDirectoryPath() + fileName;
+		System.out.println(tempZipFilePathName);
+		try {
+			ZipUtils.zip(projectPath, tempZipFilePathName);
+		} catch (IOException e) {
+			throw new NaiteException("Zip 도중 문제발생", e);
+		}
+		
+		File tempZipFile = new File(tempZipFilePathName);
+		tempZipFile.deleteOnExit();
+		
+		return tempZipFilePathName;
+	}
+	
+	
 }

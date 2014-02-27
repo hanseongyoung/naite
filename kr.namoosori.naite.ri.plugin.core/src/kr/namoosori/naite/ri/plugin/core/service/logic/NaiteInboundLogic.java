@@ -7,7 +7,6 @@ import java.util.Map;
 
 import kr.namoosori.naite.ri.plugin.core.contents.NaiteContents;
 import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
-import kr.namoosori.naite.ri.plugin.core.project.NaiteProject;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
@@ -71,7 +70,7 @@ public class NaiteInboundLogic implements NaiteService {
 	
 	
 	private List<Lecture> findLectures() throws NaiteException {
-		// TODO : StatusCode=404 인 경우 정상으로 처리할 것 - 강의가 없는 경우임
+		//
 		try {
 			String str = naiteContents.getContentsString("lectures.txt");
 			List<Lecture> lectures = Lecture.createDomains(str);
@@ -83,7 +82,7 @@ public class NaiteInboundLogic implements NaiteService {
 	}
 	
 	private List<Textbook> findTextbooks(String lectureId) throws NaiteException {
-		// TODO : StatusCode=404 인 경우 정상으로 처리할 것
+		//
 		try {
 			String str = naiteContents.getContentsString("lectures/"+lectureId+"/textbooks.txt");
 			List<Textbook> textbooks = Textbook.createDomains(str);
@@ -95,7 +94,7 @@ public class NaiteInboundLogic implements NaiteService {
 	}
 	
 	private List<ExerciseProject> findExerciseProjects(String lectureId) throws NaiteException {
-		// TODO : StatusCode=404 인 경우 정상으로 처리할 것
+		//
 		try {
 			String str = naiteContents.getContentsString("lectures/"+lectureId+"/projects.txt");
 			List<ExerciseProject> projects = ExerciseProject.createDomains(str);
@@ -145,21 +144,40 @@ public class NaiteInboundLogic implements NaiteService {
 		
 		naiteContents.doMultipartPost("lectures/" + lectureId + "/textbooks/upload", params, fileParams);
 	}
-
-	//--------------------------------------------------------------------------
-	private NaiteProject naiteProject = new NaiteProject();
-
+	
 	@Override
-	public void projectCreate(ExerciseProject exerciseProject) throws NaiteException {
+	public void createExerciseProject(String filePathName, String projectName,
+			String lectureId) throws NaiteException {
 		//
-		String lectureId = exerciseProject.getLecture().getId();
-		String serverFileName = exerciseProject.getFileName();
-		String projectName = exerciseProject.getProjectName();
+		String fileName = StringUtils.substringAfterLast(filePathName, "\\");
 		
-		naiteProject.create("lectures/" + lectureId + "/projects/", serverFileName, projectName);
+		registerExerciseProject(lectureId, fileName, projectName);
+		uploadExerciseProject(lectureId, fileName, filePathName);
+	}
+	
+	private void registerExerciseProject(String lectureId, String name, String projectName) throws NaiteException {
+		//
+		List<ExerciseProject> exists = findExerciseProjects(lectureId);
+		String id = ExerciseProject.createId(exists);
 		
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("id", id);
+		params.put("name", name);
+		params.put("projectName", projectName);
+		naiteContents.doPost("lectures/" + lectureId + "/projects/create", params);
 	}
 
-	
-	
+	private void uploadExerciseProject(String lectureId, String fileName, String filePathName) throws NaiteException {
+		//
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("fileName1", fileName);
+		
+		Map<String, File> fileParams = new HashMap<String, File>();
+		fileParams.put("file1", new File(filePathName));
+		
+		naiteContents.doMultipartPost("lectures/" + lectureId + "/projects/upload", params, fileParams);
+	}
+
+	//--------------------------------------------------------------------------
+
 }

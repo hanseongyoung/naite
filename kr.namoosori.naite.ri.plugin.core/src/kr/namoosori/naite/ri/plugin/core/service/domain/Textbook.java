@@ -70,6 +70,7 @@ public class Textbook {
 				id = eleId;
 			}
 		}
-		return String.valueOf(id++);
+		id++;
+		return String.valueOf(id);
 	}
 }

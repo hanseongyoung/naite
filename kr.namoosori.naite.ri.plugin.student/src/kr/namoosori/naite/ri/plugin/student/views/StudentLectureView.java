@@ -1,11 +1,13 @@
 package kr.namoosori.naite.ri.plugin.student.views;
 
 import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
+import kr.namoosori.naite.ri.plugin.core.project.NaiteProject;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
+import kr.namoosori.naite.ri.plugin.student.StudentContext;
 import kr.namoosori.naite.ri.plugin.student.StudentPlugin;
 import kr.namoosori.naite.ri.plugin.student.event.RefreshEventListener;
 import kr.namoosori.naite.ri.plugin.student.event.TeacherEventHandler;
@@ -14,7 +16,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -35,7 +36,7 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 	private FormToolkit toolkit;
 	private ScrolledForm form;
 	
-	private Lecture lecture;
+	//private Lecture lecture;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -50,7 +51,7 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 	public void refresh() {
 		//
 		System.out.println("***************** refresh...."+ID);
-		lecture = getCurrentLecture();
+		StudentContext.CURRENT_LECTURE = getCurrentLecture();
 		
 		if (bookSection != null && !bookSection.isDisposed()) {
 			bookSection.dispose();
@@ -59,13 +60,13 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 			exampleSection.dispose();
 		}
 		
-		if (lecture == null) {
+		if (StudentContext.CURRENT_LECTURE == null) {
 			form.setText("진행중인 강의가 없습니다.");
 			form.getParent().layout();
 			return;
 		}
 		
-		form.setText(lecture.getName());
+		form.setText(StudentContext.CURRENT_LECTURE.getName());
 		
 		// section
 		createBookSection(form);
@@ -117,22 +118,13 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 		Composite composite = toolkit.createComposite(section);
 		composite.setLayout(new GridLayout(2, false));
 		
-		for (Textbook textbook : lecture.getTextbooks()) {
+		for (Textbook textbook : StudentContext.CURRENT_LECTURE.getTextbooks()) {
 			createTextbookLink(composite, textbook);
 		}
 		
 		return composite;
 	}
 	
-	private void refreshBookSectionClient() {
-		//
-		Control client = bookSection.getClient();
-		client.dispose();
-		Composite newClient = createBookSectionClient(bookSection);
-		bookSection.setClient(newClient);
-		bookSection.getParent().layout();
-	}
-
 	private void createTextbookLink(Composite composite, final Textbook textbook) {
 		//
 		ImageHyperlink image = toolkit.createImageHyperlink(composite, SWT.NONE);
@@ -182,29 +174,28 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 		Composite composite = toolkit.createComposite(section);
 		composite.setLayout(new GridLayout(2, false));
 		
-		for (ExerciseProject exerciseProject : lecture.getExerciseProjects()) {
-			createExerciseProjectLink(composite, exerciseProject);
+		for (ExerciseProject exerciseProject : StudentContext.CURRENT_LECTURE.getExerciseProjects()) {
+			createExerciseProjectLink(composite, new NaiteProject(exerciseProject));
 		}
 		
 		return composite;
 	}
 
 	private void createExerciseProjectLink(Composite composite,
-			final ExerciseProject exerciseProject) {
+			final NaiteProject project) {
 		//
 		ImageHyperlink image = toolkit.createImageHyperlink(composite, SWT.NONE);
 		image.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJ_PROJECT));
 		
-		Hyperlink link = toolkit.createHyperlink(composite, exerciseProject.getProjectName(), SWT.WRAP);
+		Hyperlink link = toolkit.createHyperlink(composite, project.getName(), SWT.WRAP);
 	
 		link.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		link.addHyperlinkListener(new HyperlinkAdapter(){
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				//
-				NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 				try {
-					service.projectCreate(exerciseProject);
+					project.create();
 				} catch (NaiteException e1) {
 					e1.printStackTrace();
 				}

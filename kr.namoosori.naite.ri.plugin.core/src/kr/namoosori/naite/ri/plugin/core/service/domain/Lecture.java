@@ -106,7 +106,8 @@ public class Lecture {
 				id = eleId;
 			}
 		}
-		return String.valueOf(id++);
+		id++;
+		return String.valueOf(id);
 	}
 	
 	

@@ -11,6 +11,19 @@ public class ExerciseProject {
 	
 	private Lecture lecture;
 	
+	public ExerciseProject(){}
+	
+	public ExerciseProject(String projectName) {
+		//
+		this.projectName = projectName;
+	}
+	
+	public String getLectureId() {
+		//
+		if (lecture == null) return null;
+		return lecture.getId();
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -77,7 +90,8 @@ public class ExerciseProject {
 				id = eleId;
 			}
 		}
-		return String.valueOf(id++);
+		id++;
+		return String.valueOf(id);
 	}
 	
 	

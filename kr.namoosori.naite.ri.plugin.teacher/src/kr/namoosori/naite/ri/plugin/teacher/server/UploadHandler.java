@@ -55,7 +55,9 @@ public class UploadHandler extends AbstractHandler {
 			//------------------------------------------------------------------
 			InputStream in = multiFile.getInputStream();
 			try {
-				NaiteFileUtils.saveFile(fileLoc + paramFileName, in);
+				// TODO : 파일 업로드시 이유는 모르겠으나 원본파일에서 2바이트가 증가됨.(처음 2바이트)
+				// 따라서 일단 처음 2바이트를 스킵하여 파일저장함.
+				NaiteFileUtils.saveFileWithFirst2BytesSkip(fileLoc + paramFileName, in);
 			} catch (NaiteException e) {
 				e.printStackTrace();
 			}
