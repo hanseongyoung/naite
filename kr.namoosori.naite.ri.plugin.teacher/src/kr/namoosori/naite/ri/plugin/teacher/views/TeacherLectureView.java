@@ -3,6 +3,7 @@ package kr.namoosori.naite.ri.plugin.teacher.views;
 import java.io.IOException;
 
 import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
+import kr.namoosori.naite.ri.plugin.core.job.BusyUIIndicateJob;
 import kr.namoosori.naite.ri.plugin.core.project.NaiteProject;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
@@ -49,8 +50,6 @@ public class TeacherLectureView extends ViewPart {
 	private FormToolkit toolkit;
 	private ScrolledForm form;
 	
-	//private Lecture lecture;
-
 	public TeacherLectureView() {
 	}
 	
@@ -256,15 +255,37 @@ public class TeacherLectureView extends ViewPart {
                 fileDialog.setFilterNames(new String[] { "All Files" });
                 fileDialog.setText("강의교재 저장");
                 fileDialog.setFileName(textbook.getName());
-                String fileSelected = fileDialog.open();
+                final String fileSelected = fileDialog.open();
                 if (fileSelected == null || fileSelected.length() <= 0) return;
+                
+//                new BusyJobDialog(getSite().getShell()) {
+//					@Override
+//					public void job() {
+//						//
+//						NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+//						try {
+//							service.downloadTextbook(fileSelected, textbook);
+//						} catch (NaiteException e) {
+//							e.printStackTrace();
+//						}
+//					}
+//				}.run();
+                
+                BusyUIIndicateJob job = new BusyUIIndicateJob() {
+					@Override
+					public Object job() {
+						//
+						NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+						try {
+							service.downloadTextbook(fileSelected, textbook);
+						} catch (NaiteException e1) {
+							e1.printStackTrace();
+						}
+						return null;
+					}
+				};
+				job.start();
 				
-				NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
-				try {
-					service.downloadTextbook(fileSelected, textbook);
-				} catch (NaiteException e1) {
-					e1.printStackTrace();
-				}
 			}
 		});
 	}
