@@ -86,6 +86,9 @@ public class ZipUtils {
 				String sFilePath = sourceFile.getPath();
 				String zipEntryName = sFilePath.substring(sourcePath.length() + 1, sFilePath.length());
 
+				// Unix 및 Mac 과의 호환을 위해 File Separator 를 변경
+				zipEntryName = zipEntryName.replaceAll("\\\\", "/");
+				
 				bis = new BufferedInputStream(new FileInputStream(sourceFile));
 				ZipEntry zentry = new ZipEntry(zipEntryName);
 				zentry.setTime(sourceFile.lastModified());
@@ -187,5 +190,14 @@ public class ZipUtils {
 			IOUtils.closeQuietly(fos);
 		}
 		return targetFile;
+	}
+	
+	public static void main(String[] args) throws Exception {
+		System.setProperty("file.separator", "/");
+		System.out.println("system seperator:"+System.getProperty("file.separator"));
+		System.out.println("seperator:"+File.separator);
+		
+		File file = new File("D:/work/test.txt");
+		System.out.println("file:"+file.toString());
 	}
 }

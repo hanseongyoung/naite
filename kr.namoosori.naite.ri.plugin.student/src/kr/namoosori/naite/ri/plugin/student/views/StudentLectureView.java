@@ -146,6 +146,7 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 				
 				NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 				try {
+					// TODO : 다운로드 진행 상황 표시할 것 
 					service.downloadTextbook(fileSelected, textbook);
 				} catch (NaiteException e1) {
 					e1.printStackTrace();
