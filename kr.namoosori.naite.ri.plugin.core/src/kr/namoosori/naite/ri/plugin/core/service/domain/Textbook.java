@@ -56,4 +56,20 @@ public class Textbook {
 		textbook.setName(strArr[1].trim());
 		return textbook;
 	}
+	
+	public static String createId(List<Textbook> exists) {
+		//
+		if (exists == null || exists.size() <= 0) {
+			return "1";
+		}
+		
+		int id = 0;
+		for (Textbook ele : exists) {
+			int eleId = Integer.parseInt(ele.getId());
+			if (eleId > id) {
+				id = eleId;
+			}
+		}
+		return String.valueOf(id++);
+	}
 }

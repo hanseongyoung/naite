@@ -68,11 +68,7 @@ public class TeacherLectureView extends ViewPart {
 				try {
 					service.createLecture(lectureTitle);
 					refresh();
-					try {
-						MulticastServerThread.getInstance().setServeString("cmd:refresh");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					refreshStudents();
 				} catch (NaiteException e) {
 					e.printStackTrace();
 				}
@@ -95,6 +91,15 @@ public class TeacherLectureView extends ViewPart {
 		createExampleSection(form);
 	}
 	
+	public void refreshStudents() {
+		//
+		try {
+			MulticastServerThread.getInstance().setServeString("cmd:refresh");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void refresh() {
 		//
 		lecture = getCurrentLecture();
@@ -196,6 +201,7 @@ public class TeacherLectureView extends ViewPart {
 					service.createTextbook(fileSelected, lecture.getId());
 					lecture = getCurrentLecture();
 					refreshBookSectionClient();
+					refreshStudents();
 				} catch (NaiteException e1) {
 					e1.printStackTrace();
 				}

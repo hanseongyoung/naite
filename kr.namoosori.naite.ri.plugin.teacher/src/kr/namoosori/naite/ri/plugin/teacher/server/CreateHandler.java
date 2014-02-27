@@ -10,6 +10,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import kr.namoosori.naite.ri.plugin.core.util.NaiteFileUtils;
+
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -56,6 +58,9 @@ public class CreateHandler extends AbstractHandler {
 			if (StringUtils.isNotEmpty(current)) {
 				sb.append(";").append(current);
 			}
+			
+			// check dir exist
+			NaiteFileUtils.checkDir(textFileLoc);
 			
 			//PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(textFileLoc, true)));
 			// Mac과 호환을 위하여 UTF-8로 인코딩하여 파일로 저장한다.

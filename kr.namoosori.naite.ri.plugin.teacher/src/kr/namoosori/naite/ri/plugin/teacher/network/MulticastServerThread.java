@@ -84,7 +84,7 @@ public class MulticastServerThread extends Thread {
 			InetAddress group = InetAddress.getByName(CoreConstants.MULTICAST_GROUP_IP);
 			DatagramPacket packet = new DatagramPacket(buf, buf.length, group, CoreConstants.MULTICAST_PORT);
 			socket.send(packet);
-			System.out.println("send..."+data);
+			//System.out.println("send..."+data);
 		} catch (IOException e) {
 			e.printStackTrace();
 			end();

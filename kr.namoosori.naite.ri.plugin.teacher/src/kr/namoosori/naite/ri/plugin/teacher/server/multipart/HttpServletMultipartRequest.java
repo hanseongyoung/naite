@@ -70,7 +70,7 @@ public class HttpServletMultipartRequest extends HttpServletRequestWrapper {
     /**
      * Default max content length if not specified
      */
-    public static final long MAX_CONTENT_LENGTH = 10 * (1024 * 1024); // 2MB!
+    public static final long MAX_CONTENT_LENGTH = 20 * (1024 * 1024); // 20MB!
 
     /**
      * Defines the number of bytes to read per readLine call. 128K

@@ -59,14 +59,8 @@ public class NaiteInboundLogic implements NaiteService {
 	public void createLecture(String name) throws NaiteException {
 		//
 		List<Lecture> exists = findLectures();
-		System.out.println("lectures:"+exists);
 		
-		String id = null;
-		if (exists == null) {
-			id = "1";
-		} else {
-			id = "" + (exists.size() + 1);
-		}
+		String id = Lecture.createId(exists);
 		
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("id", id);
@@ -133,7 +127,7 @@ public class NaiteInboundLogic implements NaiteService {
 	private void registerTextbook(String lectureId, String name) throws NaiteException {
 		//
 		List<Textbook> exists = findTextbooks(lectureId);
-		String id = "" + (exists.size() + 1);
+		String id = Textbook.createId(exists);
 		
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("id", id);

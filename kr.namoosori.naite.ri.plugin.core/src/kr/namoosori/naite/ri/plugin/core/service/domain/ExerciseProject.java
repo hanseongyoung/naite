@@ -64,5 +64,21 @@ public class ExerciseProject {
 		return project;
 	}
 	
+	public static String createId(List<ExerciseProject> exists) {
+		//
+		if (exists == null || exists.size() <= 0) {
+			return "1";
+		}
+		
+		int id = 0;
+		for (ExerciseProject ele : exists) {
+			int eleId = Integer.parseInt(ele.getId());
+			if (eleId > id) {
+				id = eleId;
+			}
+		}
+		return String.valueOf(id++);
+	}
+	
 	
 }

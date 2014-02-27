@@ -15,12 +15,17 @@ public class NaiteFileUtils {
 	
 	/**
 	 * 디렉토리 존재여부 체크하여 없는 경우 생성함.
+	 * 만일 입력Path가 파일Path인 경우 상위 디렉토리를 체크함
 	 * 디렉토리가 존재할 경우 true를 리턴하고
 	 * 디렉토리가 존재하지 않을 경우 해당 디렉토리를 생성 후 false를 리턴한다.
 	 * @param string
 	 */
 	public static boolean checkDir(String dirPath) {
 		File dir = new File(dirPath);
+		if (!dir.isDirectory()) {
+			dir = dir.getParentFile();
+		}
+		
 		if (!dir.exists()) {
 			try {
 				FileUtils.forceMkdir(dir);
@@ -35,6 +40,8 @@ public class NaiteFileUtils {
 	
 	public static void saveFile(String saveFilePathName, InputStream in) throws NaiteException {
 		//
+		checkDir(saveFilePathName);
+		
 		OutputStream out = null;
 		try {
 			out = new FileOutputStream(new File(saveFilePathName));
@@ -67,6 +74,8 @@ public class NaiteFileUtils {
 		if (saveFilePathName == null) {
 			throw new NaiteException("파일명이 없어 파일을 저장할 수 없습니다.");
 		}
+		
+		checkDir(saveFilePathName);
 
 		File file = null;
 		FileOutputStream fos = null;
@@ -84,5 +93,16 @@ public class NaiteFileUtils {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public static void main(String[] args) throws Exception {
+		File file = new File("C:\\temp\\abc.txt");
+		System.out.println("AbsolutePath:"+file.getAbsolutePath());
+		System.out.println("CanonicalPath:"+file.getCanonicalPath());
+		System.out.println("isDirectory:"+file.isDirectory());
+		System.out.println("name:"+file.getName());
+		System.out.println("path:"+file.getPath());
+		System.out.println("parent:"+file.getParent());
+		System.out.println("parentFile:"+file.getParentFile());
 	}
 }

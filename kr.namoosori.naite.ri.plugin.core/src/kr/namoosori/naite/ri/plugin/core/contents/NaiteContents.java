@@ -201,9 +201,13 @@ public class NaiteContents {
 			HttpResponse response = httpClient.execute(request);
 			statusLine = response.getStatusLine();
 			entity = response.getEntity();
-			if (entity != null && statusLine.getStatusCode() == HttpStatus.SC_OK) {
-				String stringContents = EntityUtils.toString(entity, "UTF-8");
-				return stringContents;
+			if (entity != null) {
+				if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+					String stringContents = EntityUtils.toString(entity, "UTF-8");
+					return stringContents;
+				} else if (statusLine.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+					return null;
+				}
 			}
 		} catch (ClientProtocolException e) {
 			throw new NaiteException("HTTP 통신 요청중 오류가 발생했습니다 URL:" + request.getURI(), e);

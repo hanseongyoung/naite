@@ -92,6 +92,22 @@ public class Lecture {
 		lecture.setCurrent(Boolean.valueOf(strArr[2].trim()));
 		return lecture;
 	}
+
+	public static String createId(List<Lecture> exists) {
+		//
+		if (exists == null || exists.size() <= 0) {
+			return "1";
+		}
+		
+		int id = 0;
+		for (Lecture ele : exists) {
+			int eleId = Integer.parseInt(ele.getId());
+			if (eleId > id) {
+				id = eleId;
+			}
+		}
+		return String.valueOf(id++);
+	}
 	
 	
 	
