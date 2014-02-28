@@ -41,7 +41,7 @@ public class TeacherEventHandler extends Thread {
 	public void run() {
 		//
 		while(true) {
-			if (requiredRefresh) {
+			if (check() && requiredRefresh) {
 				handleRefresh();
 				requiredRefresh = false;
 			}
@@ -52,6 +52,62 @@ public class TeacherEventHandler extends Thread {
 	private boolean invokedTeacherNotExist = false;
 	private boolean invokedNotLogin = false;
 	
+	private boolean check() {
+		//
+		if (!context.isTeacherAlive()) {
+			if (!invokedTeacherNotExist) {
+				handleTeacherNotExist();
+				invokedTeacherNotExist = true;
+			}
+			return false;
+		}
+		
+		if (!loginManager.isLogin()) {
+			if (!invokedNotLogin) {
+				handleNotLogin();
+				invokedNotLogin = true;
+			}
+			return false;
+		}
+		
+		invokedTeacherNotExist = false;
+		invokedNotLogin = false;
+		return true;
+	}
+
+	
+	private void handleNotLogin() {
+		//
+		if (this.listeners.size() <= 0) {
+			return;
+		}
+		
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				for (RefreshEventListener listener : listeners) {
+					listener.notLogin();
+				}
+			}
+		});
+	}
+
+	private void handleTeacherNotExist() {
+		//
+		if (this.listeners.size() <= 0) {
+			return;
+		}
+		
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				for (RefreshEventListener listener : listeners) {
+					listener.teacherNotExist();
+				}
+			}
+		});
+	}
+
 	private void handleRefresh() {
 		//
 		if (this.listeners.size() <= 0) {
@@ -62,21 +118,7 @@ public class TeacherEventHandler extends Thread {
 			@Override
 			public void run() {
 				for (RefreshEventListener listener : listeners) {
-					if (!context.isTeacherAlive()) {
-						if (!invokedTeacherNotExist) {
-							listener.teacherNotExist();
-							invokedTeacherNotExist = true;
-						}
-					} else if (!loginManager.isLogin()) {
-						if (!invokedNotLogin) {
-							listener.notLogin();
-							invokedNotLogin = true;
-						}
-					} else {
-						listener.refresh();
-						invokedTeacherNotExist = false;
-						invokedNotLogin = false;
-					}
+					listener.refresh();
 				}
 			}
 		});

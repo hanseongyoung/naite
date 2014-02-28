@@ -41,6 +41,11 @@ public class StudentContext extends CoreContext {
 		return serverIp != null;
 	}
 	
+	public void setTeacherAliveTime() {
+		//
+		this.lastTeacherAliveTime = System.currentTimeMillis();
+	}
+	
 	public boolean isTeacherAlive() {
 		//
 		if (lastTeacherAliveTime <= 0L) {
@@ -56,8 +61,6 @@ public class StudentContext extends CoreContext {
 	}
 
 	public void setServerIp(String serverIp) {
-		//
-		this.lastTeacherAliveTime = System.currentTimeMillis();
 		this.serverIp = serverIp;
 	}
 

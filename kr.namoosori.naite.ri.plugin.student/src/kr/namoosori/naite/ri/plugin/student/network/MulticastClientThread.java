@@ -22,6 +22,8 @@ public class MulticastClientThread extends Thread {
 		return instance;
 	}
 	
+	private StudentContext context = StudentContext.getInstance();
+	
 	private MulticastSocket socket;
 	
 	private boolean continueReceive;
@@ -71,12 +73,15 @@ public class MulticastClientThread extends Thread {
 		if (receiveString == null || receiveString.length() <= 0) {
 			return;
 		}
+		
+		context.setTeacherAliveTime();
+		
 		String[] arr = receiveString.split(":");
 		if (arr[0].equals("ip")) {
-			//if (!StudentContext.getInstance().hasServerUrl()) {
-				StudentContext.getInstance().setServerIp(arr[1]);
+			if (!context.hasServerUrl()) {
+				context.setServerIp(arr[1]);
 				TeacherEventHandler.getInstance().setRequiredRefresh(true);
-			//}
+			}
 		}
 		if (arr[0].equals("cmd")) {
 			if (arr[1].equals("refresh")) {
