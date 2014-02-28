@@ -45,6 +45,7 @@ public class StudentPlugin extends AbstractUIPlugin {
 		
 		TeacherEventHandler teacher = TeacherEventHandler.getInstance();
 		teacher.start();
+		
 	}
 
 	/*
@@ -52,6 +53,9 @@ public class StudentPlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
+		MulticastClientThread thread = MulticastClientThread.getInstance();
+		thread.end();
+		
 		plugin = null;
 		super.stop(context);
 	}

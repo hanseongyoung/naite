@@ -1,5 +1,6 @@
 package kr.namoosori.naite.ri.plugin.core.job;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -48,7 +49,9 @@ public abstract class BusyUIIndicateJob extends BusyJob {
                         @Override
                         public void run() {
                             // 검색 진행중임을 UI에 표현
-                        	manager.setMessage("다운로드 중...");
+                        	IProgressMonitor pm = manager.getProgressMonitor();
+                        	pm.beginTask("다운로드 중...", IProgressMonitor.UNKNOWN);
+                        	//manager.setMessage("다운로드 중...");
                         }
                     });
 
@@ -58,7 +61,9 @@ public abstract class BusyUIIndicateJob extends BusyJob {
                         @Override
                         public void run() {
                             // 검색 완료되었음을 UI에 표현
-                        	manager.setMessage(null);
+                        	//manager.setMessage(null);
+                        	IProgressMonitor pm = manager.getProgressMonitor();
+                        	pm.done();
                         	MessageDialog.openInformation(getShell(), "완료", "완료되었습니다.");
                         }
                     });

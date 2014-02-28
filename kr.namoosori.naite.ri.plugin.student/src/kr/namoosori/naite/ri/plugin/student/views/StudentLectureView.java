@@ -10,9 +10,12 @@ import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
 import kr.namoosori.naite.ri.plugin.student.StudentContext;
 import kr.namoosori.naite.ri.plugin.student.StudentPlugin;
+import kr.namoosori.naite.ri.plugin.student.dialogs.StudentInfoDialog;
 import kr.namoosori.naite.ri.plugin.student.event.RefreshEventListener;
 import kr.namoosori.naite.ri.plugin.student.event.TeacherEventHandler;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -38,6 +41,21 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 	private FormToolkit toolkit;
 	private ScrolledForm form;
 	
+	class LoginStatusAction extends Action {
+		public LoginStatusAction() {
+			setId("loginStatusAction");
+			setImageDescriptor(StudentPlugin.getDefault().getImageRegistry().getDescriptor(StudentPlugin.IMG_HELP_TOPIC));
+			setToolTipText("로그인");
+			setText("로그인");
+		}
+
+		@Override
+		public void run() {
+			StudentInfoDialog dialog = new StudentInfoDialog(getSite().getShell());
+			dialog.open();
+		}
+	}
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		//
@@ -45,12 +63,17 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 		
 		createForm(parent, "강사가 준비중입니다.");
 		TeacherEventHandler.getInstance().addRefreshEventListener(this);
+		
+		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
+		ActionContributionItem item = new ActionContributionItem(new LoginStatusAction());
+		item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		manager.add(item);
+		manager.update(true);
 	}
 	
 	@Override
 	public void refresh() {
 		//
-		System.out.println("***************** refresh...."+ID);
 		StudentContext.CURRENT_LECTURE = getCurrentLecture();
 		
 		disposeSection();
@@ -166,19 +189,6 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
                 fileDialog.setFileName(textbook.getName());
                 final String fileSelected = fileDialog.open();
                 if (fileSelected == null || fileSelected.length() <= 0) return;
-                
-//                new BusyJobDialog(getSite().getShell()) {
-//					@Override
-//					public void job() {
-//						//
-//						NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
-//						try {
-//							service.downloadTextbook(fileSelected, textbook);
-//						} catch (NaiteException e) {
-//							e.printStackTrace();
-//						}
-//					}
-//				}.run();
                 
                 IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
 				BusyUIIndicateJob job = new BusyUIIndicateJob(manager) {

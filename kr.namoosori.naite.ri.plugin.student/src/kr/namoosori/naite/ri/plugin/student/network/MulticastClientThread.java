@@ -23,6 +23,7 @@ public class MulticastClientThread extends Thread {
 	}
 	
 	private StudentContext context = StudentContext.getInstance();
+	private TeacherEventHandler handler = TeacherEventHandler.getInstance();
 	
 	private MulticastSocket socket;
 	
@@ -80,12 +81,12 @@ public class MulticastClientThread extends Thread {
 		if (arr[0].equals("ip")) {
 			if (!context.hasServerUrl()) {
 				context.setServerIp(arr[1]);
-				TeacherEventHandler.getInstance().setRequiredRefresh(true);
+				handler.setRequiredRefresh(true);
 			}
 		}
 		if (arr[0].equals("cmd")) {
 			if (arr[1].equals("refresh")) {
-				TeacherEventHandler.getInstance().setRequiredRefresh(true);
+				handler.setRequiredRefresh(true);
 			}
 		}
 	}
