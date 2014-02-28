@@ -73,10 +73,10 @@ public class MulticastClientThread extends Thread {
 		}
 		String[] arr = receiveString.split(":");
 		if (arr[0].equals("ip")) {
-			if (!StudentContext.getInstance().hasServerUrl()) {
+			//if (!StudentContext.getInstance().hasServerUrl()) {
 				StudentContext.getInstance().setServerIp(arr[1]);
 				TeacherEventHandler.getInstance().setRequiredRefresh(true);
-			}
+			//}
 		}
 		if (arr[0].equals("cmd")) {
 			if (arr[1].equals("refresh")) {

@@ -3,6 +3,9 @@ package kr.namoosori.naite.ri.plugin.student.event;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.namoosori.naite.ri.plugin.student.StudentContext;
+import kr.namoosori.naite.ri.plugin.student.login.LoginManager;
+
 import org.eclipse.swt.widgets.Display;
 
 public class TeacherEventHandler extends Thread {
@@ -17,6 +20,8 @@ public class TeacherEventHandler extends Thread {
 	private static final long INTERVAL = 1000 * 10;
 	
 	private boolean requiredRefresh;
+	private StudentContext context = StudentContext.getInstance();
+	private LoginManager loginManager = LoginManager.getInstance();
 	
 	private TeacherEventHandler() {
 		super("TeacherEventHandler");
@@ -44,6 +49,9 @@ public class TeacherEventHandler extends Thread {
 		}
 	}
 	
+	private boolean invokedTeacherNotExist = false;
+	private boolean invokedNotLogin = false;
+	
 	private void handleRefresh() {
 		//
 		if (this.listeners.size() <= 0) {
@@ -54,7 +62,21 @@ public class TeacherEventHandler extends Thread {
 			@Override
 			public void run() {
 				for (RefreshEventListener listener : listeners) {
-					listener.refresh();
+					if (!context.isTeacherAlive()) {
+						if (!invokedTeacherNotExist) {
+							listener.teacherNotExist();
+							invokedTeacherNotExist = true;
+						}
+					} else if (!loginManager.isLogin()) {
+						if (!invokedNotLogin) {
+							listener.notLogin();
+							invokedNotLogin = true;
+						}
+					} else {
+						listener.refresh();
+						invokedTeacherNotExist = false;
+						invokedNotLogin = false;
+					}
 				}
 			}
 		});

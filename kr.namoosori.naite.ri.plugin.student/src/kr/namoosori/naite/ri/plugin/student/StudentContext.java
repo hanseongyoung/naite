@@ -6,6 +6,7 @@ public class StudentContext extends CoreContext {
 	//
 	private String serverIp;
 	private int serverPort;
+	private long lastTeacherAliveTime;
 	
 	public static void init() {
 		//
@@ -40,11 +41,23 @@ public class StudentContext extends CoreContext {
 		return serverIp != null;
 	}
 	
+	public boolean isTeacherAlive() {
+		//
+		if (lastTeacherAliveTime <= 0L) {
+			return false;
+		}
+		
+		long gap = System.currentTimeMillis() - lastTeacherAliveTime;
+		return gap <= TEACHER_MAX_INTERVAL;
+	}
+	
 	public String getServerIp() {
 		return serverIp;
 	}
 
 	public void setServerIp(String serverIp) {
+		//
+		this.lastTeacherAliveTime = System.currentTimeMillis();
 		this.serverIp = serverIp;
 	}
 
@@ -54,6 +67,10 @@ public class StudentContext extends CoreContext {
 
 	public void setServerPort(int serverPort) {
 		this.serverPort = serverPort;
+	}
+
+	public long getLastTeacherAliveTime() {
+		return lastTeacherAliveTime;
 	}
 
 

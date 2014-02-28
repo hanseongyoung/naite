@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 import kr.namoosori.naite.ri.plugin.core.CoreConstants;
+import kr.namoosori.naite.ri.plugin.teacher.TeacherContext;
 
 public class MulticastServerThread extends Thread {
 	//
@@ -18,8 +19,6 @@ public class MulticastServerThread extends Thread {
 		}
 		return instance;
 	}
-	
-	private long TEN_SECONDS = 10000;
 	
 	private DatagramSocket socket;
 	
@@ -71,7 +70,7 @@ public class MulticastServerThread extends Thread {
 	private void sleepForWhile() {
 		//
 		try {
-			sleep((long) (Math.random() * TEN_SECONDS * 3));
+			sleep((long) (Math.random() * TeacherContext.TEACHER_MAX_INTERVAL));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

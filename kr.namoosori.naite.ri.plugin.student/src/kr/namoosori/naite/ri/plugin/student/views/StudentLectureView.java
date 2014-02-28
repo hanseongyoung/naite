@@ -53,12 +53,7 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 		System.out.println("***************** refresh...."+ID);
 		StudentContext.CURRENT_LECTURE = getCurrentLecture();
 		
-		if (bookSection != null && !bookSection.isDisposed()) {
-			bookSection.dispose();
-		}
-		if (exampleSection != null && !exampleSection.isDisposed()) {
-			exampleSection.dispose();
-		}
+		disposeSection();
 		
 		if (StudentContext.CURRENT_LECTURE == null) {
 			form.setText("진행중인 강의가 없습니다.");
@@ -75,6 +70,34 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 		form.getParent().layout();
 		bookSection.getParent().layout();
 		exampleSection.getParent().layout();
+	}
+	
+	private void disposeSection() {
+		//
+		if (bookSection != null && !bookSection.isDisposed()) {
+			bookSection.dispose();
+		}
+		if (exampleSection != null && !exampleSection.isDisposed()) {
+			exampleSection.dispose();
+		}
+	}
+
+	@Override
+	public void teacherNotExist() {
+		//
+		disposeSection();
+		
+		form.setText("강사가 로그아웃 하였습니다.");
+		form.getParent().layout();
+	}
+
+	@Override
+	public void notLogin() {
+		//
+		disposeSection();
+		
+		form.setText("수강생 정보가 등록되지 않았습니다.");
+		form.getParent().layout();
 	}
 	
 	private void createForm(Composite parent, String formTitle) {
