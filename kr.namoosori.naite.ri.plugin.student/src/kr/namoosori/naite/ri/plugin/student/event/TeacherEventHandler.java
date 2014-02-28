@@ -55,6 +55,7 @@ public class TeacherEventHandler extends Thread {
 	private boolean check() {
 		//
 		if (!context.isTeacherAlive()) {
+			context.setServerIp(null);
 			if (!invokedTeacherNotExist) {
 				handleTeacherNotExist();
 				invokedTeacherNotExist = true;
