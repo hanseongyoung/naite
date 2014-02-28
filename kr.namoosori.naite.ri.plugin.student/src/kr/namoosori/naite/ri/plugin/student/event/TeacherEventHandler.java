@@ -14,7 +14,7 @@ public class TeacherEventHandler extends Thread {
 		return instance;
 	}
 	
-	private static final long INTERVAL = 1000 * 30;
+	private static final long INTERVAL = 1000 * 10;
 	
 	private boolean requiredRefresh;
 	

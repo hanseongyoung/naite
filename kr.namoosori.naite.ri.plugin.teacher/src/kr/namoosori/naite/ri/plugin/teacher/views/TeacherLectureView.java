@@ -16,6 +16,7 @@ import kr.namoosori.naite.ri.plugin.teacher.dialogs.TeacherProjectUploadDialog;
 import kr.namoosori.naite.ri.plugin.teacher.network.MulticastServerThread;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
@@ -258,20 +259,8 @@ public class TeacherLectureView extends ViewPart {
                 final String fileSelected = fileDialog.open();
                 if (fileSelected == null || fileSelected.length() <= 0) return;
                 
-//                new BusyJobDialog(getSite().getShell()) {
-//					@Override
-//					public void job() {
-//						//
-//						NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
-//						try {
-//							service.downloadTextbook(fileSelected, textbook);
-//						} catch (NaiteException e) {
-//							e.printStackTrace();
-//						}
-//					}
-//				}.run();
-                
-                BusyUIIndicateJob job = new BusyUIIndicateJob() {
+                IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
+                BusyUIIndicateJob job = new BusyUIIndicateJob(manager) {
 					@Override
 					public Object job() {
 						//
@@ -280,6 +269,11 @@ public class TeacherLectureView extends ViewPart {
 							service.downloadTextbook(fileSelected, textbook);
 						} catch (NaiteException e1) {
 							e1.printStackTrace();
+						}
+						try {
+							Thread.sleep(10000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
 						}
 						return null;
 					}

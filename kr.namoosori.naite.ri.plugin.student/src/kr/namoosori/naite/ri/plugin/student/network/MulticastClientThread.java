@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.UnknownHostException;
 
 import kr.namoosori.naite.ri.plugin.core.CoreConstants;
 import kr.namoosori.naite.ri.plugin.student.StudentContext;
@@ -52,6 +53,15 @@ public class MulticastClientThread extends Thread {
 				e.printStackTrace();
 			}
 		}
+		
+		try {
+			socket.leaveGroup(InetAddress.getByName(CoreConstants.MULTICAST_GROUP_IP));
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		socket.close();
 		System.out.println("end... MulticastClientThread");
 	}

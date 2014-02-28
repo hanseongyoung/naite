@@ -1,5 +1,6 @@
 package kr.namoosori.naite.ri.plugin.core.job;
 
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -20,6 +21,12 @@ public abstract class BusyUIIndicateJob extends BusyJob {
 	//
 	private boolean done = false;
     private Display display = Display.getCurrent();
+    
+    private IStatusLineManager manager;
+    
+    public BusyUIIndicateJob(IStatusLineManager manager) {
+    	this.manager = manager;
+    }
 
     public abstract Object job();
 
@@ -41,6 +48,7 @@ public abstract class BusyUIIndicateJob extends BusyJob {
                         @Override
                         public void run() {
                             // 검색 진행중임을 UI에 표현
+                        	manager.setMessage("다운로드 중...");
                         }
                     });
 
@@ -50,6 +58,7 @@ public abstract class BusyUIIndicateJob extends BusyJob {
                         @Override
                         public void run() {
                             // 검색 완료되었음을 UI에 표현
+                        	manager.setMessage(null);
                         	MessageDialog.openInformation(getShell(), "완료", "완료되었습니다.");
                         }
                     });

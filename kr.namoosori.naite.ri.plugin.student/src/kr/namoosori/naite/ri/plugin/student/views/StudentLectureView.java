@@ -13,6 +13,7 @@ import kr.namoosori.naite.ri.plugin.student.StudentPlugin;
 import kr.namoosori.naite.ri.plugin.student.event.RefreshEventListener;
 import kr.namoosori.naite.ri.plugin.student.event.TeacherEventHandler;
 
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -156,7 +157,8 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 //					}
 //				}.run();
                 
-				BusyUIIndicateJob job = new BusyUIIndicateJob() {
+                IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
+				BusyUIIndicateJob job = new BusyUIIndicateJob(manager) {
 					@Override
 					public Object job() {
 						//
