@@ -65,6 +65,7 @@ public class SocketClient {
 	private void write(String message) throws IOException {
 		toServer.write(message);
 		toServer.flush();
+		toServer.close();
 		System.out.println("write:"+message);
 	}
 
