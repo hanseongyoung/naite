@@ -54,12 +54,14 @@ public class SocketClient {
 	}
 
 	private String receive() throws IOException {
-		String read = null;
-		StringBuffer sb = new StringBuffer();
-		while ((read = fromServer.readLine()) != null) {
-			sb.append(read);
-		}
-		return sb.toString();
+//		String read = null;
+//		StringBuffer sb = new StringBuffer();
+//		while ((read = fromServer.readLine()) != null) {
+//			sb.append(read);
+//		}
+//		return sb.toString();
+		String read = fromServer.readLine();
+		return read;
 	}
 	
 	private void write(String message) throws IOException {

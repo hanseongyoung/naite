@@ -52,12 +52,14 @@ public class SocketWorker extends Thread {
 	}
 
 	private String receive() throws IOException {
-		String read = null;
-		StringBuffer sb = new StringBuffer();
-		while ((read = fromClient.readLine()) != null) {
-			sb.append(read);
-		}
-		return sb.toString();
+//		String read = null;
+//		StringBuffer sb = new StringBuffer();
+//		while ((read = fromClient.readLine()) != null) {
+//			sb.append(read);
+//		}
+//		return sb.toString();
+		String read = fromClient.readLine();
+		return read;
 	}
 	
 	private void write(String message) throws IOException {
