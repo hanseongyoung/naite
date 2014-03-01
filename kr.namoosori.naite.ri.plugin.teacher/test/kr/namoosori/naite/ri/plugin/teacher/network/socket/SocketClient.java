@@ -29,6 +29,9 @@ public class SocketClient {
 		while ((read = br.readLine()) != null) {
 			sb.append(read);
 		}
+		br.close();
+		reader.close();
+		inputStream.close();
 		return sb.toString();
 	}
 	
@@ -37,6 +40,9 @@ public class SocketClient {
 		BufferedWriter bw = new BufferedWriter(out);
 		bw.write(message);
 		bw.flush();
+		bw.close();
+		out.close();
+		outputStream.close();
 		System.out.println("write:"+message);
 	}
 
