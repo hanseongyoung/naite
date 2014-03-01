@@ -54,26 +54,21 @@ public class SocketClient {
 	}
 
 	private String receive() throws IOException {
-//		String read = null;
-//		StringBuffer sb = new StringBuffer();
-//		while ((read = fromServer.readLine()) != null) {
-//			sb.append(read);
-//		}
-//		return sb.toString();
 		String read = fromServer.readLine();
+		System.out.println(socket.getInetAddress()+":"+read);
 		return read;
 	}
 	
 	private void write(String message) throws IOException {
 		toServer.write(message + System.lineSeparator());
 		toServer.flush();
-		System.out.println("write:"+message);
+		System.out.println("me:"+message);
 	}
 
 	public static void main(String[] args) throws Exception {
 		SocketClient client = new SocketClient();
 		String receive = client.send("hello teacher");
-		System.out.println("server message:"+receive);
+		System.out.println("server say:"+receive);
 	}
 
 }

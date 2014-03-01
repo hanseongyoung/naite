@@ -23,6 +23,7 @@ public class SocketWorker extends Thread {
 
 	@Override
 	public void run() {
+		System.out.println("worker start...");
 		try {
 			String message = receive();
 			write("ok-"+message);
@@ -37,6 +38,7 @@ public class SocketWorker extends Thread {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("worker end...");
 	}
 	
 	private BufferedWriter getWriter(OutputStream outputStream) {
@@ -52,20 +54,15 @@ public class SocketWorker extends Thread {
 	}
 
 	private String receive() throws IOException {
-//		String read = null;
-//		StringBuffer sb = new StringBuffer();
-//		while ((read = fromClient.readLine()) != null) {
-//			sb.append(read);
-//		}
-//		return sb.toString();
 		String read = fromClient.readLine();
+		System.out.println(socket.getInetAddress() + ":" + read);
 		return read;
 	}
 	
 	private void write(String message) throws IOException {
 		toClient.write(message + System.lineSeparator());
 		toClient.flush();
-		System.out.println("write:"+message);
+		System.out.println("me:"+message);
 	}
 
 }
