@@ -12,20 +12,20 @@ import java.net.Socket;
 public class SocketWorker extends Thread {
 	
 	private Socket socket;
-	private InputStream fromClient;
-	private OutputStream toClient;
+	private BufferedReader fromClient;
+	private BufferedWriter toClient;
 	
 	public SocketWorker(Socket socket) throws IOException {
 		this.socket = socket;
-		this.fromClient = socket.getInputStream();
-		this.toClient = socket.getOutputStream();
+		this.fromClient = getReader(socket.getInputStream());
+		this.toClient = getWriter(socket.getOutputStream());
 	}
 
 	@Override
 	public void run() {
 		try {
-			String message = receive(fromClient);
-			write(toClient, "ok:"+message);
+			String message = receive();
+			write("ok-"+message);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -39,23 +39,30 @@ public class SocketWorker extends Thread {
 		}
 	}
 	
-	private String receive(InputStream inputStream) throws IOException {
+	private BufferedWriter getWriter(OutputStream outputStream) {
+		OutputStreamWriter out = new OutputStreamWriter(outputStream);
+		BufferedWriter bw = new BufferedWriter(out);
+		return bw;
+	}
+
+	private BufferedReader getReader(InputStream inputStream) {
 		InputStreamReader reader = new InputStreamReader(inputStream);
 		BufferedReader br = new BufferedReader(reader);
+		return br;
+	}
+
+	private String receive() throws IOException {
 		String read = null;
 		StringBuffer sb = new StringBuffer();
-		while ((read = br.readLine()) != null) {
+		while ((read = fromClient.readLine()) != null) {
 			sb.append(read);
 		}
-		System.out.println("receive message:"+sb.toString());
 		return sb.toString();
 	}
 	
-	private void write(OutputStream outputStream, String message) throws IOException {
-		OutputStreamWriter out = new OutputStreamWriter(outputStream);
-		BufferedWriter bw = new BufferedWriter(out);
-		bw.write(message);
-		bw.flush();
+	private void write(String message) throws IOException {
+		toClient.write(message);
+		toClient.flush();
 		System.out.println("write:"+message);
 	}
 
