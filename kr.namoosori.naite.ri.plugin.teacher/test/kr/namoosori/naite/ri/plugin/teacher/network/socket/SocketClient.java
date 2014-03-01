@@ -12,37 +12,51 @@ import java.net.UnknownHostException;
 
 public class SocketClient {
 	private Socket socket;
+	private InputStream fromServer;
+	private OutputStream toServer;
 	
-	public String send(String message) throws UnknownHostException, IOException {
-		socket = new Socket("10.0.1.83", 4449);
-		System.out.println("connect");
-		write(socket.getOutputStream(), message);
-		String serverMessage = receive(socket.getInputStream());
+	public String send(String message) {
+		String serverMessage = null;
+		try {
+			socket = new Socket("10.0.1.83", 4449);
+			fromServer = socket.getInputStream();
+			toServer = socket.getOutputStream();
+			System.out.println("connect");
+			write(message);
+			serverMessage = receive();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				toServer.close();
+				fromServer.close();
+				socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
 		return serverMessage;
-	};
+	}
 	
-	private String receive(InputStream inputStream) throws IOException {
-		InputStreamReader reader = new InputStreamReader(inputStream);
+	private String receive() throws IOException {
+		InputStreamReader reader = new InputStreamReader(fromServer);
 		BufferedReader br = new BufferedReader(reader);
 		String read = null;
 		StringBuffer sb = new StringBuffer();
 		while ((read = br.readLine()) != null) {
 			sb.append(read);
 		}
-		br.close();
-		reader.close();
-		inputStream.close();
 		return sb.toString();
 	}
 	
-	private void write(OutputStream outputStream, String message) throws IOException {
-		OutputStreamWriter out = new OutputStreamWriter(outputStream);
+	private void write(String message) throws IOException {
+		OutputStreamWriter out = new OutputStreamWriter(toServer);
 		BufferedWriter bw = new BufferedWriter(out);
 		bw.write(message);
 		bw.flush();
-		bw.close();
-		out.close();
-		outputStream.close();
 		System.out.println("write:"+message);
 	}
 
