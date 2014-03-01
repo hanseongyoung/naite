@@ -15,6 +15,14 @@
             class="kr.namoosori.naite.ri.plugin.teacher.views.TeacherLectureView"
             id="kr.namoosori.naite.ri.plugin.teacher.views.TeacherLectureView">
       </view>
+      <view
+            category="kr.namoosori.naite.ri.plugin.teacher"
+            class="kr.namoosori.naite.ri.plugin.teacher.views.StudentsView"
+            icon="icons/sample.gif"
+            id="kr.namoosori.naite.ri.plugin.teacher.views.StudentsView"
+            name="참여수강생"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -25,6 +33,11 @@
                relative="org.eclipse.jdt.ui.PackageExplorer"
                relationship="bottom"
                id="kr.namoosori.naite.ri.plugin.teacher.views.TeacherLectureView">
+         </view>
+         <view
+               id="kr.namoosori.naite.ri.plugin.teacher.views.StudentsView"
+               relationship="stack"
+               relative="org.eclipse.jdt.ui.JavadocView">
          </view>
       </perspectiveExtension>
    </extension>
