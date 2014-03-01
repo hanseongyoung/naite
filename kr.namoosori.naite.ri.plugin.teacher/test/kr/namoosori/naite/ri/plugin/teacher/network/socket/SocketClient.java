@@ -20,6 +20,7 @@ public class SocketClient {
 		OutputStreamWriter out = new OutputStreamWriter(outputStream);
 		BufferedWriter bw = new BufferedWriter(out);
 		bw.write(message);
+		bw.flush();
 		System.out.println("write:"+message);
 	}
 
