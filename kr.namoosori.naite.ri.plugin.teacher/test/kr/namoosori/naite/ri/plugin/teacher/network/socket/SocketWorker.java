@@ -63,7 +63,7 @@ public class SocketWorker extends Thread {
 	}
 	
 	private void write(String message) throws IOException {
-		toClient.write(message);
+		toClient.write(message + System.lineSeparator());
 		toClient.flush();
 		System.out.println("write:"+message);
 	}
