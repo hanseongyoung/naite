@@ -1,5 +1,6 @@
 package kr.namoosori.naite.ri.plugin.student.dialogs;
 
+import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
 import kr.namoosori.naite.ri.plugin.student.util.DialogSettingsUtils;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -138,12 +139,14 @@ public class StudentInfoDialog extends TitleAreaDialog {
 		//
 		if (!checkControl()) return;
 		saveData();
-		
+		setContextData();
 		super.okPressed();
 	}
 
-	
-
-	
+	private void setContextData() {
+		//
+		String email = DialogSettingsUtils.get("student", "email");
+		NaiteNetClient.getInstance().getContext().setClientId(email);
+	}
 
 }
