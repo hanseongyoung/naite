@@ -96,11 +96,16 @@ public class LoginManager implements Runnable, SecuredChecker {
 
 	private boolean sendToTeacher(Student localInfo) {
 		//
-		MessageSender sender = NaiteNetClient.getInstance().getMessageSender();
-		String result = sender.send("teacher", localInfo.getName() + ","
-				+ localInfo.getEmail() + "," + localInfo.getPassword());
-		if (result != null && result.equals("ok")) {
-			return true;
+		try {
+			MessageSender sender = NaiteNetClient.getInstance().getMessageSender();
+			String result = sender.send("teacher", localInfo.getName() + ","
+					+ localInfo.getEmail() + "," + localInfo.getPassword());
+			if (result != null && result.equals("ok")) {
+				return true;
+			}
+			return false;
+		} catch (RuntimeException e) {
+			e.printStackTrace();
 		}
 		return false;
 	}
