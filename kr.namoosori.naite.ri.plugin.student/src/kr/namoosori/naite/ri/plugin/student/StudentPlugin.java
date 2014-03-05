@@ -5,6 +5,7 @@ import java.net.URL;
 import kr.namoosori.naite.ri.plugin.netclient.NetClientPlugin;
 import kr.namoosori.naite.ri.plugin.netclient.facade.ServerStateListener;
 import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
+import kr.namoosori.naite.ri.plugin.student.login.LoginManager;
 import kr.namoosori.naite.ri.plugin.student.util.DialogSettingsUtils;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -48,6 +49,8 @@ public class StudentPlugin extends AbstractUIPlugin {
 		
 		String email = DialogSettingsUtils.get("student", "email");
 		NaiteNetClient.getInstance().getContext().setClientId(email);
+		
+		LoginManager.getInstance().startObserve();
 	}
 	
 	ServerStateListener serverStateListener = new ServerStateListener() {
