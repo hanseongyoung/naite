@@ -2,11 +2,13 @@ package kr.namoosori.naite.ri.plugin.core.service;
 
 import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
+import kr.namoosori.naite.ri.plugin.core.service.domain.Student;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
 
 public interface NaiteService {
 	//
 	public Lecture getCurrentLecture() throws NaiteException;
+	public Student getCurrentStudent(String studentEmail) throws NaiteException;
 
 	public void createLecture(String name) throws NaiteException;
 

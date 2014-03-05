@@ -10,6 +10,7 @@ import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
+import kr.namoosori.naite.ri.plugin.core.service.domain.Student;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
 
 import org.apache.commons.lang.StringUtils;
@@ -54,6 +55,47 @@ public class NaiteInboundLogic implements NaiteService {
 		return current;
 	}
 	
+	@Override
+	public Student getCurrentStudent(String studentEmail) throws NaiteException {
+		//
+		List<Lecture> lectures = findLectures();
+		if (lectures == null) {
+			return null;
+		}
+		
+		Lecture current = null;
+		for (Lecture lecture : lectures) {
+			if (lecture.isCurrent()) {
+				current = lecture;
+				break;
+			}
+		}
+		if (current == null) {
+			return null;
+		}
+		
+		List<Student> students = findStudents(current.getId());
+		Student finded = null;
+		for (Student student : students) {
+			if (student.getEmail().equals(studentEmail)) {
+				finded = student;
+			}
+		}
+		return finded;
+	}
+
+	
+	private List<Student> findStudents(String lectureId) {
+		try {
+			String str = naiteContents.getContentsString("lectures/"+lectureId+"/students.txt");
+			List<Student> students = Student.createDomains(str);
+			return students;
+		} catch (NaiteException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	@Override
 	public void createLecture(String name) throws NaiteException {
 		//
@@ -178,6 +220,7 @@ public class NaiteInboundLogic implements NaiteService {
 		naiteContents.doMultipartPost("lectures/" + lectureId + "/projects/upload", params, fileParams);
 	}
 
+	
 	//--------------------------------------------------------------------------
 
 }

@@ -40,10 +40,6 @@ public class StudentPlugin extends AbstractUIPlugin {
 		plugin = this;
 		
 		StudentContext.init();
-//		MulticastClientThread thread = MulticastClientThread.getInstance();
-//		thread.start();
-//		TeacherEventHandler teacher = TeacherEventHandler.getInstance();
-//		teacher.start();
 		
 		NetClientPlugin.getDefault();
 		NaiteNetClient.getInstance().addServerStateListener(serverStateListener);

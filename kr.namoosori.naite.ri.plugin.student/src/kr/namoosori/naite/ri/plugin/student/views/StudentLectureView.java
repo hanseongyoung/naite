@@ -8,11 +8,14 @@ import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
+import kr.namoosori.naite.ri.plugin.netclient.facade.SecuredServerStateListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.ServerStateListener;
 import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
 import kr.namoosori.naite.ri.plugin.student.StudentContext;
 import kr.namoosori.naite.ri.plugin.student.StudentPlugin;
 import kr.namoosori.naite.ri.plugin.student.dialogs.StudentInfoDialog;
+import kr.namoosori.naite.ri.plugin.student.login.LoginListener;
+import kr.namoosori.naite.ri.plugin.student.login.LoginManager;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -35,7 +38,7 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.part.ViewPart;
 
-public class StudentLectureView extends ViewPart implements ServerStateListener {
+public class StudentLectureView extends ViewPart implements LoginListener {
 	//
 	public static final String ID = StudentLectureView.class.getName();
 	
@@ -57,14 +60,49 @@ public class StudentLectureView extends ViewPart implements ServerStateListener 
 		}
 	}
 	
+	private LoginManager loginManager = LoginManager.getInstance();
+	private NaiteNetClient netClient = NaiteNetClient.getInstance();
+	
+	private ServerStateListener serverStateListener = new SecuredServerStateListener(loginManager) {
+		@Override
+		public void serverStateChangedWithChecked(boolean serverState) {
+			updateServerStateChanged(serverState);
+		}
+	};
+	
+	@Override
+	public void loginChecked(boolean logined) {
+		// called when login failed...
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				updateNotLogin();
+			}
+		});
+	}
+	
+	public void updateServerStateChanged(final boolean serverState) {
+		//
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (serverState) {
+					refresh();
+				} else {
+					teacherNotExist();
+				}
+			}
+		});
+	}
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		//
 		toolkit = new FormToolkit(getSite().getShell().getDisplay());
 		
 		createForm(parent, "강사가 준비중입니다.");
-		//TeacherEventHandler.getInstance().addRefreshEventListener(this);
-		NaiteNetClient.getInstance().addServerStateListener(this);
+		loginManager.addLoginListener(this);
+		netClient.addServerStateListener(serverStateListener);
 		
 		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
 		ActionContributionItem item = new ActionContributionItem(new LoginStatusAction());
@@ -73,7 +111,7 @@ public class StudentLectureView extends ViewPart implements ServerStateListener 
 		manager.update(true);
 	}
 	
-	public void refresh() {
+	private void refresh() {
 		//
 		StudentContext.CURRENT_LECTURE = getCurrentLecture();
 		
@@ -105,23 +143,8 @@ public class StudentLectureView extends ViewPart implements ServerStateListener 
 			exampleSection.dispose();
 		}
 	}
-	
-	@Override
-	public void serverStateChanged(final boolean serverState) {
-		//
-		Display.getDefault().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (serverState) {
-					refresh();
-				} else {
-					teacherNotExist();
-				}
-			}
-		});
-	}
 
-	public void teacherNotExist() {
+	private void teacherNotExist() {
 		//
 		disposeSection();
 		
@@ -129,11 +152,11 @@ public class StudentLectureView extends ViewPart implements ServerStateListener 
 		form.getParent().layout();
 	}
 
-	public void notLogin() {
+	private void updateNotLogin() {
 		//
 		disposeSection();
 		
-		form.setText("수강생 정보가 등록되지 않았습니다.");
+		form.setText("수강생 정보를 확인하세요.");
 		form.getParent().layout();
 	}
 	
@@ -282,12 +305,15 @@ public class StudentLectureView extends ViewPart implements ServerStateListener 
 	@Override
 	public void dispose() {
 		//
-		NaiteNetClient.getInstance().removeServerStateListener(this);
+		netClient.removeServerStateListener(serverStateListener);
+		loginManager.removeLoginListener(this);
 		if (toolkit != null) {
 			toolkit.dispose();
 		}
 		super.dispose();
 	}
+
+	
 
 	
 

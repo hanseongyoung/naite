@@ -1,5 +1,6 @@
 package kr.namoosori.naite.ri.plugin.core.service.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Student {
@@ -64,6 +65,35 @@ public class Student {
 		}
 		id++;
 		return String.valueOf(id);
+	}
+	
+	public static List<Student> createDomains(String str) {
+		if (str == null || str.length() <= 0) {
+			return null;
+		}
+		List<Student> students = new ArrayList<Student>();
+		String[] strArr = str.split("\n");
+		for (String line : strArr) {
+			if (line != null && line.length() > 0) {
+				students.add(createDomain(line));
+			}
+		}
+		return students;
+	}
+	
+	private static Student createDomain(String line) {
+		//
+		String[] strArr = line.split(";");
+		if (strArr.length < 4) {
+			return null;
+		}
+		
+		Student student = new Student();
+		student.setId(strArr[0].trim());
+		student.setEmail(strArr[1].trim());
+		student.setName(strArr[2].trim());
+		student.setPassword(strArr[3].trim());
+		return student;
 	}
 	
 }
