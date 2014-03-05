@@ -67,7 +67,7 @@ public class EventInvoker implements Runnable {
 	private NetServerResponse pull() {
 		//
 		if (!context.isRequestAvailable()) {
-			System.out.println("WARNING : server info not available");
+			System.out.println("WARNING : server info not available - "+context.getServerIp() + ", "+context.getClientId());
 			return null;
 		}
 		System.out.println("### PULL ###");
