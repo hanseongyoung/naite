@@ -39,7 +39,7 @@ public class StudentPlugin extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		
-//		StudentContext.init();
+		StudentContext.init();
 //		MulticastClientThread thread = MulticastClientThread.getInstance();
 //		thread.start();
 //		TeacherEventHandler teacher = TeacherEventHandler.getInstance();
