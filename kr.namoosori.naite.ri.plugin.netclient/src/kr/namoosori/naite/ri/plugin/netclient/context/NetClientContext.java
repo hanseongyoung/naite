@@ -5,7 +5,7 @@ public class NetClientContext {
 	public static final long MULTICAST_MAX_INTERVAL = 10000L * 3L; // 30초
 	
 	private String serverIp;
-	private int serverPort;
+	private int serverPort = 4000;
 	private String clientId;
 	private long lastServerAliveTime;
 	
