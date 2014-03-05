@@ -3,6 +3,8 @@ package kr.namoosori.naite.ri.plugin.student;
 import java.net.URL;
 
 import kr.namoosori.naite.ri.plugin.netclient.NetClientPlugin;
+import kr.namoosori.naite.ri.plugin.netclient.facade.ServerStateListener;
+import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
@@ -44,7 +46,20 @@ public class StudentPlugin extends AbstractUIPlugin {
 //		teacher.start();
 		
 		NetClientPlugin.getDefault();
+		NaiteNetClient.getInstance().addServerStateListener(serverStateListener);
 	}
+	
+	ServerStateListener serverStateListener = new ServerStateListener() {
+		@Override
+		public void serverStateChanged(boolean serverState) {
+			if (serverState) {
+				String serverIp = NaiteNetClient.getInstance().getContext().getServerIp();
+				StudentContext.getInstance().setServerIp(serverIp);
+			} else {
+				StudentContext.getInstance().setServerIp(null);
+			}
+		}
+	};
 
 	/*
 	 * (non-Javadoc)
