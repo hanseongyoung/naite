@@ -1,8 +1,10 @@
 package kr.namoosori.naite.ri.plugin.netclient.main;
 
 import kr.namoosori.naite.ri.plugin.netclient.context.NetClientContext;
+import kr.namoosori.naite.ri.plugin.netclient.facade.MessageListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.MessageSender;
 import kr.namoosori.naite.ri.plugin.netclient.work.EventInvoker;
+import kr.namoosori.naite.ri.plugin.netclient.work.MessageProvider;
 import kr.namoosori.naite.ri.plugin.netclient.work.SocketMessageSender;
 
 public class NaiteNetClient {
@@ -40,5 +42,21 @@ public class NaiteNetClient {
 	public MessageSender getMessageSender() {
 		//
 		return this.sender;
+	}
+
+	public NetClientContext getContext() {
+		return context;
+	}
+
+	public void addMessageListener(MessageListener listener) {
+		//
+		MessageProvider provider = invoker.getMessageProvider();
+		provider.addMessageListener(listener);
+	}
+	
+	public void removeMessageListener(MessageListener listener) {
+		//
+		MessageProvider provider = invoker.getMessageProvider();
+		provider.removeMessageListener(listener);
 	}
 }

@@ -5,6 +5,7 @@ Bundle-SymbolicName: kr.namoosori.naite.ri.plugin.netclient
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: kr.namoosori.naite.ri.plugin.netclient.NetClientPlugin
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ kr.namoosori.naite.ri.plugin.core;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy

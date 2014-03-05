@@ -8,11 +8,14 @@ public class EventInvoker implements Runnable {
 	
 	private NetClientContext context;
 	
+	private MessageProvider messageProvider;
+	
 	private boolean continueInvoke;
 	
 	public EventInvoker(NetClientContext context) {
 		//
 		this.context = context;
+		this.messageProvider = new MessageProvider();
 	}
 	
 	public void startInvoke() {
@@ -32,11 +35,34 @@ public class EventInvoker implements Runnable {
 	public void run() {
 		//
 		while(continueInvoke) {
+			NetServerResponse response = pull();
+			if(response != null && response.hasMessage()) {
+				invoke(response);
+			}
 			sleepForWhile();
 		}
 		System.out.println("EventInvoker stoped...");
 	}
 	
+	private void invoke(NetServerResponse response) {
+		//
+		messageProvider.sendToListener(response);
+	}
+
+	private NetServerResponse pull() {
+		//
+		if (!context.isRequestAvailable()) {
+			System.out.println("WARNING : server info not available");
+			return null;
+		}
+		System.out.println("### PULL ###");
+		ConnectlessSocketClient client = new ConnectlessSocketClient(
+				context.getServerIp(), context.getServerPort());
+		NetServerRequest req = NetServerRequest.asPullRequest(context.getClientId());
+		NetServerResponse res = client.send(req);
+		return res;
+	}
+
 	private void sleepForWhile() {
 		//
 		try {
@@ -44,6 +70,10 @@ public class EventInvoker implements Runnable {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public MessageProvider getMessageProvider() {
+		return messageProvider;
 	}
 
 }

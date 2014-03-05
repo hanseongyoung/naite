@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -42,6 +43,8 @@ public class ConnectlessSocketClient {
 			write("ok");
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
+		} catch (ConnectException e) {
+			System.out.println("WARNING:"+e.getMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -52,7 +55,6 @@ public class ConnectlessSocketClient {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
 		}
 		return response;
 	}

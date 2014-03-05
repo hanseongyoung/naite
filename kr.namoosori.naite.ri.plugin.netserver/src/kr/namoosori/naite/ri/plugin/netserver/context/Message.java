@@ -24,7 +24,8 @@ public class Message {
 		parse(messageBlock);
 	}
 	
-	//message format --> [sender ID]:[receiver ID]:[Method]:[Type]:[Message]
+	//request message format  --> [sender ID]:[receiver ID]:[Method]:[Type]:[Message]
+	//response message format --> [sender ID]:[Type]:[Message]
 	//put message --> 'yumi:hong:PUT:MESSAGE:hello'    --> ok
 	//get message --> 'hong::GET:MESSAGE:'             --> yumi:MESSAGE:hello  --> ok
 	//put control --> 'yumi:hong:PUT:CONTROL:stop'     --> ok

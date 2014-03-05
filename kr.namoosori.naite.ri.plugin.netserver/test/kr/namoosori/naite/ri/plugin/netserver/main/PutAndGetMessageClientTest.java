@@ -1,6 +1,7 @@
 package kr.namoosori.naite.ri.plugin.netserver.main;
 
-//message format --> [¹ß½ÅÀÚID]:[¼ö½ÅÀÚID]:[Method]:[Type]:[Message]
+//request message format  --> [sender ID]:[receiver ID]:[Method]:[Type]:[Message]
+//response message format --> [sender ID]:[Type]:[Message]
 //put message --> 'yumi:hong:PUT:MESSAGE:hello'    --> ok
 //get message --> 'hong::GET:MESSAGE:'             --> yumi:MESSAGE:hello  --> ok
 //put control --> 'yumi:hong:PUT:CONTROL:stop'     --> ok
@@ -8,26 +9,26 @@ package kr.namoosori.naite.ri.plugin.netserver.main;
 public class PutAndGetMessageClientTest {
 	public static void main(String[] args) {
 		//
-		// 1. hongÀÌ ¸ÕÀú Á¢¼ÓÇÏ¿© Å¬¶óÀÌ¾ðÆ®·Î µî·ÏÀÌ µÈ´Ù.
+		// 1. hongï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È´ï¿½.
 		System.out.println("[hong]");
 		SocketClientStub clientHong = new SocketClientStub();
 		String receive = clientHong.send("hong::GET:MESSAGE:");
 		
-		// 2. yumi°¡ hong¿¡°Ô Àü´ÞÇÒ ¸Þ½ÃÁö¸¦ Àü¼ÛÇÑ´Ù.
+		// 2. yumiï¿½ï¿½ hongï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 		System.out.println("[yumi]");
 		SocketClientStub clientYumi = new SocketClientStub();
 		receive = clientYumi.send("yumi:hong:PUT:MESSAGE:hello");
 		
 		System.out.println("[yumi]");
 		clientYumi = new SocketClientStub();
-		receive = clientYumi.send("yumi:hong:PUT:MESSAGE:¾È³ç!");
+		receive = clientYumi.send("yumi:hong:PUT:MESSAGE:ì•ˆë…•!");
 		
-		// 3. hongÀÌ ¸Þ½ÃÁö¸¦ ¼ö½ÅÇÑ´Ù.
+		// 3. hongï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 		System.out.println("[hong]");
 		clientHong = new SocketClientStub();
 		receive = clientHong.send("hong::GET:MESSAGE:");
 		
-		// 4. hongÀÌ ¶Ç ¸Þ½ÃÁö ¼ö½Å¿äÃ»À» º¸³»³ª ¼ö½ÅµÈ ¸Þ½ÃÁö°¡ ¾øÀ½
+		// 4. hongï¿½ï¿½ ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å¿ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Åµï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		System.out.println("[hong]");
 		clientHong = new SocketClientStub();
 		receive = clientHong.send("hong::GET:MESSAGE:");
