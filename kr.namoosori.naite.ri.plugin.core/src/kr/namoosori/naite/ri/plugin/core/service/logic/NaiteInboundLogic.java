@@ -76,6 +76,9 @@ public class NaiteInboundLogic implements NaiteService {
 		
 		List<Student> students = findStudents(current.getId());
 		Student finded = null;
+		if (students == null) {
+			return null;
+		}
 		for (Student student : students) {
 			if (student.getEmail().equals(studentEmail)) {
 				finded = student;
