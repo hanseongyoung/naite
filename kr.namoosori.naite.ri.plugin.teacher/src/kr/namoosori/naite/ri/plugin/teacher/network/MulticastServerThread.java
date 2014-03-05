@@ -8,6 +8,7 @@ import java.net.InetAddress;
 import kr.namoosori.naite.ri.plugin.core.CoreConstants;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherContext;
 
+@Deprecated
 public class MulticastServerThread extends Thread {
 	//
 	private static MulticastServerThread instance;

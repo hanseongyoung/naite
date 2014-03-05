@@ -10,6 +10,7 @@ import kr.namoosori.naite.ri.plugin.core.CoreConstants;
 import kr.namoosori.naite.ri.plugin.student.StudentContext;
 import kr.namoosori.naite.ri.plugin.student.event.TeacherEventHandler;
 
+@Deprecated
 public class MulticastClientThread extends Thread {
 	//
 	private static MulticastClientThread instance;
@@ -75,7 +76,7 @@ public class MulticastClientThread extends Thread {
 			return;
 		}
 		
-		context.setTeacherAliveTime();
+		//context.setTeacherAliveTime();
 		
 		String[] arr = receiveString.split(":");
 		if (arr[0].equals("ip")) {

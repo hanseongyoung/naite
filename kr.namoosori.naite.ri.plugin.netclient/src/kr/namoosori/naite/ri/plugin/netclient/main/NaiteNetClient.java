@@ -3,8 +3,11 @@ package kr.namoosori.naite.ri.plugin.netclient.main;
 import kr.namoosori.naite.ri.plugin.netclient.context.NetClientContext;
 import kr.namoosori.naite.ri.plugin.netclient.facade.MessageListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.MessageSender;
+import kr.namoosori.naite.ri.plugin.netclient.facade.ServerStateListener;
+import kr.namoosori.naite.ri.plugin.netclient.provider.MessageProvider;
+import kr.namoosori.naite.ri.plugin.netclient.provider.ServerStateProvider;
 import kr.namoosori.naite.ri.plugin.netclient.work.EventInvoker;
-import kr.namoosori.naite.ri.plugin.netclient.work.MessageProvider;
+import kr.namoosori.naite.ri.plugin.netclient.work.MulticastClient;
 import kr.namoosori.naite.ri.plugin.netclient.work.SocketMessageSender;
 
 public class NaiteNetClient {
@@ -22,21 +25,26 @@ public class NaiteNetClient {
 	
 	private MessageSender sender;
 	
+	private MulticastClient multicastClient;
+	
 	private NaiteNetClient() {
 		//
 		context = new NetClientContext();
 		invoker = new EventInvoker(context);
 		sender = new SocketMessageSender(context);
+		multicastClient = new MulticastClient(context);
 	}
 	
 	public void start() {
 		//
 		this.invoker.startInvoke();
+		this.multicastClient.start();
 	}
 	
 	public void stop() {
 		//
 		this.invoker.stopInvoke();
+		this.multicastClient.end();
 	}
 	
 	public MessageSender getMessageSender() {
@@ -58,5 +66,17 @@ public class NaiteNetClient {
 		//
 		MessageProvider provider = invoker.getMessageProvider();
 		provider.removeMessageListener(listener);
+	}
+	
+	public void addServerStateListener(ServerStateListener listener) {
+		//
+		ServerStateProvider provider = invoker.getServerStateProvider();
+		provider.addServerStateListener(listener);
+	}
+	
+	public void removeServerStateListener(ServerStateListener listener) {
+		//
+		ServerStateProvider provider = invoker.getServerStateProvider();
+		provider.removeServerStateListener(listener);
 	}
 }

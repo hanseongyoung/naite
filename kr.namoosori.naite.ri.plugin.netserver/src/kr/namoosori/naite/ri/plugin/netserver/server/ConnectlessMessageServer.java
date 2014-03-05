@@ -10,6 +10,11 @@ public class ConnectlessMessageServer extends AbstractSocketServer {
 	//
 	private NetServerContext context = new NetServerContext();
 	
+	public ConnectlessMessageServer() {
+		//
+		super("MessageServer", 0L, false);
+	}
+	
 	@Override
 	protected void takeOver(Socket clientSocket) {
 		//

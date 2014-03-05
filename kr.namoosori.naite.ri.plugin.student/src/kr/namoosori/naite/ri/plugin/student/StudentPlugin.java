@@ -2,8 +2,7 @@ package kr.namoosori.naite.ri.plugin.student;
 
 import java.net.URL;
 
-import kr.namoosori.naite.ri.plugin.student.event.TeacherEventHandler;
-import kr.namoosori.naite.ri.plugin.student.network.MulticastClientThread;
+import kr.namoosori.naite.ri.plugin.netclient.NetClientPlugin;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
@@ -38,14 +37,13 @@ public class StudentPlugin extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		
-		StudentContext.init();
+//		StudentContext.init();
+//		MulticastClientThread thread = MulticastClientThread.getInstance();
+//		thread.start();
+//		TeacherEventHandler teacher = TeacherEventHandler.getInstance();
+//		teacher.start();
 		
-		MulticastClientThread thread = MulticastClientThread.getInstance();
-		thread.start();
-		
-		TeacherEventHandler teacher = TeacherEventHandler.getInstance();
-		teacher.start();
-		
+		NetClientPlugin.getDefault();
 	}
 
 	/*
@@ -53,8 +51,8 @@ public class StudentPlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		MulticastClientThread thread = MulticastClientThread.getInstance();
-		thread.end();
+//		MulticastClientThread thread = MulticastClientThread.getInstance();
+//		thread.end();
 		
 		plugin = null;
 		super.stop(context);

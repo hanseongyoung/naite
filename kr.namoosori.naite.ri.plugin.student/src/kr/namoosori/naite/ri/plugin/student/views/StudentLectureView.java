@@ -8,11 +8,11 @@ import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
+import kr.namoosori.naite.ri.plugin.netclient.facade.ServerStateListener;
+import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
 import kr.namoosori.naite.ri.plugin.student.StudentContext;
 import kr.namoosori.naite.ri.plugin.student.StudentPlugin;
 import kr.namoosori.naite.ri.plugin.student.dialogs.StudentInfoDialog;
-import kr.namoosori.naite.ri.plugin.student.event.RefreshEventListener;
-import kr.namoosori.naite.ri.plugin.student.event.TeacherEventHandler;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -21,6 +21,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -34,7 +35,7 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.part.ViewPart;
 
-public class StudentLectureView extends ViewPart implements RefreshEventListener {
+public class StudentLectureView extends ViewPart implements ServerStateListener {
 	//
 	public static final String ID = StudentLectureView.class.getName();
 	
@@ -62,7 +63,8 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 		toolkit = new FormToolkit(getSite().getShell().getDisplay());
 		
 		createForm(parent, "강사가 준비중입니다.");
-		TeacherEventHandler.getInstance().addRefreshEventListener(this);
+		//TeacherEventHandler.getInstance().addRefreshEventListener(this);
+		NaiteNetClient.getInstance().addServerStateListener(this);
 		
 		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
 		ActionContributionItem item = new ActionContributionItem(new LoginStatusAction());
@@ -71,7 +73,6 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 		manager.update(true);
 	}
 	
-	@Override
 	public void refresh() {
 		//
 		StudentContext.CURRENT_LECTURE = getCurrentLecture();
@@ -104,8 +105,22 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 			exampleSection.dispose();
 		}
 	}
-
+	
 	@Override
+	public void serverStateChanged(final boolean serverState) {
+		//
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (serverState) {
+					refresh();
+				} else {
+					teacherNotExist();
+				}
+			}
+		});
+	}
+
 	public void teacherNotExist() {
 		//
 		disposeSection();
@@ -114,7 +129,6 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 		form.getParent().layout();
 	}
 
-	@Override
 	public void notLogin() {
 		//
 		disposeSection();
@@ -268,11 +282,13 @@ public class StudentLectureView extends ViewPart implements RefreshEventListener
 	@Override
 	public void dispose() {
 		//
-		TeacherEventHandler.getInstance().removeRefreshEventListener(this);
+		NaiteNetClient.getInstance().removeServerStateListener(this);
 		if (toolkit != null) {
 			toolkit.dispose();
 		}
 		super.dispose();
 	}
+
+	
 
 }

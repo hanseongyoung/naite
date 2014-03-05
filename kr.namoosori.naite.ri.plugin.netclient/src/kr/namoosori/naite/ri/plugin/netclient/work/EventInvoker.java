@@ -1,6 +1,8 @@
 package kr.namoosori.naite.ri.plugin.netclient.work;
 
 import kr.namoosori.naite.ri.plugin.netclient.context.NetClientContext;
+import kr.namoosori.naite.ri.plugin.netclient.provider.MessageProvider;
+import kr.namoosori.naite.ri.plugin.netclient.provider.ServerStateProvider;
 
 public class EventInvoker implements Runnable {
 	//
@@ -9,6 +11,7 @@ public class EventInvoker implements Runnable {
 	private NetClientContext context;
 	
 	private MessageProvider messageProvider;
+	private ServerStateProvider serverStateProvider;
 	
 	private boolean continueInvoke;
 	
@@ -16,12 +19,13 @@ public class EventInvoker implements Runnable {
 		//
 		this.context = context;
 		this.messageProvider = new MessageProvider();
+		this.serverStateProvider = new ServerStateProvider();
 	}
 	
 	public void startInvoke() {
 		//
 		this.continueInvoke = true;
-		Thread thread = new Thread(this);
+		Thread thread = new Thread(this, "EventInvoker");
 		thread.start();
 		System.out.println("EventInvoker started...");
 	}
@@ -35,18 +39,29 @@ public class EventInvoker implements Runnable {
 	public void run() {
 		//
 		while(continueInvoke) {
-			NetServerResponse response = pull();
-			if(response != null && response.hasMessage()) {
-				invoke(response);
-			}
+			checkServerState();
+			checkMessage();
 			sleepForWhile();
 		}
 		System.out.println("EventInvoker stoped...");
 	}
 	
-	private void invoke(NetServerResponse response) {
+	private boolean prevServerState;
+	private void checkServerState() {
 		//
-		messageProvider.sendToListener(response);
+		boolean serverState = context.isServerAlive();
+		if (prevServerState != serverState) {
+			serverStateProvider.sendToListener(serverState);
+			prevServerState = serverState;
+		}
+	}
+
+	private void checkMessage() {
+		//
+		NetServerResponse response = pull();
+		if(response != null && response.hasMessage()) {
+			messageProvider.sendToListener(response);
+		}
 	}
 
 	private NetServerResponse pull() {
@@ -74,6 +89,10 @@ public class EventInvoker implements Runnable {
 
 	public MessageProvider getMessageProvider() {
 		return messageProvider;
+	}
+
+	public ServerStateProvider getServerStateProvider() {
+		return serverStateProvider;
 	}
 
 }

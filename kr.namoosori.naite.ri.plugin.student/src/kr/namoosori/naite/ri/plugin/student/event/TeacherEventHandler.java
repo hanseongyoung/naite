@@ -8,6 +8,7 @@ import kr.namoosori.naite.ri.plugin.student.login.LoginManager;
 
 import org.eclipse.swt.widgets.Display;
 
+@Deprecated
 public class TeacherEventHandler extends Thread {
 	//
 	private static TeacherEventHandler instance = new TeacherEventHandler();
@@ -54,14 +55,14 @@ public class TeacherEventHandler extends Thread {
 	
 	private boolean check() {
 		//
-		if (!context.isTeacherAlive()) {
-			context.setServerIp(null);
-			if (!invokedTeacherNotExist) {
-				handleTeacherNotExist();
-				invokedTeacherNotExist = true;
-			}
-			return false;
-		}
+//		if (!context.isTeacherAlive()) {
+//			context.setServerIp(null);
+//			if (!invokedTeacherNotExist) {
+//				handleTeacherNotExist();
+//				invokedTeacherNotExist = true;
+//			}
+//			return false;
+//		}
 		
 		if (!loginManager.isLogin()) {
 			if (!invokedNotLogin) {
