@@ -20,6 +20,7 @@ public class LoginObserver implements Runnable {
 	
 	private LoginManager loginManager = LoginManager.getInstance();
 	private boolean continueObserve;
+	private boolean alreadySendToTeacher;
 	
 	private LoginObserver() {
 	}
@@ -48,10 +49,13 @@ public class LoginObserver implements Runnable {
 
 			Student localInfo = getLocalStudent();
 
-			boolean successSend = sendToTeacher(localInfo);
-			if (successSend) {
-				stopObserve();
-				break;
+			if (!alreadySendToTeacher) {
+				boolean successSend = sendToTeacher(localInfo);
+				if (successSend) {
+					stopObserve();
+					alreadySendToTeacher = true;
+					break;
+				}
 			}
 
 			sleepForWhile();
