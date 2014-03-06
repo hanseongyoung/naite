@@ -1,0 +1,12 @@
+request message format  --> [sender ID]:[receiver ID]:[Method]:[Type]:[Message]
+response message format --> [sender ID]:[Type]:[Message]
+  - put message --> 'yumi:hong:PUT:MESSAGE:hello'    --> ok
+  - get message --> 'hong::GET:MESSAGE:'             --> yumi:MESSAGE:hello  --> ok
+  - put control --> 'yumi:hong:PUT:CONTROL:stop'     --> ok
+  - get control --> 'hong::GET:CONTROL:'             --> yumi:CONTROL:stop   --> ok
+  
+  
+** Message Format(':' is not permitted)
+[command]?[key1]=[value1]&[key2]=[value2]...
+   - registerStudent --> registerStudent?name=홍길동&email=hong@nextree.co.kr&pass=1234
+   - refresh --> refresh

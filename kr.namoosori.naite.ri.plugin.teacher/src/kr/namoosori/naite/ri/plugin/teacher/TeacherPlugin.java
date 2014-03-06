@@ -4,6 +4,9 @@ import java.net.URL;
 
 import kr.namoosori.naite.ri.plugin.core.project.NaiteWorkspace;
 import kr.namoosori.naite.ri.plugin.core.util.NaiteFileUtils;
+import kr.namoosori.naite.ri.plugin.core.util.NetworkUtils;
+import kr.namoosori.naite.ri.plugin.netclient.NetClientPlugin;
+import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
 import kr.namoosori.naite.ri.plugin.netserver.NetServerPlugin;
 import kr.namoosori.naite.ri.plugin.teacher.server.NaiteServer;
 
@@ -46,11 +49,10 @@ public class TeacherPlugin extends AbstractUIPlugin {
 		
 		TeacherContext.init();
 		
-//		MulticastServerThread multi = MulticastServerThread.getInstance();
-//		multi.setDefaultServeString("ip:"+TeacherContext.getInstance().getServerIp());
-//		multi.start();
-		
 		NetServerPlugin.getDefault();
+		NetClientPlugin.getDefault();
+		NaiteNetClient.getInstance().getContext().setClientId("teacher");
+		NaiteNetClient.getInstance().getContext().setServerIp(NetworkUtils.getHostAddress());
 	}
 	
 	private String getTeacherWorkspace() {

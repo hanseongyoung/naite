@@ -3,7 +3,7 @@ package kr.namoosori.naite.ri.plugin.netclient.work;
 import java.util.ArrayList;
 import java.util.List;
 
-import kr.namoosori.naite.ri.plugin.netclient.facade.ClientMessage;
+import kr.namoosori.naite.ri.plugin.netclient.facade.message.ClientMessage;
 
 public class NetServerResponse {
 	//

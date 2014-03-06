@@ -12,4 +12,5 @@ Bundle-ActivationPolicy: lazy
 Export-Package: kr.namoosori.naite.ri.plugin.netclient,
  kr.namoosori.naite.ri.plugin.netclient.context,
  kr.namoosori.naite.ri.plugin.netclient.facade,
+ kr.namoosori.naite.ri.plugin.netclient.facade.message,
  kr.namoosori.naite.ri.plugin.netclient.main

@@ -1,5 +1,8 @@
 package kr.namoosori.naite.ri.plugin.netclient.main;
 
+import kr.namoosori.naite.ri.plugin.netclient.facade.message.NameValue;
+import kr.namoosori.naite.ri.plugin.netclient.facade.message.SendMessage;
+
 // Play with : kr.namoosori.naite.ri.plugin.netserver.main.NaiteNetServerTest
 // Play with : kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetHongClientTest
 // Play with : kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetYumiClientTest
@@ -14,7 +17,11 @@ public class NaiteNetYumiClientTest {
 			@Override
 			public void run() {
 				while(true) {
-					clientStub.send("hong", "안녕");
+					SendMessage sendMessage = new SendMessage();
+					sendMessage.setCommand("noti");
+					sendMessage.addNameValue(new NameValue("msg", "안녕"));
+					
+					clientStub.send("hong", sendMessage);
 					try {
 						Thread.sleep(5000);
 					} catch (InterruptedException e) {

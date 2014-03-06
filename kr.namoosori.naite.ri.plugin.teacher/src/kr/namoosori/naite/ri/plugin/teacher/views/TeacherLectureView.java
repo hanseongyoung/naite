@@ -1,7 +1,5 @@
 package kr.namoosori.naite.ri.plugin.teacher.views;
 
-import java.io.IOException;
-
 import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
 import kr.namoosori.naite.ri.plugin.core.job.BusyUIIndicateJob;
 import kr.namoosori.naite.ri.plugin.core.project.NaiteProject;
@@ -13,7 +11,6 @@ import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherContext;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherPlugin;
 import kr.namoosori.naite.ri.plugin.teacher.dialogs.TeacherProjectUploadDialog;
-import kr.namoosori.naite.ri.plugin.teacher.network.MulticastServerThread;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -74,7 +71,7 @@ public class TeacherLectureView extends ViewPart {
 				try {
 					service.createLecture(lectureTitle);
 					refresh();
-					refreshStudents();
+					//refreshStudents();
 				} catch (NaiteException e) {
 					e.printStackTrace();
 				}
@@ -99,11 +96,7 @@ public class TeacherLectureView extends ViewPart {
 	
 	public void refreshStudents() {
 		//
-		try {
-			MulticastServerThread.getInstance().setServeString("cmd:refresh");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		
 	}
 
 	public void refresh() {
@@ -269,11 +262,6 @@ public class TeacherLectureView extends ViewPart {
 							service.downloadTextbook(fileSelected, textbook);
 						} catch (NaiteException e1) {
 							e1.printStackTrace();
-						}
-						try {
-							Thread.sleep(10000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
 						}
 						return null;
 					}

@@ -2,6 +2,7 @@ package kr.namoosori.naite.ri.plugin.netclient.main;
 
 import kr.namoosori.naite.ri.plugin.netclient.context.NetClientContext;
 import kr.namoosori.naite.ri.plugin.netclient.facade.MessageListener;
+import kr.namoosori.naite.ri.plugin.netclient.facade.message.SendMessage;
 
 public class NetClientStub {
 	private NaiteNetClient client = NaiteNetClient.getInstance();
@@ -15,8 +16,8 @@ public class NetClientStub {
 		client.addMessageListener(listener);
 	}
 	
-	public void send(String receiverId, String message) {
-		client.getMessageSender().send(receiverId, message);
+	public void send(String receiverId, SendMessage sendMessage) {
+		client.getMessageSender().send(receiverId, sendMessage);
 	}
 	
 	public void start() {

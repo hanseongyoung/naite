@@ -1,14 +1,14 @@
-package kr.namoosori.naite.ri.plugin.netclient.facade;
+package kr.namoosori.naite.ri.plugin.netclient.facade.message;
 
 public class ClientMessage {
 	//
 	private String senderId;
-	private String message;
+	private SendMessage sendMessage;
 	
 	public ClientMessage(String senderId, String message) {
 		//
 		this.senderId = senderId;
-		this.message = message;
+		this.sendMessage = SendMessage.create(message);
 	}
 
 	public String getSenderId() {
@@ -19,12 +19,12 @@ public class ClientMessage {
 		this.senderId = senderId;
 	}
 
-	public String getMessage() {
-		return message;
+	public SendMessage getSendMessage() {
+		return sendMessage;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	public void setSendMessage(SendMessage sendMessage) {
+		this.sendMessage = sendMessage;
 	}
-	
+
 }
