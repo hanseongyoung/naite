@@ -45,7 +45,7 @@ public class SendMessage {
 			return;
 		}
 		
-		String[] strArr = message.split("?");
+		String[] strArr = message.split("\\?");
 		this.command = strArr[0];
 		this.nameValues = NameValue.createList(strArr[1]);
 	}
