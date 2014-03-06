@@ -59,9 +59,11 @@ public class StudentPlugin extends AbstractUIPlugin {
 			if (serverState) {
 				String serverIp = NaiteNetClient.getInstance().getContext().getServerIp();
 				StudentContext.getInstance().setServerIp(serverIp);
+				System.out.println("teacher login : server ip set to "+serverIp);
 			} else {
 				StudentContext.getInstance().setServerIp(null);
 				LoginObserver.getInstance().setAlreadySendToTeacher(false);
+				System.out.println("teacher logout : server ip set to null.");
 			}
 		}
 	};

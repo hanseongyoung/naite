@@ -76,4 +76,9 @@ public class SendMessage {
 		return new SendMessage(message);
 	}
 
+	public String getValue(String name) {
+		//
+		return NameValue.getValue(name, nameValues);
+	}
+
 }

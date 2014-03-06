@@ -10,6 +10,16 @@ public class ClientMessage {
 		this.senderId = senderId;
 		this.sendMessage = SendMessage.create(message);
 	}
+	
+	public String getCommand() {
+		//
+		return sendMessage.getCommand();
+	}
+	
+	public String getValue(String name) {
+		//
+		return sendMessage.getValue(name);
+	}
 
 	public String getSenderId() {
 		return senderId;
