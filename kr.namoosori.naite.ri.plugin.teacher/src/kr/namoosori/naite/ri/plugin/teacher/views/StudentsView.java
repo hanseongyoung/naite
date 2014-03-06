@@ -48,6 +48,8 @@ public class StudentsView extends ViewPart implements MessageListener {
 		createForm(parent);
 		createStudentListSection(form);
 		createStudentDetailSection(form);
+		
+		refreshStudentViewer();
 	}
 
 	private void createForm(Composite parent) {
@@ -122,7 +124,7 @@ public class StudentsView extends ViewPart implements MessageListener {
 		
 		return composite;
 	}
-
+	
 	private void refreshStudentViewer() {
 		//
 		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
@@ -133,8 +135,17 @@ public class StudentsView extends ViewPart implements MessageListener {
 			e.printStackTrace();
 		}
 		List<Student> allStudents = new ArrayList<Student>();
-		allStudents.addAll(this.students);
-		allStudents.addAll(this.tmpStudents);
+		if (this.students != null && this.students.size() > 0) {
+			allStudents.addAll(this.students);
+		}
+		if (this.tmpStudents != null && this.tmpStudents.size() > 0) {
+			allStudents.addAll(this.tmpStudents);
+		}
+		
+		for (Student student : allStudents) {
+			System.out.println("****" + student);
+		}
+		
 		studentListViewer.setInput(allStudents);
 	}
 
@@ -176,6 +187,7 @@ public class StudentsView extends ViewPart implements MessageListener {
 					Student student = new Student();
 					student.setEmail(message.getSenderId());
 					student.setName(message.getValue("name"));
+					student.setPassword(message.getValue("pass"));
 					studentListViewer.add(student);
 					tmpStudents.add(student);
 				}
