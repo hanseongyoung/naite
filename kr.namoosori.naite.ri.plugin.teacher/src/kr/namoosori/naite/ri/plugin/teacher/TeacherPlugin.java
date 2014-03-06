@@ -94,9 +94,11 @@ public class TeacherPlugin extends AbstractUIPlugin {
 	}
 	
 	public static final String IMG_HELP_TOPIC = "helpTopic"; //$NON-NLS-1$
+	public static final String IMG_USER = "user"; //$NON-NLS-1$
 	
 	protected void initializeImageRegistry(ImageRegistry registry) {
 		registerImage(registry, IMG_HELP_TOPIC, "help_topic.gif"); //$NON-NLS-1$
+		registerImage(registry, IMG_USER, "user.png"); //$NON-NLS-1$
 	}
 
 	private void registerImage(ImageRegistry registry, String key,

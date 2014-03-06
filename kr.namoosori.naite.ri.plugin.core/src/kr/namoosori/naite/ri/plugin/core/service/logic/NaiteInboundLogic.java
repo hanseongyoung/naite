@@ -88,7 +88,7 @@ public class NaiteInboundLogic implements NaiteService {
 	}
 
 	
-	private List<Student> findStudents(String lectureId) {
+	public List<Student> findStudents(String lectureId) throws NaiteException {
 		try {
 			String str = naiteContents.getContentsString("lectures/"+lectureId+"/students.txt");
 			List<Student> students = Student.createDomains(str);
@@ -148,6 +148,26 @@ public class NaiteInboundLogic implements NaiteService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	@Override
+	public void createStudent(String lectureId, Student student)
+			throws NaiteException {
+		//
+		registerStudent(lectureId, student);
+	}
+	
+	private void registerStudent(String lectureId, Student student) throws NaiteException {
+		//
+		List<Student> exists = findStudents(lectureId);
+		String id = Student.createId(exists);
+		
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("id", id);
+		params.put("email", student.getEmail());
+		params.put("name", student.getName());
+		params.put("pass", student.getPassword());
+		naiteContents.doPost("lectures/" + lectureId + "/students/create", params);
 	}
 
 	//--------------------------------------------------------------------------
@@ -223,7 +243,6 @@ public class NaiteInboundLogic implements NaiteService {
 		naiteContents.doMultipartPost("lectures/" + lectureId + "/projects/upload", params, fileParams);
 	}
 
-	
 	//--------------------------------------------------------------------------
 
 }

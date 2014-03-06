@@ -39,9 +39,11 @@ public class CreateHandler extends AbstractHandler {
 		if (target.endsWith("create")) {
 			baseRequest.setHandled(true);
 			String id = request.getParameter("id");
+			String email = request.getParameter("email");  // for Student
 			String name = request.getParameter("name");
 			String current = request.getParameter("current"); // for Lecture
 			String projectName = request.getParameter("projectName"); // for ExciseProject
+			String pass = request.getParameter("pass");   // for Student
 			
 			
 			System.out.println("*********************************");
@@ -55,12 +57,18 @@ public class CreateHandler extends AbstractHandler {
 			
 			StringBuffer sb = new StringBuffer();
 			sb.append(id);
+			if (StringUtils.isNotEmpty(email)) {
+				sb.append(";").append(email);
+			}
 			sb.append(";").append(name);
 			if (StringUtils.isNotEmpty(current)) {
 				sb.append(";").append(current);
 			}
 			if (StringUtils.isNotEmpty(projectName)) {
 				sb.append(";").append(projectName);
+			}
+			if (StringUtils.isNotEmpty(pass)) {
+				sb.append(";").append(pass);
 			}
 			
 			// check dir exist
