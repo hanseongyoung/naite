@@ -61,6 +61,7 @@ public class StudentPlugin extends AbstractUIPlugin {
 				StudentContext.getInstance().setServerIp(serverIp);
 			} else {
 				StudentContext.getInstance().setServerIp(null);
+				LoginObserver.getInstance().setAlreadySendToTeacher(false);
 			}
 		}
 	};

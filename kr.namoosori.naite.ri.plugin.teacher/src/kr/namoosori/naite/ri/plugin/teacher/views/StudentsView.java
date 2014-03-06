@@ -33,7 +33,7 @@ public class StudentsView extends ViewPart implements MessageListener {
 	@Override
 	public void messageReceived(final ClientMessage message) {
 		//
-		Display.getCurrent().asyncExec(new Runnable() {
+		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				MessageDialog.openInformation(getSite().getShell(), "메시지", message.getSenderId());

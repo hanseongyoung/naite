@@ -1,6 +1,7 @@
 package kr.namoosori.naite.ri.plugin.student.dialogs;
 
 import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
+import kr.namoosori.naite.ri.plugin.student.login.LoginObserver;
 import kr.namoosori.naite.ri.plugin.student.util.DialogSettingsUtils;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -147,6 +148,7 @@ public class StudentInfoDialog extends TitleAreaDialog {
 		//
 		String email = DialogSettingsUtils.get("student", "email");
 		NaiteNetClient.getInstance().getContext().setClientId(email);
+		LoginObserver.getInstance().setAlreadySendToTeacher(false);
 	}
 
 }

@@ -52,9 +52,7 @@ public class LoginObserver implements Runnable {
 			if (!alreadySendToTeacher) {
 				boolean successSend = sendToTeacher(localInfo);
 				if (successSend) {
-					stopObserve();
 					alreadySendToTeacher = true;
-					break;
 				}
 			}
 
@@ -116,5 +114,9 @@ public class LoginObserver implements Runnable {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	public void setAlreadySendToTeacher(boolean alreadySendToTeacher) {
+		this.alreadySendToTeacher = alreadySendToTeacher;
 	}
 }
