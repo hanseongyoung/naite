@@ -12,7 +12,9 @@ public abstract class SecuredServerStateListener implements ServerStateListener 
 	@Override
 	public void serverStateChanged(boolean serverState) {
 		//
-		if (checker.check()) {
+		if (!serverState) {
+			serverStateChangedWithChecked(false);
+		} else if (checker.check()) { // if serverState is false, don't invoke check().
 			serverStateChangedWithChecked(serverState);
 		} else {
 			checker.notPermitted();
