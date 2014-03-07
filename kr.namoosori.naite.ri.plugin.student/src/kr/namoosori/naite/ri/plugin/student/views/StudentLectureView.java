@@ -8,7 +8,6 @@ import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
-import kr.namoosori.naite.ri.plugin.netclient.facade.SecuredServerStateListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.ServerStateListener;
 import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
 import kr.namoosori.naite.ri.plugin.student.StudentContext;
@@ -38,9 +37,12 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.part.ViewPart;
 
-public class StudentLectureView extends ViewPart implements LoginListener {
+public class StudentLectureView extends ViewPart implements LoginListener, ServerStateListener {
 	//
 	public static final String ID = StudentLectureView.class.getName();
+	
+	private LoginManager loginManager = LoginManager.getInstance();
+	private NaiteNetClient netClient = NaiteNetClient.getInstance();
 	
 	private FormToolkit toolkit;
 	private ScrolledForm form;
@@ -60,19 +62,37 @@ public class StudentLectureView extends ViewPart implements LoginListener {
 		}
 	}
 	
-	private LoginManager loginManager = LoginManager.getInstance();
-	private NaiteNetClient netClient = NaiteNetClient.getInstance();
-	
-	private ServerStateListener serverStateListener = new SecuredServerStateListener(loginManager) {
-		@Override
-		public void serverStateChangedWithChecked(boolean serverState) {
-			updateServerStateChanged(serverState);
-		}
-	};
-	
 	@Override
-	public void loginChecked(boolean logined) {
-		// called when login failed...
+	public void serverOn() {
+		System.out.println("[StudentLectureView] server on");
+		loginManager.check();
+	}
+
+	@Override
+	public void serverOff() {
+		System.out.println("[StudentLectureView] server off");
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				teacherNotExist();
+			}
+		});
+	}
+
+	@Override
+	public void logined() {
+		System.out.println("[StudentLectureView] logined");
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				refresh();
+			}
+		});
+	}
+
+	@Override
+	public void logoffed() {
+		System.out.println("[StudentLectureView] logoffed");
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -80,35 +100,22 @@ public class StudentLectureView extends ViewPart implements LoginListener {
 			}
 		});
 	}
-	
-	public void updateServerStateChanged(final boolean serverState) {
-		//
-		Display.getDefault().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (serverState) {
-					refresh();
-				} else {
-					teacherNotExist();
-				}
-			}
-		});
-	}
-	
+
 	@Override
 	public void createPartControl(Composite parent) {
 		//
 		toolkit = new FormToolkit(getSite().getShell().getDisplay());
 		
 		createForm(parent, "강사가 준비중입니다.");
-		loginManager.addLoginListener(this);
-		netClient.addServerStateListener(serverStateListener);
 		
 		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
 		ActionContributionItem item = new ActionContributionItem(new LoginStatusAction());
 		item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
 		manager.add(item);
 		manager.update(true);
+		
+		loginManager.addLoginListener(this);
+		netClient.addServerStateListener(this);
 	}
 	
 	private void refresh() {
@@ -305,16 +312,12 @@ public class StudentLectureView extends ViewPart implements LoginListener {
 	@Override
 	public void dispose() {
 		//
-		netClient.removeServerStateListener(serverStateListener);
+		netClient.removeServerStateListener(this);
 		loginManager.removeLoginListener(this);
 		if (toolkit != null) {
 			toolkit.dispose();
 		}
 		super.dispose();
 	}
-
-	
-
-	
 
 }

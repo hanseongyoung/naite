@@ -55,6 +55,22 @@ public class StudentPlugin extends AbstractUIPlugin {
 	
 	ServerStateListener serverStateListener = new ServerStateListener() {
 		@Override
+		public void serverOn() {
+			StudentContext.getInstance().setServerOn(true);
+			String serverIp = NaiteNetClient.getInstance().getContext().getServerIp();
+			StudentContext.getInstance().setServerIp(serverIp);
+			System.out.println("teacher login : server ip set to "+serverIp);
+		}
+		@Override
+		public void serverOff() {
+			StudentContext.getInstance().setServerOn(false);
+			StudentContext.getInstance().setServerIp(null);
+			LoginObserver.getInstance().setAlreadySendToTeacher(false);
+			System.out.println("teacher logout : server ip set to null.");
+		}
+		
+		/*
+		@Override
 		public void serverStateChanged(boolean serverState) {
 			if (serverState) {
 				String serverIp = NaiteNetClient.getInstance().getContext().getServerIp();
@@ -66,6 +82,7 @@ public class StudentPlugin extends AbstractUIPlugin {
 				System.out.println("teacher logout : server ip set to null.");
 			}
 		}
+		*/
 	};
 
 	/*

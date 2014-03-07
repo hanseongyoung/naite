@@ -42,7 +42,7 @@ public class LoginObserver implements Runnable {
 	public void run() {
 		//
 		while (continueObserve) {
-			if (loginManager.isLogined()) {
+			if (loginManager.check()) {
 				stopObserve();
 				break;
 			}

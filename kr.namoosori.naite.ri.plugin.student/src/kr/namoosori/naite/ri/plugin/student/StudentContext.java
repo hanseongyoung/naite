@@ -4,6 +4,7 @@ import kr.namoosori.naite.ri.plugin.core.CoreContext;
 
 public class StudentContext extends CoreContext {
 	//
+	private boolean serverOn;
 	private String serverIp;
 	private int serverPort;
 	//private long lastTeacherAliveTime;
@@ -70,6 +71,14 @@ public class StudentContext extends CoreContext {
 
 	public void setServerPort(int serverPort) {
 		this.serverPort = serverPort;
+	}
+
+	public boolean isServerOn() {
+		return serverOn;
+	}
+
+	public void setServerOn(boolean serverOn) {
+		this.serverOn = serverOn;
 	}
 
 //	public long getLastTeacherAliveTime() {

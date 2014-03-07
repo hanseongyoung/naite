@@ -7,16 +7,16 @@ import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Student;
-import kr.namoosori.naite.ri.plugin.netclient.facade.SecuredChecker;
+import kr.namoosori.naite.ri.plugin.student.StudentContext;
 import kr.namoosori.naite.ri.plugin.student.util.DialogSettingsUtils;
 
-public class LoginManager implements SecuredChecker {
+public class LoginManager {
 	//
 	private static LoginManager instance = new LoginManager();
 
 	private boolean logined;
-	
 	private List<LoginListener> listeners = new ArrayList<LoginListener>();
+	private StudentContext context = StudentContext.getInstance();
 
 	public static LoginManager getInstance() {
 		//
@@ -26,21 +26,17 @@ public class LoginManager implements SecuredChecker {
 	private LoginManager() {
 	}
 
-	@Override
 	public boolean check() {
 		//
 		if (!logined) {
-			checkLogin();
+			if (context.isServerOn()) {
+				checkLogin();
+				invokeListeners();
+			}
 		}
 		return logined;
 	}
 	
-	@Override
-	public void notPermitted() {
-		//
-		invokeListeners();
-	}
-
 	private void checkLogin() {
 		//
 		String studentEmail = DialogSettingsUtils.get("student", "email");
@@ -81,7 +77,11 @@ public class LoginManager implements SecuredChecker {
 			return;
 		}
 		for (LoginListener listener : listeners) {
-			listener.loginChecked(logined);
+			if (logined) {
+				listener.logined();
+			} else {
+				listener.logoffed();
+			}
 		}
 	}
 

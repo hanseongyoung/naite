@@ -31,7 +31,11 @@ public class ServerStateProvider {
 			return;
 		}
 		for (ServerStateListener listener : listeners) {
-			listener.serverStateChanged(serverState);
+			if (serverState) {
+				listener.serverOn();
+			} else {
+				listener.serverOff();
+			}
 		}
 	}
 }
