@@ -196,16 +196,27 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 			}
 		});
 	}
+	
+	private Student findStudent(String email) {
+		//
+		for (Student student : students) {
+			if (student.getEmail().equals(email)) {
+				return student;
+			}
+		}
+		return null;
+	}
 
 	@Override
-	public void clientIn(String clientId) {
+	public void clientIn(final String clientId) {
 		//
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				if (studentListViewer == null) return;
-				IStructuredSelection selection = (IStructuredSelection) studentListViewer.getSelection();
-				Student student = (Student) selection.getFirstElement();
+				Student student = findStudent(clientId);
+				if (student == null) {
+					return;
+				}
 				student.setLogined(true);
 				studentListViewer.refresh();
 			}
@@ -213,14 +224,15 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 	}
 
 	@Override
-	public void clientOut(String clientId) {
+	public void clientOut(final String clientId) {
 		//
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				if (studentListViewer == null) return;
-				IStructuredSelection selection = (IStructuredSelection) studentListViewer.getSelection();
-				Student student = (Student) selection.getFirstElement();
+				Student student = findStudent(clientId);
+				if (student == null) {
+					return;
+				}
 				student.setLogined(false);
 				studentListViewer.refresh();
 			}
