@@ -18,7 +18,25 @@ public class MessageBox {
 	}
 	
 	public synchronized void removeAll(List<Message> clearMessages) {
+		//
 		messages.removeAll(clearMessages);
+	}
+	
+	public synchronized void remove(Message message) {
+		//
+		messages.remove(message);
+	}
+	
+	public List<Message> findByClientId(String clientId) {
+		//
+		List<Message> finded = new ArrayList<Message>();
+		for (Message message : messages) {
+			if (message.getFrom().getId().equals(clientId)
+					|| message.getTo().getId().equals(clientId)) {
+				finded.add(message);
+			}
+		}
+		return finded;
 	}
 
 	public List<Message> getMessages() {

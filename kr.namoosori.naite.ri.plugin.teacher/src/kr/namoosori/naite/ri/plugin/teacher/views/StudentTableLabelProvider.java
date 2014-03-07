@@ -5,6 +5,7 @@ import kr.namoosori.naite.ri.plugin.teacher.TeacherPlugin;
 
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 
 
@@ -18,7 +19,13 @@ public class StudentTableLabelProvider extends LabelProvider implements ITableLa
 			Student student = (Student) element;
 			if (columnIndex == 0) {
 				if (student.getId() != null && student.getId().length() > 0) {
-					return TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_USER);
+					Image userImage = TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_USER);
+					if (student.isLogined()) {
+						return userImage;
+					} else {
+						Image disableUserImage = new Image(userImage.getDevice(), userImage, SWT.IMAGE_GRAY);
+						return disableUserImage;
+					}
 				}
 			}
 		}

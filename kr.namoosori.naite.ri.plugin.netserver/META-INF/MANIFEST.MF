@@ -10,4 +10,5 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: kr.namoosori.naite.ri.plugin.netserver,
+ kr.namoosori.naite.ri.plugin.netserver.facade,
  kr.namoosori.naite.ri.plugin.netserver.main

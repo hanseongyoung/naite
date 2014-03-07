@@ -70,7 +70,6 @@ public class EventInvoker implements Runnable {
 			System.out.println("WARNING : server info not available - "+context.getServerIp() + ", "+context.getClientId());
 			return null;
 		}
-		System.out.println("### PULL ###");
 		ConnectlessSocketClient client = new ConnectlessSocketClient(
 				context.getServerIp(), context.getServerPort());
 		NetServerRequest req = NetServerRequest.asPullRequest(context.getClientId());

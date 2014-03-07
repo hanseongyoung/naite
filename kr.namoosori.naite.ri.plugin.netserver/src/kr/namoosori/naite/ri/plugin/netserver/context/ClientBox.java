@@ -18,6 +18,19 @@ public class ClientBox {
 		}
 		return finded;
 	}
+	
+	public List<Client> findClientsByTimeoutInterval(long timeoutInterval) {
+		//
+		List<Client> timeoutClients = new ArrayList<Client>();
+		long currentTime = System.currentTimeMillis();
+		for (Client client : clients) {
+			long interval = currentTime - client.getLastAccessTime();
+			if (interval > timeoutInterval) {
+				timeoutClients.add(client);
+			}
+		}
+		return timeoutClients;
+	}
 
 	public synchronized Client addClient(String clientId, String clientIp) {
 		//
@@ -29,6 +42,11 @@ public class ClientBox {
 		Client client = new Client(clientId, clientIp);
 		clients.add(client);
 		return client;
+	}
+	
+	public synchronized void removeClient(Client client) {
+		//
+		clients.remove(client);
 	}
 
 	public List<Client> getClients() {

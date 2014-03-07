@@ -20,7 +20,6 @@ public class SocketMessageSender implements MessageSender {
 		if (!context.isRequestAvailable()) {
 			throw new NaiteRuntimeException("server info not exist.");
 		}
-		System.out.println("### SEND ###");
 		ConnectlessSocketClient client = new ConnectlessSocketClient(
 				context.getServerIp(), context.getServerPort());
 		NetServerRequest req = NetServerRequest.asMessageRequest(
@@ -35,7 +34,6 @@ public class SocketMessageSender implements MessageSender {
 		if (!context.isRequestAvailable()) {
 			throw new NaiteRuntimeException("server info not exist.");
 		}
-		System.out.println("### SEND ALL ###");
 		ConnectlessSocketClient client = new ConnectlessSocketClient(
 				context.getServerIp(), context.getServerPort());
 		NetServerRequest req = NetServerRequest.asMessageRequest(

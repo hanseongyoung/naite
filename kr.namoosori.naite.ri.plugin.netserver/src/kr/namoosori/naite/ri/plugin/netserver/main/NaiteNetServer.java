@@ -3,8 +3,10 @@ package kr.namoosori.naite.ri.plugin.netserver.main;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import kr.namoosori.naite.ri.plugin.netserver.facade.ServerEventListener;
 import kr.namoosori.naite.ri.plugin.netserver.server.ConnectlessMessageServer;
 import kr.namoosori.naite.ri.plugin.netserver.server.MulticastServer;
+import kr.namoosori.naite.ri.plugin.netserver.work.ServerEventManager;
 
 public class NaiteNetServer {
 	//
@@ -46,6 +48,18 @@ public class NaiteNetServer {
 		//
 		this.multicastServer.stopServer();
 		this.messageServer.stopServer();
+	}
+
+	public void addServerEventListener(ServerEventListener listener) {
+		//
+		ServerEventManager manager = this.messageServer.getEventManager();
+		manager.addServerStateListener(listener);
+	}
+	
+	public void removeServerEventListener(ServerEventListener listener) {
+		//
+		ServerEventManager manager = this.messageServer.getEventManager();
+		manager.removeServerStateListener(listener);
 	}
 	
 }

@@ -10,9 +10,10 @@ import kr.namoosori.naite.ri.plugin.core.service.domain.Student;
 import kr.namoosori.naite.ri.plugin.netclient.facade.MessageListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.message.ClientMessage;
 import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
+import kr.namoosori.naite.ri.plugin.netserver.facade.ServerEventListener;
+import kr.namoosori.naite.ri.plugin.netserver.main.NaiteNetServer;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherContext;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -32,7 +33,7 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.part.ViewPart;
 
-public class StudentsView extends ViewPart implements MessageListener {
+public class StudentsView extends ViewPart implements MessageListener, ServerEventListener {
 	//
 	public static final String ID = StudentsView.class.getName();
 	
@@ -43,6 +44,7 @@ public class StudentsView extends ViewPart implements MessageListener {
 	public void createPartControl(Composite parent) {
 		//
 		NaiteNetClient.getInstance().addMessageListener(this);
+		NaiteNetServer.getInstance().addServerEventListener(this);
 		toolkit = new FormToolkit(getSite().getShell().getDisplay());
 		
 		createForm(parent);
@@ -172,8 +174,8 @@ public class StudentsView extends ViewPart implements MessageListener {
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
-		
+		//
+		form.setFocus();
 	}
 
 	@Override
@@ -182,7 +184,7 @@ public class StudentsView extends ViewPart implements MessageListener {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				MessageDialog.openInformation(getSite().getShell(), "메시지", message.getSenderId());
+				//MessageDialog.openInformation(getSite().getShell(), "메시지", message.getSenderId());
 				if (!existStudent(message.getSenderId())) {
 					Student student = new Student();
 					student.setEmail(message.getSenderId());
@@ -193,6 +195,44 @@ public class StudentsView extends ViewPart implements MessageListener {
 				}
 			}
 		});
+	}
+
+	@Override
+	public void clientIn(String clientId) {
+		//
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (studentListViewer == null) return;
+				IStructuredSelection selection = (IStructuredSelection) studentListViewer.getSelection();
+				Student student = (Student) selection.getFirstElement();
+				student.setLogined(true);
+				studentListViewer.refresh();
+			}
+		});
+	}
+
+	@Override
+	public void clientOut(String clientId) {
+		//
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (studentListViewer == null) return;
+				IStructuredSelection selection = (IStructuredSelection) studentListViewer.getSelection();
+				Student student = (Student) selection.getFirstElement();
+				student.setLogined(false);
+				studentListViewer.refresh();
+			}
+		});
+	}
+
+	@Override
+	public void dispose() {
+		//
+		NaiteNetServer.getInstance().removeServerEventListener(this);
+		NaiteNetClient.getInstance().removeMessageListener(this);
+		super.dispose();
 	}
 
 }

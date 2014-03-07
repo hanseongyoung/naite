@@ -32,7 +32,6 @@ public class ConnectlessSocketClient {
 			socket = new Socket(serverIp, port);
 			fromServer = getReader(socket.getInputStream());
 			toServer = getWriter(socket.getOutputStream());
-			System.out.println("connect");
 			write(request.toMessageBlock());
 			
 			String serverMessage = null;
@@ -73,13 +72,13 @@ public class ConnectlessSocketClient {
 
 	private String receive() throws IOException {
 		String read = fromServer.readLine();
-		System.out.println("read-->"+read);
+		//System.out.println("read-->"+read);
 		return read;
 	}
 	
 	private void write(String message) throws IOException {
 		toServer.write(message + System.lineSeparator());
 		toServer.flush();
-		System.out.println("write-->"+message);
+		//System.out.println("write-->"+message);
 	}
 }

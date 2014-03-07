@@ -24,14 +24,14 @@ public class ConnectlessSocketWorker extends Thread {
 	private BufferedReader fromClient;
 	private BufferedWriter toClient;
 	
-	public ConnectlessSocketWorker(Socket socket, NetServerContext context) throws IOException {
+	public ConnectlessSocketWorker(Socket socket, NetServerContext context, ServerEventManager eventManager) throws IOException {
 		//
 		this.socket = socket;
 		this.fromClient = getReader(socket.getInputStream());
 		this.toClient = getWriter(socket.getOutputStream());
 		this.context = context;
-		this.messageManager = new MessageManager(context.getMessageBox(), context.getClientBox());
-		this.clientManager = new ClientManager(context.getClientBox());
+		this.messageManager = new MessageManager(this.context.getMessageBox(), this.context.getClientBox());
+		this.clientManager = new ClientManager(this.context.getClientBox(), eventManager);
 	}
 
 	@Override
@@ -86,13 +86,13 @@ public class ConnectlessSocketWorker extends Thread {
 
 	private String receiveMessage() throws IOException {
 		String read = fromClient.readLine();
-		System.out.println(socket.getInetAddress() + "-->" + read);
+		//System.out.println(socket.getInetAddress() + "-->" + read);
 		return read;
 	}
 	private void writeMessage(String message) throws IOException {
 		toClient.write(message + System.lineSeparator());
 		toClient.flush();
-		System.out.println("write-->"+message);
+		//System.out.println("write-->"+message);
 	}
 	
 	private BufferedWriter getWriter(OutputStream outputStream) {

@@ -11,6 +11,9 @@ public class Student {
 	private String password;
 	private List<ExerciseProject> exerciseProjects;
 	
+	// UI Setting
+	private boolean logined;
+	
 	private Lecture lecture;
 	
 	public String getId() {
@@ -48,6 +51,12 @@ public class Student {
 	}
 	public void setLecture(Lecture lecture) {
 		this.lecture = lecture;
+	}
+	public boolean isLogined() {
+		return logined;
+	}
+	public void setLogined(boolean logined) {
+		this.logined = logined;
 	}
 	
 	public static String createId(List<Student> exists) {
