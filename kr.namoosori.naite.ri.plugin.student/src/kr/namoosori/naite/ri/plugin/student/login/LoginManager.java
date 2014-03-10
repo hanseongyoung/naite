@@ -33,6 +33,8 @@ public class LoginManager {
 				checkLogin();
 				invokeListeners();
 			}
+		} else {
+			invokeListeners();
 		}
 		return logined;
 	}

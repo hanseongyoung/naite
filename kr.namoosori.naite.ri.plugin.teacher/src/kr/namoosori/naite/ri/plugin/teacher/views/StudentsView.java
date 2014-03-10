@@ -90,6 +90,11 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 				return true;
 			}
 		}
+		for (Student student : students) {
+			if (student.getEmail().equals(email)) {
+				return true;
+			}
+		}
 		return false;
 	}
 	private Composite createStudentListSectionClient(Section section) {
@@ -161,6 +166,7 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 		String lectureId = TeacherContext.CURRENT_LECTURE.getId(); 
 		try {
 			this.students = service.findStudents(lectureId);
+			// TODO : student의 로그인 여부를 확인하여 세팅함.
 		} catch (NaiteException e) {
 			e.printStackTrace();
 		}
