@@ -85,14 +85,18 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 	private List<Student> tmpStudents = new ArrayList<Student>();
 	private boolean existStudent(String email) {
 		//
-		for (Student student : tmpStudents) {
-			if (student.getEmail().equals(email)) {
-				return true;
+		if (tmpStudents != null) {
+			for (Student student : tmpStudents) {
+				if (student.getEmail().equals(email)) {
+					return true;
+				}
 			}
 		}
-		for (Student student : students) {
-			if (student.getEmail().equals(email)) {
-				return true;
+		if (students != null) {
+			for (Student student : students) {
+				if (student.getEmail().equals(email)) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -232,10 +236,12 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 	}
 	
 	private Student findStudent(String email) {
-		//
-		for (Student student : students) {
-			if (student.getEmail().equals(email)) {
-				return student;
+		// 
+		if (students != null) {
+			for (Student student : students) {
+				if (student.getEmail().equals(email)) {
+					return student;
+				}
 			}
 		}
 		return null;

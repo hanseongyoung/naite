@@ -9,10 +9,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swt;bundle-version="3.102.1",
  org.eclipse.jface;bundle-version="3.9.1",
  org.eclipse.ui;bundle-version="3.105.0",
- org.apache.commons.io;bundle-version="2.0.1",
  org.apache.httpcomponents.httpclient;bundle-version="4.1.3",
  org.apache.httpcomponents.httpcore;bundle-version="4.1.4",
- org.apache.commons.lang;bundle-version="2.6.0",
  org.apache.commons.logging;bundle-version="1.1.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
@@ -24,3 +22,6 @@ Export-Package: kr.namoosori.naite.ri.plugin.core,
  kr.namoosori.naite.ri.plugin.core.service,
  kr.namoosori.naite.ri.plugin.core.service.domain,
  kr.namoosori.naite.ri.plugin.core.util
+Bundle-ClassPath: .,
+ lib/commons-io-2.0.jar,
+ lib/commons-lang-2.6.jar
