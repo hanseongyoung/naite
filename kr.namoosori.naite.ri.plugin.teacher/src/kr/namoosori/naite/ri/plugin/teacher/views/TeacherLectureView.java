@@ -8,6 +8,9 @@ import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
+import kr.namoosori.naite.ri.plugin.netclient.facade.MessageSender;
+import kr.namoosori.naite.ri.plugin.netclient.facade.message.SendMessage;
+import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherContext;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherPlugin;
 import kr.namoosori.naite.ri.plugin.teacher.dialogs.TeacherProjectUploadDialog;
@@ -16,6 +19,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -71,7 +75,7 @@ public class TeacherLectureView extends ViewPart {
 				try {
 					service.createLecture(lectureTitle);
 					refresh();
-					//refreshStudents();
+					refreshStudents();
 				} catch (NaiteException e) {
 					e.printStackTrace();
 				}
@@ -96,7 +100,10 @@ public class TeacherLectureView extends ViewPart {
 	
 	public void refreshStudents() {
 		//
-		
+		MessageSender sender = NaiteNetClient.getInstance().getMessageSender();
+		SendMessage sendMessage = new SendMessage();
+		sendMessage.setCommand("refresh");
+		sender.sendAll(sendMessage);
 	}
 
 	public void refresh() {
@@ -213,7 +220,7 @@ public class TeacherLectureView extends ViewPart {
 	private Composite createBookSectionClient(Section section) {
 		//
 		Composite composite = toolkit.createComposite(section);
-		composite.setLayout(new GridLayout(2, false));
+		composite.setLayout(new GridLayout(3, false));
 		
 		if (TeacherContext.CURRENT_LECTURE != null) {
 			for (Textbook textbook : TeacherContext.CURRENT_LECTURE.getTextbooks()) {
@@ -268,6 +275,19 @@ public class TeacherLectureView extends ViewPart {
 				};
 				job.start();
 				
+			}
+		});
+		
+		Hyperlink delLink = toolkit.createHyperlink(composite, "삭제", SWT.WRAP);
+		delLink.addHyperlinkListener(new HyperlinkAdapter(){
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				boolean confirm = MessageDialog.openConfirm(getSite().getShell(), "강의교재 삭제", "[미구현]강의교재를 삭제하시겠습니까?");
+				if (confirm) {
+					NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+					//TODO delete
+					service.deleteTextbook(textbook);
+				}
 			}
 		});
 	}

@@ -15,11 +15,14 @@ import kr.namoosori.naite.ri.plugin.netserver.main.NaiteNetServer;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherContext;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -77,6 +80,7 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 	}
 
 	private TableViewer studentListViewer;
+	private Button registerButton;
 	private List<Student> students = new ArrayList<Student>();
 	private List<Student> tmpStudents = new ArrayList<Student>();
 	private boolean existStudent(String email) {
@@ -95,6 +99,9 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 		
 		studentListViewer = new TableViewer(composite, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 		Table table = studentListViewer.getTable();
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = 90;
+		table.setLayoutData(data);
 		
 		TableColumn nameColumn = new TableColumn(table, SWT.LEFT);
 		nameColumn.setWidth(120);
@@ -104,8 +111,24 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 		
 		studentListViewer.setContentProvider(new ArrayContentProvider());
 		studentListViewer.setLabelProvider(new StudentTableLabelProvider());
+		studentListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+				Object ele = selection.getFirstElement();
+				if (ele instanceof Student) {
+					Student student = (Student) ele;
+					if (student.getId() == null || student.getId().length() <= 0) {
+						registerButton.setEnabled(true);
+						return;
+					}
+				}
+				registerButton.setEnabled(false);
+			}
+		});
 		
-		Button registerButton = toolkit.createButton(composite, "등록", SWT.FLAT);
+		registerButton = toolkit.createButton(composite, "등록", SWT.FLAT);
+		registerButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		registerButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -123,6 +146,7 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 				}
 			}
 		});
+		registerButton.setEnabled(false);
 		
 		return composite;
 	}

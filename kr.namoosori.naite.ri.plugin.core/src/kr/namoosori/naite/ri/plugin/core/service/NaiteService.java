@@ -14,6 +14,8 @@ public interface NaiteService {
 	public Student getCurrentStudent(String studentEmail) throws NaiteException;
 	public List<Student> findStudents(String lectureId) throws NaiteException;
 	public void createStudent(String lectureId, Student student) throws NaiteException;
+	
+	public void deleteTextbook(Textbook textbook);
 
 	// -------------------------------------------------------------------------
 	// file service

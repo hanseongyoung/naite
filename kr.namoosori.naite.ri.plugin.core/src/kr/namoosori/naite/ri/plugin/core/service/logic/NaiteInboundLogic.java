@@ -243,6 +243,12 @@ public class NaiteInboundLogic implements NaiteService {
 		naiteContents.doMultipartPost("lectures/" + lectureId + "/projects/upload", params, fileParams);
 	}
 
+	@Override
+	public void deleteTextbook(Textbook textbook) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	//--------------------------------------------------------------------------
 
 }

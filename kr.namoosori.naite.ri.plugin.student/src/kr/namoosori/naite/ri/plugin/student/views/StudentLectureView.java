@@ -8,7 +8,9 @@ import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
+import kr.namoosori.naite.ri.plugin.netclient.facade.MessageListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.ServerStateListener;
+import kr.namoosori.naite.ri.plugin.netclient.facade.message.ClientMessage;
 import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
 import kr.namoosori.naite.ri.plugin.student.StudentContext;
 import kr.namoosori.naite.ri.plugin.student.StudentPlugin;
@@ -37,7 +39,7 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.part.ViewPart;
 
-public class StudentLectureView extends ViewPart implements LoginListener, ServerStateListener {
+public class StudentLectureView extends ViewPart implements LoginListener, ServerStateListener, MessageListener {
 	//
 	public static final String ID = StudentLectureView.class.getName();
 	
@@ -100,6 +102,19 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 			}
 		});
 	}
+	
+	@Override
+	public void messageReceived(final ClientMessage message) {
+		System.out.println("[StudentLectureView] message --> "+message.getCommand());
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if ("refresh".equals(message.getCommand())) {
+					refresh();
+				}
+			}
+		});
+	}
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -116,6 +131,7 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		
 		loginManager.addLoginListener(this);
 		netClient.addServerStateListener(this);
+		netClient.addMessageListener(this);
 	}
 	
 	private void refresh() {
@@ -312,6 +328,7 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 	@Override
 	public void dispose() {
 		//
+		netClient.removeMessageListener(this);
 		netClient.removeServerStateListener(this);
 		loginManager.removeLoginListener(this);
 		if (toolkit != null) {
