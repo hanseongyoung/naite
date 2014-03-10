@@ -153,6 +153,12 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 	
 	private void refreshStudentViewer() {
 		//
+		if (TeacherContext.CURRENT_LECTURE == null) {
+			form.setText("진행중인 강의가 없습니다.");
+			form.getParent().layout();
+			return;
+		}
+		
 		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 		String lectureId = TeacherContext.CURRENT_LECTURE.getId(); 
 		try {

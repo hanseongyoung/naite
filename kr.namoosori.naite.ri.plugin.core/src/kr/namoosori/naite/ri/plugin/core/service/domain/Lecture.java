@@ -69,6 +69,9 @@ public class Lecture {
 	
 	public static List<Lecture> createDomains(String str) {
 		//
+		if (str == null || str.length() <= 0) {
+			return null;
+		}
 		List<Lecture> lectures = new ArrayList<Lecture>();
 		String[] strArr = str.split("\n");
 		for (String line : strArr) {
