@@ -57,9 +57,10 @@ public class NaiteServer {
 		
 		UploadHandler uploadHandler = new UploadHandler(resourceBase);
 		CreateHandler createHandler = new CreateHandler(resourceBase);
+		DeleteHandler deleteHandler = new DeleteHandler(resourceBase);
 		
 		HandlerList handlers = new HandlerList();
-		handlers.setHandlers(new Handler[]{resourceHandler, createHandler, uploadHandler, new DefaultHandler()});
+		handlers.setHandlers(new Handler[]{resourceHandler, createHandler, uploadHandler, deleteHandler, new DefaultHandler()});
 		
 		server.setHandler(handlers);
 	}

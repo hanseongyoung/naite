@@ -132,6 +132,10 @@ public class NaiteProject {
 		
 		return tempZipFilePathName;
 	}
+
+	public ExerciseProject getExerciseProject() {
+		return exerciseProject;
+	}
 	
 	
 }

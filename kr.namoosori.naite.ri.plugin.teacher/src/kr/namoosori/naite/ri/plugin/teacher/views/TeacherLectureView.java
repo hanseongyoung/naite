@@ -282,11 +282,17 @@ public class TeacherLectureView extends ViewPart {
 		delLink.addHyperlinkListener(new HyperlinkAdapter(){
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				boolean confirm = MessageDialog.openConfirm(getSite().getShell(), "강의교재 삭제", "[미구현]강의교재를 삭제하시겠습니까?");
+				boolean confirm = MessageDialog.openConfirm(getSite().getShell(), "강의교재 삭제", "강의교재를 삭제하시겠습니까?");
 				if (confirm) {
 					NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
-					//TODO delete
-					service.deleteTextbook(textbook);
+					try {
+						service.deleteTextbook(textbook);
+						TeacherContext.CURRENT_LECTURE = getCurrentLecture();
+						refreshBookSectionClient();
+						refreshStudents();
+					} catch (NaiteException e1) {
+						e1.printStackTrace();
+					}
 				}
 			}
 		});
@@ -336,7 +342,7 @@ public class TeacherLectureView extends ViewPart {
 	private Composite createExampleSectionClient(Section section) {
 		//
 		Composite composite = toolkit.createComposite(section);
-		composite.setLayout(new GridLayout(2, false));
+		composite.setLayout(new GridLayout(3, false));
 		
 		if (TeacherContext.CURRENT_LECTURE != null) {
 			for (ExerciseProject exerciseProject : TeacherContext.CURRENT_LECTURE.getExerciseProjects()) {
@@ -373,6 +379,25 @@ public class TeacherLectureView extends ViewPart {
 					project.create();
 				} catch (NaiteException e1) {
 					e1.printStackTrace();
+				}
+			}
+		});
+		
+		Hyperlink delLink = toolkit.createHyperlink(composite, "삭제", SWT.WRAP);
+		delLink.addHyperlinkListener(new HyperlinkAdapter(){
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				boolean confirm = MessageDialog.openConfirm(getSite().getShell(), "실습예제 삭제", "실습예제를 삭제하시겠습니까?");
+				if (confirm) {
+					NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+					try {
+						service.deleteExerciseProject(project.getExerciseProject());
+						TeacherContext.CURRENT_LECTURE = getCurrentLecture();
+						refreshExampleSectionClient();
+						refreshStudents();
+					} catch (NaiteException e1) {
+						e1.printStackTrace();
+					}
 				}
 			}
 		});

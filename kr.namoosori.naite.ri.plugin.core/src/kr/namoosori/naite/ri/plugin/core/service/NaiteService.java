@@ -3,6 +3,7 @@ package kr.namoosori.naite.ri.plugin.core.service;
 import java.util.List;
 
 import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
+import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Student;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
@@ -15,7 +16,8 @@ public interface NaiteService {
 	public List<Student> findStudents(String lectureId) throws NaiteException;
 	public void createStudent(String lectureId, Student student) throws NaiteException;
 	
-	public void deleteTextbook(Textbook textbook);
+	public void deleteTextbook(Textbook textbook) throws NaiteException;
+	public void deleteExerciseProject(ExerciseProject project) throws NaiteException;
 
 	// -------------------------------------------------------------------------
 	// file service

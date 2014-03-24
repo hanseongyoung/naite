@@ -244,9 +244,26 @@ public class NaiteInboundLogic implements NaiteService {
 	}
 
 	@Override
-	public void deleteTextbook(Textbook textbook) {
-		// TODO Auto-generated method stub
+	public void deleteTextbook(Textbook textbook) throws NaiteException {
+		//
+		String lectureId = textbook.getLecture().getId();
+		String id = textbook.getId();
 		
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("id", id);
+		naiteContents.doPost("lectures/" + lectureId + "/textbooks/delete", params);
+	}
+
+	@Override
+	public void deleteExerciseProject(ExerciseProject project)
+			throws NaiteException {
+		//
+		String lectureId = project.getLecture().getId();
+		String id = project.getId();
+		
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("id", id);
+		naiteContents.doPost("lectures/" + lectureId + "/projects/delete", params);
 	}
 
 	//--------------------------------------------------------------------------
