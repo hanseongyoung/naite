@@ -41,6 +41,10 @@ import org.eclipse.ui.part.ViewPart;
 
 public class StudentLectureView extends ViewPart implements LoginListener, ServerStateListener, MessageListener {
 	//
+	// TODO : 프로젝트를 설치할 때 자신의 아이디가 포함됨.
+	// TODO : 프로젝트를 제출할 때 자신의 아이디 및 날짜버전으로 제출됨.
+	// TODO : 강사는 수강생이 제출한 프로젝트를 볼 수 있음.
+	// TODO : 강사가 프로젝트 내 특정 파일을 각 수강생에게 배포할 수 있음.
 	public static final String ID = StudentLectureView.class.getName();
 	
 	private LoginManager loginManager = LoginManager.getInstance();
