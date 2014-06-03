@@ -30,8 +30,8 @@ public class NaiteNetClient {
 	private NaiteNetClient() {
 		//
 		context = new NetClientContext();
-		invoker = new EventInvoker(context);
 		sender = new SocketMessageSender(context);
+		invoker = new EventInvoker(context, sender);
 		multicastClient = new MulticastClient(context);
 	}
 	
@@ -54,6 +54,10 @@ public class NaiteNetClient {
 
 	public NetClientContext getContext() {
 		return context;
+	}
+	
+	public String getClientId() {
+		return context.getClientId();
 	}
 
 	public void addMessageListener(MessageListener listener) {

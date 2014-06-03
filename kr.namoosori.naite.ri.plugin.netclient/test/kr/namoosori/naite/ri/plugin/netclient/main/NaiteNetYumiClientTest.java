@@ -21,7 +21,7 @@ public class NaiteNetYumiClientTest {
 					sendMessage.setCommand("noti");
 					sendMessage.addNameValue(new NameValue("msg", "안녕"));
 					
-					clientStub.send("hong", sendMessage);
+					clientStub.send("yumi", "hong", sendMessage);
 					try {
 						Thread.sleep(5000);
 					} catch (InterruptedException e) {

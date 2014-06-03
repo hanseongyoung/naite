@@ -1,6 +1,10 @@
 package kr.namoosori.naite.ri.plugin.netclient.work;
 
+import java.util.List;
+
 import kr.namoosori.naite.ri.plugin.netclient.context.NetClientContext;
+import kr.namoosori.naite.ri.plugin.netclient.facade.MessageSender;
+import kr.namoosori.naite.ri.plugin.netclient.facade.message.ClientMessage;
 import kr.namoosori.naite.ri.plugin.netclient.provider.MessageProvider;
 import kr.namoosori.naite.ri.plugin.netclient.provider.ServerStateProvider;
 
@@ -12,14 +16,16 @@ public class EventInvoker implements Runnable {
 	
 	private MessageProvider messageProvider;
 	private ServerStateProvider serverStateProvider;
+	private MessageSender sender;
 	
 	private boolean continueInvoke;
 	
-	public EventInvoker(NetClientContext context) {
+	public EventInvoker(NetClientContext context, MessageSender sender) {
 		//
 		this.context = context;
 		this.messageProvider = new MessageProvider();
 		this.serverStateProvider = new ServerStateProvider();
+		this.sender = sender;
 	}
 	
 	public void startInvoke() {
@@ -58,23 +64,10 @@ public class EventInvoker implements Runnable {
 
 	private void checkMessage() {
 		//
-		NetServerResponse response = pull();
-		if(response != null && response.hasMessage()) {
-			messageProvider.sendToListener(response);
+		List<ClientMessage> messages = sender.getMessages(context.getClientId());
+		if(messages != null && messages.size() > 0) {
+			messageProvider.sendToListener(messages);
 		}
-	}
-
-	private NetServerResponse pull() {
-		//
-		if (!context.isRequestAvailable()) {
-			System.out.println("WARNING : server info not available - "+context.getServerIp() + ", "+context.getClientId());
-			return null;
-		}
-		ConnectlessSocketClient client = new ConnectlessSocketClient(
-				context.getServerIp(), context.getServerPort());
-		NetServerRequest req = NetServerRequest.asPullRequest(context.getClientId());
-		NetServerResponse res = client.send(req);
-		return res;
 	}
 
 	private void sleepForWhile() {

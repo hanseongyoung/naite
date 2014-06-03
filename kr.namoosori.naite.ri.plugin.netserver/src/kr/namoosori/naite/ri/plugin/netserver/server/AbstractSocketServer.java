@@ -43,7 +43,7 @@ public abstract class AbstractSocketServer extends ContinuedServerThread {
 		//
 		Socket clientSocket = null;
 		try {
-			System.out.println("wait...");
+			System.out.println("[AbstractSocketServer] wait...");
 			synchronized (serverSocket) {
 				clientSocket = serverSocket.accept();
 			}

@@ -1,5 +1,8 @@
 package kr.namoosori.naite.ri.plugin.netclient.facade;
 
+import java.util.List;
+
+import kr.namoosori.naite.ri.plugin.netclient.facade.message.ClientMessage;
 import kr.namoosori.naite.ri.plugin.netclient.facade.message.SendMessage;
 
 public interface MessageSender {
@@ -10,7 +13,7 @@ public interface MessageSender {
 	 * @param sendMessage a message object to send
 	 * @return send result
 	 */
-	public String send(String receiverId, SendMessage sendMessage);
+	public String send(String senderId, String receiverId, SendMessage sendMessage);
 	
 	/**
 	 * Send a message to all other clients on network.
@@ -18,5 +21,10 @@ public interface MessageSender {
 	 * @param message a message object to send
 	 * @return send result
 	 */
-	public String sendAll(SendMessage sendMessage);
+	public String sendAll(String senderId, SendMessage sendMessage);
+	
+	/**
+	 * @return
+	 */
+	public List<ClientMessage> getMessages(String clientId);
 }

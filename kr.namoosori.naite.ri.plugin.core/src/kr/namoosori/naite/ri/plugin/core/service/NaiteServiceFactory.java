@@ -1,6 +1,6 @@
 package kr.namoosori.naite.ri.plugin.core.service;
 
-import kr.namoosori.naite.ri.plugin.core.service.logic.NaiteInboundLogic;
+import kr.namoosori.naite.ri.plugin.core.service.logic.NaiteOutboundLogic;
 
 public class NaiteServiceFactory {
 	//
@@ -12,6 +12,7 @@ public class NaiteServiceFactory {
 	}
 	
 	public NaiteService getNaiteService() {
-		return new NaiteInboundLogic();
+		//return new NaiteInboundLogic();
+		return new NaiteOutboundLogic();
 	}
 }

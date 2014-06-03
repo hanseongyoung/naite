@@ -16,8 +16,8 @@ public class NetClientStub {
 		client.addMessageListener(listener);
 	}
 	
-	public void send(String receiverId, SendMessage sendMessage) {
-		client.getMessageSender().send(receiverId, sendMessage);
+	public void send(String senderId, String receiverId, SendMessage sendMessage) {
+		client.getMessageSender().send(senderId, receiverId, sendMessage);
 	}
 	
 	public void start() {

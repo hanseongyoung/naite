@@ -103,7 +103,7 @@ public class TeacherLectureView extends ViewPart {
 		MessageSender sender = NaiteNetClient.getInstance().getMessageSender();
 		SendMessage sendMessage = new SendMessage();
 		sendMessage.setCommand("refresh");
-		sender.sendAll(sendMessage);
+		sender.sendAll(NaiteNetClient.getInstance().getClientId(), sendMessage);
 	}
 
 	public void refresh() {

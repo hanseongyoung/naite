@@ -105,7 +105,7 @@ public class LoginObserver implements Runnable {
 			sendMessage.addNameValue(new NameValue("email", localInfo.getEmail()));
 			sendMessage.addNameValue(new NameValue("pass", localInfo.getPassword()));
 			
-			String result = sender.send("teacher", sendMessage);
+			String result = sender.send(localInfo.getEmail(), "teacher", sendMessage);
 			if (result != null && result.equals("ok")) {
 				return true;
 			}
