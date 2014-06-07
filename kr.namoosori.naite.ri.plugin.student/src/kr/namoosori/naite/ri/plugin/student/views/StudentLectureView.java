@@ -8,10 +8,11 @@ import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
+import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.facade.MessageListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.ServerStateListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.message.ClientMessage;
-import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
+import kr.namoosori.naite.ri.plugin.netclient.main.NaiteWSClient;
 import kr.namoosori.naite.ri.plugin.student.StudentContext;
 import kr.namoosori.naite.ri.plugin.student.StudentPlugin;
 import kr.namoosori.naite.ri.plugin.student.dialogs.StudentInfoDialog;
@@ -48,7 +49,6 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 	public static final String ID = StudentLectureView.class.getName();
 	
 	private LoginManager loginManager = LoginManager.getInstance();
-	private NaiteNetClient netClient = NaiteNetClient.getInstance();
 	
 	private FormToolkit toolkit;
 	private ScrolledForm form;
@@ -134,8 +134,11 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		manager.update(true);
 		
 		loginManager.addLoginListener(this);
-		netClient.addServerStateListener(this);
-		netClient.addMessageListener(this);
+		EventManager.getInstance().addServerStateListener(this);
+		EventManager.getInstance().addMessageListener(this);
+		
+		NaiteWSClient.getInstance().start();
+		NaiteWSClient.getInstance().send();
 	}
 	
 	private void refresh() {
@@ -332,12 +335,15 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 	@Override
 	public void dispose() {
 		//
-		netClient.removeMessageListener(this);
-		netClient.removeServerStateListener(this);
+		EventManager.getInstance().removeMessageListener(this);
+		EventManager.getInstance().removeServerStateListener(this);
 		loginManager.removeLoginListener(this);
 		if (toolkit != null) {
 			toolkit.dispose();
 		}
+		
+		NaiteWSClient.getInstance().stop();
+		
 		super.dispose();
 	}
 

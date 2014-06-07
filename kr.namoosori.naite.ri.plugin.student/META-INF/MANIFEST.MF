@@ -12,3 +12,4 @@ Require-Bundle: org.eclipse.ui,
  kr.namoosori.naite.ri.plugin.netclient;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .

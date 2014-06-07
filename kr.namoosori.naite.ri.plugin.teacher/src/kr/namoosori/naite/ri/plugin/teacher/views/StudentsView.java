@@ -7,9 +7,9 @@ import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Student;
+import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.facade.MessageListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.message.ClientMessage;
-import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
 import kr.namoosori.naite.ri.plugin.netserver.facade.ServerEventListener;
 import kr.namoosori.naite.ri.plugin.netserver.main.NaiteNetServer;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherContext;
@@ -46,7 +46,7 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 	@Override
 	public void createPartControl(Composite parent) {
 		//
-		NaiteNetClient.getInstance().addMessageListener(this);
+		EventManager.getInstance().addMessageListener(this);
 		NaiteNetServer.getInstance().addServerEventListener(this);
 		toolkit = new FormToolkit(getSite().getShell().getDisplay());
 		
@@ -283,7 +283,7 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 	public void dispose() {
 		//
 		NaiteNetServer.getInstance().removeServerEventListener(this);
-		NaiteNetClient.getInstance().removeMessageListener(this);
+		EventManager.getInstance().removeMessageListener(this);
 		super.dispose();
 	}
 

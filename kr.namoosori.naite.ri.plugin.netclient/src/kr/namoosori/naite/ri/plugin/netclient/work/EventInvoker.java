@@ -3,10 +3,9 @@ package kr.namoosori.naite.ri.plugin.netclient.work;
 import java.util.List;
 
 import kr.namoosori.naite.ri.plugin.netclient.context.NetClientContext;
+import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.facade.MessageSender;
 import kr.namoosori.naite.ri.plugin.netclient.facade.message.ClientMessage;
-import kr.namoosori.naite.ri.plugin.netclient.provider.MessageProvider;
-import kr.namoosori.naite.ri.plugin.netclient.provider.ServerStateProvider;
 
 public class EventInvoker implements Runnable {
 	//
@@ -14,8 +13,6 @@ public class EventInvoker implements Runnable {
 	
 	private NetClientContext context;
 	
-	private MessageProvider messageProvider;
-	private ServerStateProvider serverStateProvider;
 	private MessageSender sender;
 	
 	private boolean continueInvoke;
@@ -23,8 +20,6 @@ public class EventInvoker implements Runnable {
 	public EventInvoker(NetClientContext context, MessageSender sender) {
 		//
 		this.context = context;
-		this.messageProvider = new MessageProvider();
-		this.serverStateProvider = new ServerStateProvider();
 		this.sender = sender;
 	}
 	
@@ -57,7 +52,7 @@ public class EventInvoker implements Runnable {
 		//
 		boolean serverState = context.isServerAlive();
 		if (prevServerState != serverState) {
-			serverStateProvider.sendToListener(serverState);
+			EventManager.getInstance().invokeServerStateEvent(serverState);
 			prevServerState = serverState;
 		}
 	}
@@ -66,7 +61,7 @@ public class EventInvoker implements Runnable {
 		//
 		List<ClientMessage> messages = sender.getMessages(context.getClientId());
 		if(messages != null && messages.size() > 0) {
-			messageProvider.sendToListener(messages);
+			EventManager.getInstance().invokeMessageEvent(messages);
 		}
 	}
 
@@ -77,14 +72,6 @@ public class EventInvoker implements Runnable {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public MessageProvider getMessageProvider() {
-		return messageProvider;
-	}
-
-	public ServerStateProvider getServerStateProvider() {
-		return serverStateProvider;
 	}
 
 }

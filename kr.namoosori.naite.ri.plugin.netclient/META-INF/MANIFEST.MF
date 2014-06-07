@@ -11,6 +11,9 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: kr.namoosori.naite.ri.plugin.netclient,
  kr.namoosori.naite.ri.plugin.netclient.context,
+ kr.namoosori.naite.ri.plugin.netclient.event,
  kr.namoosori.naite.ri.plugin.netclient.facade,
  kr.namoosori.naite.ri.plugin.netclient.facade.message,
  kr.namoosori.naite.ri.plugin.netclient.main
+Bundle-ClassPath: .,
+ lib/tyrus-standalone-client-1.6.jar

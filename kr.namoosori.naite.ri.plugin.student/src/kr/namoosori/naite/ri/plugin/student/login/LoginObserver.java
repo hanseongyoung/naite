@@ -96,6 +96,10 @@ public class LoginObserver implements Runnable {
 	
 	private boolean sendToTeacher(Student localInfo) {
 		//
+		if (localInfo == null) {
+			return false;
+		}
+		
 		try {
 			MessageSender sender = NaiteNetClient.getInstance().getMessageSender();
 			

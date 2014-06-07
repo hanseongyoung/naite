@@ -3,6 +3,7 @@ package kr.namoosori.naite.ri.plugin.student;
 import java.net.URL;
 
 import kr.namoosori.naite.ri.plugin.netclient.NetClientPlugin;
+import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.facade.ServerStateListener;
 import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
 import kr.namoosori.naite.ri.plugin.student.login.LoginObserver;
@@ -45,12 +46,12 @@ public class StudentPlugin extends AbstractUIPlugin {
 		
 		NetClientPlugin.getDefault();
 		
-		NaiteNetClient.getInstance().addServerStateListener(serverStateListener);
+		EventManager.getInstance().addServerStateListener(serverStateListener);
 		
 		String email = DialogSettingsUtils.get("student", "email");
 		NaiteNetClient.getInstance().getContext().setClientId(email);
 		
-		LoginObserver.getInstance().startObserve();
+		//LoginObserver.getInstance().startObserve();
 	}
 	
 	ServerStateListener serverStateListener = new ServerStateListener() {

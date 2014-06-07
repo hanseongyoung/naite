@@ -1,6 +1,7 @@
 package kr.namoosori.naite.ri.plugin.netclient.main;
 
 import kr.namoosori.naite.ri.plugin.netclient.context.NetClientContext;
+import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.facade.MessageListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.message.SendMessage;
 
@@ -13,7 +14,7 @@ public class NetClientStub {
 	}
 	
 	public void addMessageListener(MessageListener listener) {
-		client.addMessageListener(listener);
+		EventManager.getInstance().addMessageListener(listener);
 	}
 	
 	public void send(String senderId, String receiverId, SendMessage sendMessage) {
