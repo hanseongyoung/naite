@@ -24,4 +24,5 @@ Export-Package: kr.namoosori.naite.ri.plugin.core,
  kr.namoosori.naite.ri.plugin.core.util
 Bundle-ClassPath: .,
  lib/commons-io-2.0.jar,
- lib/commons-lang-2.6.jar
+ lib/commons-lang-2.6.jar,
+ lib/gson-2.2.4.jar

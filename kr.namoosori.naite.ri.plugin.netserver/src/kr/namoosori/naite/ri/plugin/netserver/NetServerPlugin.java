@@ -1,7 +1,5 @@
 package kr.namoosori.naite.ri.plugin.netserver;
 
-import kr.namoosori.naite.ri.plugin.netserver.main.NaiteNetServer;
-
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -30,7 +28,7 @@ public class NetServerPlugin extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		
-		NaiteNetServer.getInstance().start();
+		//NaiteNetServer.getInstance().start();
 	}
 
 	/*
@@ -38,7 +36,7 @@ public class NetServerPlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		NaiteNetServer.getInstance().stop();
+		//NaiteNetServer.getInstance().stop();
 		
 		plugin = null;
 		super.stop(context);

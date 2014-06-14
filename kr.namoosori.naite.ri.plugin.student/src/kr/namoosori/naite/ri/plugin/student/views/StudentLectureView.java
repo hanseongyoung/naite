@@ -205,7 +205,7 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		//
 		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 		try {
-			return service.getCurrentLecture();
+			return service.getCurrentLecture("");
 		} catch (NaiteException e) {
 			e.printStackTrace();
 		}

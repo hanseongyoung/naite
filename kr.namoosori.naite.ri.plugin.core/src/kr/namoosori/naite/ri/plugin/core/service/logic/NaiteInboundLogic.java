@@ -20,7 +20,7 @@ public class NaiteInboundLogic implements NaiteService {
 	private NaiteContents naiteContents = new NaiteContents();
 	
 	@Override
-	public Lecture getCurrentLecture() throws NaiteException {
+	public Lecture getCurrentLecture(String teacherEmail) throws NaiteException {
 		//
 		List<Lecture> lectures = findLectures();
 		if (lectures == null) {
@@ -100,7 +100,7 @@ public class NaiteInboundLogic implements NaiteService {
 	}
 
 	@Override
-	public void createLecture(String name) throws NaiteException {
+	public void createLecture(String name, String teacherEmail) throws NaiteException {
 		//
 		List<Lecture> exists = findLectures();
 		

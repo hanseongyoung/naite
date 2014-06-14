@@ -4,11 +4,8 @@ import java.net.URL;
 
 import kr.namoosori.naite.ri.plugin.core.project.NaiteWorkspace;
 import kr.namoosori.naite.ri.plugin.core.util.NaiteFileUtils;
-import kr.namoosori.naite.ri.plugin.core.util.NetworkUtils;
-import kr.namoosori.naite.ri.plugin.netclient.NetClientPlugin;
-import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
-import kr.namoosori.naite.ri.plugin.netserver.NetServerPlugin;
 import kr.namoosori.naite.ri.plugin.teacher.server.NaiteServer;
+import kr.namoosori.naite.ri.plugin.teacher.util.DialogSettingsUtils;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
@@ -43,6 +40,9 @@ public class TeacherPlugin extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		
+		setTeacherContext();
+		
+		/*
 		NaiteServer server = NaiteServer.getInstance();
 		server.setResourceBase(getTeacherWorkspace());
 		server.start();
@@ -53,8 +53,35 @@ public class TeacherPlugin extends AbstractUIPlugin {
 		NetClientPlugin.getDefault();
 		NaiteNetClient.getInstance().getContext().setClientId("teacher");
 		NaiteNetClient.getInstance().getContext().setServerIp(NetworkUtils.getHostAddress());
+		*/
 	}
 	
+	private static String DEFAULT_DOMAIN = "10.0.1.45";
+	private static int DEFAULT_PORT = 9000;
+	
+	private void setTeacherContext() {
+		//
+		String domain = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_TEACHER, DialogSettingsUtils.KEY_DOMAIN);
+		if (domain == null || domain.length() <= 0) {
+			domain = DEFAULT_DOMAIN;
+		}
+		TeacherContext.getInstance().setServerIp(domain);
+		
+		String port = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_TEACHER, DialogSettingsUtils.KEY_PORT);
+		if (port == null || port.length() <= 0) {
+			port = ""+DEFAULT_PORT;
+		}
+		TeacherContext.getInstance().setServerPort(parseInt(port));
+	}
+
+	private int parseInt(String str) {
+		try {
+			return Integer.parseInt(str);
+		} catch (Exception e) {
+		}
+		return 0;
+	}
+
 	private String getTeacherWorkspace() {
 		//
 		String workspacePath = NaiteWorkspace.getInstance().getRootLocation();
@@ -95,10 +122,12 @@ public class TeacherPlugin extends AbstractUIPlugin {
 	
 	public static final String IMG_HELP_TOPIC = "helpTopic"; //$NON-NLS-1$
 	public static final String IMG_USER = "user"; //$NON-NLS-1$
+	public static final String IMG_COG = "cog"; //$NON-NLS-1$
 	
 	protected void initializeImageRegistry(ImageRegistry registry) {
 		registerImage(registry, IMG_HELP_TOPIC, "help_topic.gif"); //$NON-NLS-1$
 		registerImage(registry, IMG_USER, "user.png"); //$NON-NLS-1$
+		registerImage(registry, IMG_COG, "cog.png"); //$NON-NLS-1$
 	}
 
 	private void registerImage(ImageRegistry registry, String key,

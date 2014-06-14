@@ -8,11 +8,11 @@ import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
-import kr.namoosori.naite.ri.plugin.netclient.facade.MessageSender;
-import kr.namoosori.naite.ri.plugin.netclient.facade.message.SendMessage;
-import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
+import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
+import kr.namoosori.naite.ri.plugin.netclient.facade.RefreshListener;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherContext;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherPlugin;
+import kr.namoosori.naite.ri.plugin.teacher.dialogs.TeacherInfoDialog;
 import kr.namoosori.naite.ri.plugin.teacher.dialogs.TeacherProjectUploadDialog;
 
 import org.eclipse.jface.action.Action;
@@ -45,7 +45,7 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.part.ViewPart;
 
-public class TeacherLectureView extends ViewPart {
+public class TeacherLectureView extends ViewPart implements RefreshListener {
 	//
 	public static final String ID = TeacherLectureView.class.getName();
 	
@@ -55,6 +55,27 @@ public class TeacherLectureView extends ViewPart {
 	public TeacherLectureView() {
 	}
 	
+	/**
+	 * 로그인 액션
+	 */
+	class LoginStatusAction extends Action {
+		public LoginStatusAction() {
+			setId("loginStatusAction");
+			setImageDescriptor(TeacherPlugin.getDefault().getImageRegistry().getDescriptor(TeacherPlugin.IMG_COG));
+			setToolTipText("설정");
+			setText("설정");
+		}
+
+		@Override
+		public void run() {
+			TeacherInfoDialog dialog = new TeacherInfoDialog(getSite().getShell());
+			dialog.open();
+		}
+	}
+	
+	/**
+	 * 강의 추가 액션
+	 */
 	class AddLectureAction extends Action {
 		//
 		public AddLectureAction() {
@@ -73,7 +94,7 @@ public class TeacherLectureView extends ViewPart {
 				String lectureTitle = dialog.getValue();
 				NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 				try {
-					service.createLecture(lectureTitle);
+					service.createLecture(lectureTitle, "hong@nextree.co.kr");
 					refresh();
 					refreshStudents();
 				} catch (NaiteException e) {
@@ -96,16 +117,22 @@ public class TeacherLectureView extends ViewPart {
 		// section
 		createBookSection(form);
 		createExampleSection(form);
+		
+		// event
+		EventManager.getInstance().addRefreshListener(this);
 	}
 	
 	public void refreshStudents() {
-		//
-		MessageSender sender = NaiteNetClient.getInstance().getMessageSender();
-		SendMessage sendMessage = new SendMessage();
-		sendMessage.setCommand("refresh");
-		sender.sendAll(NaiteNetClient.getInstance().getClientId(), sendMessage);
+		// TODO
+//		MessageSender sender = NaiteNetClient.getInstance().getMessageSender();
+//		SendMessage sendMessage = new SendMessage();
+//		sendMessage.setCommand("refresh");
+//		sender.sendAll(NaiteNetClient.getInstance().getClientId(), sendMessage);
 	}
 
+	/**
+	 * @see kr.namoosori.naite.ri.plugin.netclient.facade.RefreshListener#refresh()
+	 */
 	public void refresh() {
 		//
 		TeacherContext.CURRENT_LECTURE = getCurrentLecture();
@@ -152,6 +179,7 @@ public class TeacherLectureView extends ViewPart {
 		toolkit.decorateFormHeading(form.getForm());
 		
 		ToolBarManager toolbarManager = (ToolBarManager) form.getToolBarManager();
+		toolbarManager.add(new LoginStatusAction());
 		toolbarManager.add(new AddLectureAction());
 		toolbarManager.update(true);
 	}
@@ -160,7 +188,7 @@ public class TeacherLectureView extends ViewPart {
 		//
 		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 		try {
-			return service.getCurrentLecture();
+			return service.getCurrentLecture("hong@nextree.co.kr");
 		} catch (NaiteException e) {
 			e.printStackTrace();
 		}
@@ -191,6 +219,8 @@ public class TeacherLectureView extends ViewPart {
 		ToolBar toolbar = new ToolBar(section, SWT.FLAT | SWT.HORIZONTAL);
 		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
 		toolbar.setCursor(handCursor);
+		
+		//
 		ToolItem item = new ToolItem(toolbar, SWT.PUSH);
 		item.setToolTipText("강의교재 등록");
 		item.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_HELP_TOPIC));
@@ -412,6 +442,8 @@ public class TeacherLectureView extends ViewPart {
 	@Override
 	public void dispose() {
 		//
+		EventManager.getInstance().removeRefreshListener(this);
+		
 		if (toolkit != null) {
 			toolkit.dispose();
 		}

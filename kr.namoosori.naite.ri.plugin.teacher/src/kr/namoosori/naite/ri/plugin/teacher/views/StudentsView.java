@@ -9,6 +9,7 @@ import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Student;
 import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.facade.MessageListener;
+import kr.namoosori.naite.ri.plugin.netclient.facade.RefreshListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.message.ClientMessage;
 import kr.namoosori.naite.ri.plugin.netserver.facade.ServerEventListener;
 import kr.namoosori.naite.ri.plugin.netserver.main.NaiteNetServer;
@@ -36,7 +37,7 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.part.ViewPart;
 
-public class StudentsView extends ViewPart implements MessageListener, ServerEventListener {
+public class StudentsView extends ViewPart implements MessageListener, ServerEventListener, RefreshListener {
 	//
 	public static final String ID = StudentsView.class.getName();
 	
@@ -47,6 +48,7 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 	public void createPartControl(Composite parent) {
 		//
 		EventManager.getInstance().addMessageListener(this);
+		EventManager.getInstance().addRefreshListener(this);
 		NaiteNetServer.getInstance().addServerEventListener(this);
 		toolkit = new FormToolkit(getSite().getShell().getDisplay());
 		
@@ -160,13 +162,22 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 		return composite;
 	}
 	
+	/**
+	 * @see kr.namoosori.naite.ri.plugin.netclient.facade.RefreshListener#refresh()
+	 */
+	public void refresh() {
+		//
+		refreshStudentViewer();
+	}
+	
 	private void refreshStudentViewer() {
 		//
+		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+		
 		if (TeacherContext.CURRENT_LECTURE == null) {
 			return;
 		}
 		
-		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 		String lectureId = TeacherContext.CURRENT_LECTURE.getId(); 
 		try {
 			this.students = service.findStudents(lectureId);
@@ -284,6 +295,7 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 		//
 		NaiteNetServer.getInstance().removeServerEventListener(this);
 		EventManager.getInstance().removeMessageListener(this);
+		EventManager.getInstance().removeRefreshListener(this);
 		super.dispose();
 	}
 

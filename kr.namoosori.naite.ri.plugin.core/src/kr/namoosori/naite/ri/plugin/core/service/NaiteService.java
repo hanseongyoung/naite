@@ -10,8 +10,8 @@ import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
 
 public interface NaiteService {
 	//
-	public Lecture getCurrentLecture() throws NaiteException;
-	public void createLecture(String name) throws NaiteException;
+	public Lecture getCurrentLecture(String teacherEmail) throws NaiteException;
+	public void createLecture(String name, String teacherEmail) throws NaiteException;
 	public Student getCurrentStudent(String studentEmail) throws NaiteException;
 	public List<Student> findStudents(String lectureId) throws NaiteException;
 	public void createStudent(String lectureId, Student student) throws NaiteException;

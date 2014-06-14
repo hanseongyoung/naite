@@ -64,6 +64,16 @@ public class NaiteContents {
 		return contentsString;
 	}
 	
+	public String getContentsJson(String uri) throws NaiteException {
+		//
+		String serverUrl = CoreContext.getInstance().getServerUrl();
+		//byte[] contentsArray = getHttpContentsArray(serverUrl + uri);
+		//String contentsString = new String(contentsArray);
+		String contentsString = getHttpContentsString(serverUrl + uri);
+		System.out.println(uri+" --> "+contentsString);
+		return contentsString;
+	}
+	
 	public void doPost(String uri, Map<String, String> params) throws NaiteException {
 		//
 		String serverUrl = CoreContext.getInstance().getServerUrl();

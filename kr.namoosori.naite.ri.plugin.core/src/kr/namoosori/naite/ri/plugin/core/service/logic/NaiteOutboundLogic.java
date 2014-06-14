@@ -1,7 +1,10 @@
 package kr.namoosori.naite.ri.plugin.core.service.logic;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import kr.namoosori.naite.ri.plugin.core.contents.NaiteContents;
 import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
@@ -10,18 +13,30 @@ import kr.namoosori.naite.ri.plugin.core.service.domain.Student;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
 
 public class NaiteOutboundLogic implements NaiteService {
+	//
+	private NaiteContents naiteContents = new NaiteContents();
 
 	@Override
-	public Lecture getCurrentLecture() throws NaiteException {
-		// TODO Auto-generated method stub
-		System.out.println("[Outbound] getCurrentLecture");
-		return null;
+	public Lecture getCurrentLecture(String teacherEmail) throws NaiteException {
+		//
+		String currentJson = naiteContents.getContentsJson("currentlecture/"+teacherEmail);
+		Lecture current = Lecture.createDomainByJson(currentJson);
+		if (current == null) {
+			return null;
+		}
+		
+		String json = naiteContents.getContentsJson("lectures/"+current.getId());
+		Lecture lecture = Lecture.createDomainByJson(json);
+		return lecture;
 	}
 
 	@Override
-	public void createLecture(String name) throws NaiteException {
-		// TODO Auto-generated method stub
-		System.out.println("[Outbound] createLecture");
+	public void createLecture(String name, String teacherEmail) throws NaiteException {
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("name", name);
+		params.put("current", "true");
+		params.put("teacherEmail", teacherEmail);
+		naiteContents.doPost("lectures", params);
 	}
 
 	@Override
@@ -33,9 +48,10 @@ public class NaiteOutboundLogic implements NaiteService {
 
 	@Override
 	public List<Student> findStudents(String lectureId) throws NaiteException {
-		// TODO Auto-generated method stub
 		System.out.println("[Outbound] findStudents");
-		return null;
+		String str = naiteContents.getContentsJson("students");
+		List<Student> students = Student.createDomainsByJson(str);
+		return students;
 	}
 
 	@Override

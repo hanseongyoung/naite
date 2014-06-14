@@ -3,6 +3,8 @@ package kr.namoosori.naite.ri.plugin.core.service.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.Gson;
+
 public class Lecture {
 	//
 	private String id;
@@ -80,6 +82,12 @@ public class Lecture {
 			}
 		}
 		return lectures;
+	}
+	
+	public static Lecture createDomainByJson(String json) {
+		//
+		Gson gson = new Gson();
+		return gson.fromJson(json, Lecture.class);
 	}
 	
 	private static Lecture createDomain(String line) {
