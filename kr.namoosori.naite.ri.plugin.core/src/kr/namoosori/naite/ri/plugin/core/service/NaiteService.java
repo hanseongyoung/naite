@@ -16,6 +16,7 @@ public interface NaiteService {
 	public void createNaiteUser(String name, String email, String password) throws NaiteException;
 	
 	public Lecture getCurrentLecture(String teacherEmail) throws NaiteException;
+	public Lecture getCurrentLectureOfStudent(String studentEmail) throws NaiteException;
 	public void createLecture(String name, String teacherEmail) throws NaiteException;
 	public Student getCurrentStudent(String studentEmail) throws NaiteException;
 	public List<Student> findStudents(String lectureId) throws NaiteException;

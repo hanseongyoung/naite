@@ -10,6 +10,7 @@ import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
 import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.facade.MessageListener;
+import kr.namoosori.naite.ri.plugin.netclient.facade.RefreshListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.ServerStateListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.message.ClientMessage;
 import kr.namoosori.naite.ri.plugin.netclient.main.NaiteWSClient;
@@ -18,10 +19,11 @@ import kr.namoosori.naite.ri.plugin.student.StudentPlugin;
 import kr.namoosori.naite.ri.plugin.student.dialogs.StudentInfoDialog;
 import kr.namoosori.naite.ri.plugin.student.login.LoginListener;
 import kr.namoosori.naite.ri.plugin.student.login.LoginManager;
+import kr.namoosori.naite.ri.plugin.student.util.DialogSettingsUtils;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -40,7 +42,7 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.part.ViewPart;
 
-public class StudentLectureView extends ViewPart implements LoginListener, ServerStateListener, MessageListener {
+public class StudentLectureView extends ViewPart implements LoginListener, ServerStateListener, MessageListener, RefreshListener {
 	//
 	// TODO : 프로젝트를 설치할 때 자신의 아이디가 포함됨.
 	// TODO : 프로젝트를 제출할 때 자신의 아이디 및 날짜버전으로 제출됨.
@@ -56,9 +58,9 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 	class LoginStatusAction extends Action {
 		public LoginStatusAction() {
 			setId("loginStatusAction");
-			setImageDescriptor(StudentPlugin.getDefault().getImageRegistry().getDescriptor(StudentPlugin.IMG_HELP_TOPIC));
-			setToolTipText("로그인");
-			setText("로그인");
+			setImageDescriptor(StudentPlugin.getDefault().getImageRegistry().getDescriptor(StudentPlugin.IMG_COG));
+			setToolTipText("설정");
+			setText("설정");
 		}
 
 		@Override
@@ -125,23 +127,32 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		//
 		toolkit = new FormToolkit(getSite().getShell().getDisplay());
 		
-		createForm(parent, "강사가 준비중입니다.");
+		createForm(parent, "로그인하세요.");
 		
+		/*
 		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
 		ActionContributionItem item = new ActionContributionItem(new LoginStatusAction());
 		item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
 		manager.add(item);
 		manager.update(true);
+		*/
 		
+		// event
 		loginManager.addLoginListener(this);
 		EventManager.getInstance().addServerStateListener(this);
 		EventManager.getInstance().addMessageListener(this);
+		EventManager.getInstance().addRefreshListener(this);
 		
-		NaiteWSClient.getInstance().start();
-		NaiteWSClient.getInstance().send();
+		// TODO
+		//NaiteWSClient.getInstance().start();
+		//NaiteWSClient.getInstance().send();
+		if (getStudentEmail() != null) {
+			refresh();
+		}
 	}
 	
-	private void refresh() {
+	@Override
+	public void refresh() {
 		//
 		StudentContext.CURRENT_LECTURE = getCurrentLecture();
 		
@@ -199,19 +210,30 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		form.getBody().setLayout(layout);
 		form.setText(formTitle);
 		toolkit.decorateFormHeading(form.getForm());
+		
+		ToolBarManager toolbarManager = (ToolBarManager) form.getToolBarManager();
+		toolbarManager.add(new LoginStatusAction());
+		toolbarManager.update(true);
 	}
 
 	private Lecture getCurrentLecture() {
 		//
 		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 		try {
-			return service.getCurrentLecture("");
+			return service.getCurrentLectureOfStudent(getStudentEmail());
 		} catch (NaiteException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 	
+	
+	private String getStudentEmail() {
+		String studentEmail = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_EMAIL);
+		return studentEmail;
+	}
+
+
 	private Section bookSection;
 
 	private void createBookSection(ScrolledForm parentForm) {
@@ -335,6 +357,7 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 	@Override
 	public void dispose() {
 		//
+		EventManager.getInstance().removeRefreshListener(this);
 		EventManager.getInstance().removeMessageListener(this);
 		EventManager.getInstance().removeServerStateListener(this);
 		loginManager.removeLoginListener(this);
@@ -342,7 +365,7 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 			toolkit.dispose();
 		}
 		
-		NaiteWSClient.getInstance().stop();
+		//NaiteWSClient.getInstance().stop();
 		
 		super.dispose();
 	}

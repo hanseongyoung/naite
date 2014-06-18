@@ -6,6 +6,14 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 
 public class DialogSettingsUtils {
 	//
+	public static final String SECTION_STUDENT = "student";
+	
+	public static final String KEY_DOMAIN = "domain";
+	public static final String KEY_PORT = "port";
+	public static final String KEY_NAME = "name";
+	public static final String KEY_EMAIL = "email";
+	public static final String KEY_PASS = "pass";
+	
 	public static void put(String sectionName, String key, String value) {
 		//
 		IDialogSettings section = getSection(sectionName);

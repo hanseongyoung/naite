@@ -56,20 +56,17 @@ public class TeacherPlugin extends AbstractUIPlugin {
 		*/
 	}
 	
-	private static String DEFAULT_DOMAIN = "10.0.1.45";
-	private static int DEFAULT_PORT = 9000;
-	
 	private void setTeacherContext() {
 		//
 		String domain = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_TEACHER, DialogSettingsUtils.KEY_DOMAIN);
 		if (domain == null || domain.length() <= 0) {
-			domain = DEFAULT_DOMAIN;
+			domain = TeacherContext.DEFAULT_DOMAIN;
 		}
 		TeacherContext.getInstance().setServerIp(domain);
 		
 		String port = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_TEACHER, DialogSettingsUtils.KEY_PORT);
 		if (port == null || port.length() <= 0) {
-			port = ""+DEFAULT_PORT;
+			port = ""+TeacherContext.DEFAULT_PORT;
 		}
 		TeacherContext.getInstance().setServerPort(parseInt(port));
 	}

@@ -101,6 +101,8 @@ public class TeacherInfoDialog extends TitleAreaDialog {
 	
 	private void clear() {
 		//
+		domainText.setText(TeacherContext.DEFAULT_DOMAIN);
+		domainPortText.setText(""+TeacherContext.DEFAULT_PORT);
 		nameText.setText("");
 		mailText.setText("");
 		passText.setText("");

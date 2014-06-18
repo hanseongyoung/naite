@@ -5,6 +5,9 @@ import kr.namoosori.naite.ri.plugin.core.util.NetworkUtils;
 
 public class TeacherContext extends CoreContext {
 	//
+	public static final String DEFAULT_DOMAIN = "playapp-syhan.rhcloud.com";
+	public static final int DEFAULT_PORT = 80;
+	
 	private String serverIp;
 	private int serverPort;
 	

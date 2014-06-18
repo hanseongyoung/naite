@@ -324,6 +324,13 @@ public class NaiteInboundLogic implements NaiteService {
 		
 	}
 
+	@Override
+	public Lecture getCurrentLectureOfStudent(String studentEmail)
+			throws NaiteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	//--------------------------------------------------------------------------
 
 }

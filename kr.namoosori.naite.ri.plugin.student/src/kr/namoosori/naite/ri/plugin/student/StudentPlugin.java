@@ -2,8 +2,6 @@ package kr.namoosori.naite.ri.plugin.student;
 
 import java.net.URL;
 
-import kr.namoosori.naite.ri.plugin.netclient.NetClientPlugin;
-import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.facade.ServerStateListener;
 import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
 import kr.namoosori.naite.ri.plugin.student.login.LoginObserver;
@@ -42,16 +40,41 @@ public class StudentPlugin extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		
+		setStudentContext();
+		/*
 		StudentContext.init();
-		
 		NetClientPlugin.getDefault();
-		
 		EventManager.getInstance().addServerStateListener(serverStateListener);
-		
 		String email = DialogSettingsUtils.get("student", "email");
 		NaiteNetClient.getInstance().getContext().setClientId(email);
+		LoginObserver.getInstance().startObserve();
+		*/
+	}
+	
+	private static String DEFAULT_DOMAIN = "10.0.1.45";
+	private static int DEFAULT_PORT = 9000;
+	
+	private void setStudentContext() {
+		//
+		String domain = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_DOMAIN);
+		if (domain == null || domain.length() <= 0) {
+			domain = DEFAULT_DOMAIN;
+		}
+		StudentContext.getInstance().setServerIp(domain);
 		
-		//LoginObserver.getInstance().startObserve();
+		String port = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_PORT);
+		if (port == null || port.length() <= 0) {
+			port = ""+DEFAULT_PORT;
+		}
+		StudentContext.getInstance().setServerPort(parseInt(port));
+	}
+	
+	private int parseInt(String str) {
+		try {
+			return Integer.parseInt(str);
+		} catch (Exception e) {
+		}
+		return 0;
 	}
 	
 	ServerStateListener serverStateListener = new ServerStateListener() {
@@ -119,9 +142,11 @@ public class StudentPlugin extends AbstractUIPlugin {
 	}
 	
 	public static final String IMG_HELP_TOPIC = "helpTopic"; //$NON-NLS-1$
+	public static final String IMG_COG = "cog"; //$NON-NLS-1$
 	
 	protected void initializeImageRegistry(ImageRegistry registry) {
 		registerImage(registry, IMG_HELP_TOPIC, "help_topic.gif"); //$NON-NLS-1$
+		registerImage(registry, IMG_COG, "cog.png"); //$NON-NLS-1$
 	}
 
 	private void registerImage(ImageRegistry registry, String key,

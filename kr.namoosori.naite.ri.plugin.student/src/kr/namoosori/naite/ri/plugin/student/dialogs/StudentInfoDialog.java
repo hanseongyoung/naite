@@ -1,7 +1,8 @@
 package kr.namoosori.naite.ri.plugin.student.dialogs;
 
+import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
-import kr.namoosori.naite.ri.plugin.student.login.LoginObserver;
+import kr.namoosori.naite.ri.plugin.student.StudentContext;
 import kr.namoosori.naite.ri.plugin.student.util.DialogSettingsUtils;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -20,11 +21,8 @@ import org.eclipse.swt.widgets.Text;
 
 public class StudentInfoDialog extends TitleAreaDialog {
 	//
-	private static final String SECTION_STUDENT = "student";
-	private static final String KEY_NAME = "name";
-	private static final String KEY_EMAIL = "email";
-	private static final String KEY_PASS = "pass";
-	
+	private Text domainText;
+	private Text domainPortText;
 	private Text nameText;
 	private Text mailText;
 	private Text passText;
@@ -36,8 +34,8 @@ public class StudentInfoDialog extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		setTitle("수강생 정보");
-		setMessage("수강생 정보를 입력합니다.");
+		setTitle("설정");
+		setMessage("컨텐츠 서버 접속에 필요한 정보를 입력합니다.");
 		Composite composite = (Composite) super.createDialogArea(parent);
 		createForm(composite);
 		return composite;
@@ -46,30 +44,46 @@ public class StudentInfoDialog extends TitleAreaDialog {
 	private void createForm(Composite parent) {
 		//
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(2, false));
+		composite.setLayout(new GridLayout(4, false));
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		Label domainLabel = new Label(composite, SWT.RIGHT);
+		domainLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+		domainLabel.setText("도메인");
+		
+		domainText = new Text(composite, SWT.BORDER | SWT.SINGLE);
+		domainText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		
+		Label domainPortLabel = new Label(composite, SWT.RIGHT);
+		domainPortLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+		domainPortLabel.setText("포트");
+		
+		domainPortText = new Text(composite, SWT.BORDER | SWT.SINGLE);
+		domainPortText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		
 		Label nameLabel = new Label(composite, SWT.RIGHT);
 		nameLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
 		nameLabel.setText("이름");
 		
 		nameText = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		nameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		nameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		
 		Label mailLabel = new Label(composite, SWT.RIGHT);
 		mailLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
 		mailLabel.setText("이메일");
 		
 		mailText = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		mailText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		mailText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		
 		Label passLabel = new Label(composite, SWT.RIGHT);
 		passLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
 		passLabel.setText("비밀번호");
 		
 		passText = new Text(composite, SWT.BORDER | SWT.SINGLE | SWT.PASSWORD);
-		passText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		passText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
 		
 		initButton = new Button(composite, SWT.FLAT);
@@ -87,6 +101,8 @@ public class StudentInfoDialog extends TitleAreaDialog {
 	
 	private void clear() {
 		//
+		domainText.setText(StudentContext.DEFAULT_DOMAIN);
+		domainPortText.setText(""+StudentContext.DEFAULT_PORT);
 		nameText.setText("");
 		mailText.setText("");
 		passText.setText("");
@@ -95,9 +111,13 @@ public class StudentInfoDialog extends TitleAreaDialog {
 	
 	private void initControl() {
 		//
-		String name = DialogSettingsUtils.get(SECTION_STUDENT, KEY_NAME);
-		String email = DialogSettingsUtils.get(SECTION_STUDENT, KEY_EMAIL);
-		String pass = DialogSettingsUtils.get(SECTION_STUDENT, KEY_PASS);
+		String domain = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_DOMAIN);
+		String port = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_PORT);
+		String name = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_NAME);
+		String email = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_EMAIL);
+		String pass = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_PASS);
+		domainText.setText(domain != null ? domain : StudentContext.getInstance().getServerIp());
+		domainPortText.setText(port != null ? port : "" + StudentContext.getInstance().getServerPort());
 		nameText.setText(name != null ? name : "");
 		mailText.setText(email != null ? email : "");
 		passText.setText(pass != null ? pass : "");
@@ -130,25 +150,44 @@ public class StudentInfoDialog extends TitleAreaDialog {
 	
 	private void saveData() {
 		//
-		DialogSettingsUtils.put(SECTION_STUDENT, KEY_NAME, nameText.getText());
-		DialogSettingsUtils.put(SECTION_STUDENT, KEY_EMAIL, mailText.getText());
-		DialogSettingsUtils.put(SECTION_STUDENT, KEY_PASS, passText.getText());
+		DialogSettingsUtils.put(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_DOMAIN, domainText.getText());
+		DialogSettingsUtils.put(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_PORT, domainPortText.getText());
+		DialogSettingsUtils.put(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_NAME, nameText.getText());
+		DialogSettingsUtils.put(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_EMAIL, mailText.getText());
+		DialogSettingsUtils.put(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_PASS, passText.getText());
 	}
 
 	@Override
 	protected void okPressed() {
 		//
+		System.out.println("okPressed");
 		if (!checkControl()) return;
 		saveData();
 		setContextData();
+		EventManager.getInstance().invokeRefreshEvent();
 		super.okPressed();
 	}
 
 	private void setContextData() {
 		//
-		String email = DialogSettingsUtils.get("student", "email");
+		String domain = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_DOMAIN);
+		StudentContext.getInstance().setServerIp(domain);
+		
+		String port = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_PORT);
+		StudentContext.getInstance().setServerPort(parseInt(port));
+		
+		String email = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_EMAIL);
 		NaiteNetClient.getInstance().getContext().setClientId(email);
-		LoginObserver.getInstance().setAlreadySendToTeacher(false);
+		//LoginObserver.getInstance().setAlreadySendToTeacher(false);
+	}
+	
+	private int parseInt(String str) {
+		//
+		try {
+			return Integer.parseInt(str);
+		} catch (Exception e) {
+		}
+		return 0;
 	}
 
 }

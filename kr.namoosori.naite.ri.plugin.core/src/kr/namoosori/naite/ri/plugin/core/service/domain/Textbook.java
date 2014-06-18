@@ -37,6 +37,13 @@ public class Textbook {
 	public void setStandardTextbookId(String standardTextbookId) {
 		this.standardTextbookId = standardTextbookId;
 	}
+
+	public String getLectureId() {
+		//
+		if (lecture == null) return null;
+		return lecture.getId();
+	}
+	
 	public static List<Textbook> createDomains(String str) {
 		//
 		if (str == null || str.length() <= 0) {
@@ -81,4 +88,5 @@ public class Textbook {
 		id++;
 		return String.valueOf(id);
 	}
+	
 }

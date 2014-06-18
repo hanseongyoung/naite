@@ -35,6 +35,20 @@ public class NaiteOutboundLogic implements NaiteService {
 		Lecture lecture = Lecture.createDomainByJson(json);
 		return lecture;
 	}
+	
+	@Override
+	public Lecture getCurrentLectureOfStudent(String studentEmail) throws NaiteException {
+		//
+		String currentJson = naiteContents.getContentsJson("currentlecture/students/"+studentEmail);
+		Lecture current = Lecture.createDomainByJson(currentJson);
+		if (current == null) {
+			return null;
+		}
+		
+		String json = naiteContents.getContentsJson("lectures/"+current.getId());
+		Lecture lecture = Lecture.createDomainByJson(json);
+		return lecture;
+	}
 
 	@Override
 	public void createLecture(String name, String teacherEmail) throws NaiteException {
@@ -73,15 +87,17 @@ public class NaiteOutboundLogic implements NaiteService {
 
 	@Override
 	public void deleteTextbook(Textbook textbook) throws NaiteException {
-		// TODO Auto-generated method stub
-		System.out.println("[TODO][Outbound] deleteTextbook");
+		String lectureId = textbook.getLectureId();
+		String textbookId = textbook.getId();
+		naiteContents.doPost("lectures/" + lectureId + "/textbooks/" + textbookId + "/delete", new HashMap<String, String>());
 	}
 
 	@Override
 	public void deleteExerciseProject(ExerciseProject project)
 			throws NaiteException {
-		// TODO Auto-generated method stub
-		System.out.println("[TODO][Outbound] deleteExerciseProject");
+		String lectureId = project.getLectureId();
+		String projectId = project.getId();
+		naiteContents.doPost("lectures/" + lectureId + "/exerciseprojects/" + projectId + "/delete", new HashMap<String, String>());
 	}
 
 	@Override
