@@ -46,7 +46,8 @@ public class LoginManager {
 		NaiteService service = NaiteServiceFactory.getInstance()
 				.getNaiteService();
 		try {
-			Student student = service.getCurrentStudent(studentEmail);
+			String lectureId = ""; // TODO
+			Student student = service.getCurrentStudent(lectureId, studentEmail);
 			if (student != null) {
 				if (student.getPassword().equals(studentPass)) {
 					logined = true;

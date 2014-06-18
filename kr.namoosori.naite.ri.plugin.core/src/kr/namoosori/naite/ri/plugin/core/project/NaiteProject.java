@@ -10,6 +10,7 @@ import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
+import kr.namoosori.naite.ri.plugin.core.service.domain.StudentProject;
 import kr.namoosori.naite.ri.plugin.core.util.ZipUtils;
 
 import org.apache.commons.io.FileUtils;
@@ -55,11 +56,21 @@ public class NaiteProject {
 	
 	public void create() throws NaiteException {
 		//
+		checkCreated();
 		String serverPath = "lectures/" + exerciseProject.getLectureId() + "/exerciseprojects/";
 		createProjectContents(serverPath);
 		createProject();
 	}
 	
+	// Workspace에 프로젝트가 이미 생성되었는지 체크 
+	private void checkCreated() throws NaiteException {
+		File workspaceDir = NaiteWorkspace.getInstance().getRootLocationAsFile();
+		File targetDir = new File(workspaceDir, project.getName());
+		if (targetDir.exists()) {
+			throw new NaiteException("프로젝트가 이미 존재합니다.");
+		}
+	}
+
 	public void export() throws NaiteException {
 		//
 		//String serverPath = "lectures/" + exerciseProject.getLectureId() + "/projects/";
@@ -67,6 +78,29 @@ public class NaiteProject {
 		
 		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 		service.createExerciseProject(packedFilePathName, project.getName(), exerciseProject.getLectureId());
+	}
+	
+	public void createAndExportToStudent() throws NaiteException {
+		//
+		//checkCreated();
+		
+		if (!(exerciseProject instanceof StudentProject)) {
+			System.out.println("[NaiteProject.createAndExportToStudent] 올바르지 않은 요청임.");
+			return;
+		}
+		
+		StudentProject studentProject = (StudentProject) exerciseProject;
+		
+		// create from lecture exercise
+		String serverPath = "lectures/" + studentProject.getLectureId() + "/exerciseprojects/";
+		createProjectContents(serverPath);
+		createProject();
+		
+		// export to student
+		String packedFilePathName = packProjectContents();
+		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+		service.createStudentProject(packedFilePathName, project.getName(), studentProject.getLectureId(), 
+				studentProject.getStudentId(), studentProject.getExerciseProjectId());
 	}
 
 	private void createProject() throws NaiteException {

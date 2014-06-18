@@ -18,7 +18,7 @@ public interface NaiteService {
 	public Lecture getCurrentLecture(String teacherEmail) throws NaiteException;
 	public Lecture getCurrentLectureOfStudent(String studentEmail) throws NaiteException;
 	public void createLecture(String name, String teacherEmail) throws NaiteException;
-	public Student getCurrentStudent(String studentEmail) throws NaiteException;
+	public Student getCurrentStudent(String lectureId, String studentEmail) throws NaiteException;
 	public List<Student> findStudents(String lectureId) throws NaiteException;
 	public void createStudent(String lectureId, Student student) throws NaiteException;
 	
@@ -45,6 +45,10 @@ public interface NaiteService {
 	
 	public void createStandardProject(String projectFilePathName, String projectName) throws NaiteException;
 	public void createStandardTextbook(String textbookFilePathName) throws NaiteException;
+	
+	public void createStudentProject(String projectFilePathName,
+			String projectName, String lectureId, String studentId, 
+			String exerciseProjectId) throws NaiteException;
 
 	// -------------------------------------------------------------------------
 	/**

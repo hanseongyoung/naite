@@ -14,7 +14,7 @@ public class Student {
 	private String name;
 	private String password;
 	
-	private List<ExerciseProject> exerciseProjects;
+	private List<StudentProject> studentProjects;
 	
 	// UI Setting
 	private boolean logined;
@@ -45,11 +45,11 @@ public class Student {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public List<ExerciseProject> getExerciseProjects() {
-		return exerciseProjects;
+	public List<StudentProject> getStudentProjects() {
+		return studentProjects;
 	}
-	public void setExerciseProjects(List<ExerciseProject> exerciseProjects) {
-		this.exerciseProjects = exerciseProjects;
+	public void setStudentProjects(List<StudentProject> studentProjects) {
+		this.studentProjects = studentProjects;
 	}
 	public Lecture getLecture() {
 		return lecture;
@@ -62,6 +62,13 @@ public class Student {
 	}
 	public void setLogined(boolean logined) {
 		this.logined = logined;
+	}
+	
+	public String getNickname() {
+		if (this.email == null || this.email.length() <= 0) {
+			return null;
+		}
+		return this.email.split("@")[0];
 	}
 	
 	public static String createId(List<Student> exists) {
@@ -100,6 +107,11 @@ public class Student {
         	}.getType();
         List<Student> students = new Gson().fromJson(jsonStr, listType);
 		return students;
+	}
+	
+	public static Student createDomainByJson(String jsonStr) {
+		Gson gson = new Gson();
+		return gson.fromJson(jsonStr, Student.class);
 	}
 	
 	private static Student createDomain(String line) {

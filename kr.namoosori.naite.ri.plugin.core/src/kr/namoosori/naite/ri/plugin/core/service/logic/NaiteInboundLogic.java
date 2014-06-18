@@ -59,7 +59,7 @@ public class NaiteInboundLogic implements NaiteService {
 	}
 	
 	@Override
-	public Student getCurrentStudent(String studentEmail) throws NaiteException {
+	public Student getCurrentStudent(String lectureId, String studentEmail) throws NaiteException {
 		//
 		List<Lecture> lectures = findLectures();
 		if (lectures == null) {
@@ -329,6 +329,14 @@ public class NaiteInboundLogic implements NaiteService {
 			throws NaiteException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void createStudentProject(String projectFilePathName,
+			String projectName, String lectureId, String studentId,
+			String exerciseProjectId) throws NaiteException {
+		// TODO Auto-generated method stub
+		
 	}
 
 	//--------------------------------------------------------------------------

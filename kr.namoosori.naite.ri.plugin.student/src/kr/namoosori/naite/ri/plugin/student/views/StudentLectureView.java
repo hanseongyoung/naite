@@ -7,13 +7,14 @@ import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
+import kr.namoosori.naite.ri.plugin.core.service.domain.Student;
+import kr.namoosori.naite.ri.plugin.core.service.domain.StudentProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
 import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.facade.MessageListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.RefreshListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.ServerStateListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.message.ClientMessage;
-import kr.namoosori.naite.ri.plugin.netclient.main.NaiteWSClient;
 import kr.namoosori.naite.ri.plugin.student.StudentContext;
 import kr.namoosori.naite.ri.plugin.student.StudentPlugin;
 import kr.namoosori.naite.ri.plugin.student.dialogs.StudentInfoDialog;
@@ -24,6 +25,7 @@ import kr.namoosori.naite.ri.plugin.student.util.DialogSettingsUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -151,6 +153,18 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		}
 	}
 	
+	private Student findCurrentStudent(String studentEmail) {
+		//
+		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+		Student student = null;
+		try {
+			student = service.getCurrentStudent(StudentContext.CURRENT_LECTURE.getId(), studentEmail);
+		} catch (NaiteException e) {
+			e.printStackTrace();
+		}
+		return student;
+	}
+
 	@Override
 	public void refresh() {
 		//
@@ -318,9 +332,11 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		//
 		Composite composite = toolkit.createComposite(section);
 		composite.setLayout(new GridLayout(2, false));
+		Student currentStudent = findCurrentStudent(getStudentEmail());
 		
 		for (ExerciseProject exerciseProject : StudentContext.CURRENT_LECTURE.getExerciseProjects()) {
-			createExerciseProjectLink(composite, new NaiteProject(exerciseProject));
+			StudentProject studentProject = exerciseProject.newStudentProject(currentStudent);
+			createExerciseProjectLink(composite, new NaiteProject(studentProject));
 		}
 		
 		return composite;
@@ -340,9 +356,10 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 			public void linkActivated(HyperlinkEvent e) {
 				//
 				try {
-					project.create();
+					project.createAndExportToStudent();
 				} catch (NaiteException e1) {
 					e1.printStackTrace();
+					MessageDialog.openWarning(getSite().getShell(), "실습예제 설치", e1.getMessage());
 				}
 			}
 		});

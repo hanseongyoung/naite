@@ -60,10 +60,9 @@ public class NaiteOutboundLogic implements NaiteService {
 	}
 
 	@Override
-	public Student getCurrentStudent(String studentEmail) throws NaiteException {
-		// TODO Auto-generated method stub
-		System.out.println("[Outbound] getCurrentStudent");
-		return null;
+	public Student getCurrentStudent(String lectureId, String studentEmail) throws NaiteException {
+		String jsonStr = naiteContents.getContentsJson("lectures/"+lectureId + "/students/"+studentEmail);
+		return Student.createDomainByJson(jsonStr);
 	}
 
 	@Override
@@ -181,6 +180,25 @@ public class NaiteOutboundLogic implements NaiteService {
 		fileParams.put("file", new File(projectFilePathName));
 		
 		naiteContents.doMultipartPost("lectures/" + lectureId + "/exerciseprojects", params, fileParams);
+	}
+	
+	@Override
+	public void createStudentProject(String projectFilePathName,
+			String projectName, String lectureId, String studentId, 
+			String exerciseProjectId) throws NaiteException {
+		String fileName = StringUtils.substringAfterLast(projectFilePathName, "\\");
+		
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("fileName", fileName);
+		params.put("projectName", projectName);
+		params.put("lectureId", lectureId);
+		params.put("studentId", studentId);
+		params.put("exerciseProjectId", exerciseProjectId);
+		
+		Map<String, File> fileParams = new HashMap<String, File>();
+		fileParams.put("file", new File(projectFilePathName));
+		
+		naiteContents.doMultipartPost("lectures/" + lectureId + "/students/" +studentId + "/projects", params, fileParams);
 	}
 	
 	@Override

@@ -7,6 +7,7 @@ import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Student;
+import kr.namoosori.naite.ri.plugin.core.service.domain.StudentProject;
 import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.facade.MessageListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.RefreshListener;
@@ -136,6 +137,8 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 					if (student.getId() == null || student.getId().length() <= 0) {
 						registerButton.setEnabled(true);
 						return;
+					} else {
+						refreshStudentDetailViewer(student.getEmail());
 					}
 				}
 				registerButton.setEnabled(false);
@@ -250,7 +253,7 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 		emailColumn.setWidth(200);
 		
 		studentDetailViewer.setContentProvider(new ArrayContentProvider());
-		studentDetailViewer.setLabelProvider(new StudentTableLabelProvider());
+		studentDetailViewer.setLabelProvider(new StudentDetailTableLabelProvider());
 		studentDetailViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -258,6 +261,19 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 		});
 
 		return composite;
+	}
+	
+	private void refreshStudentDetailViewer(String studentEmail) {
+		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+		Student student = null;
+		try {
+			student = service.getCurrentStudent(TeacherContext.CURRENT_LECTURE.getId(), studentEmail);
+		} catch (NaiteException e) {
+			e.printStackTrace();
+			return;
+		}
+		List<StudentProject> studentProjects = student.getStudentProjects();
+		studentDetailViewer.setInput(studentProjects);
 	}
 
 	@Override

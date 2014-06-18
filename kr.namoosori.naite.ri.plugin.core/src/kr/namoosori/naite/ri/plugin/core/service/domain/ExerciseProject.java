@@ -93,6 +93,17 @@ public class ExerciseProject {
 		id++;
 		return String.valueOf(id);
 	}
+
+	public StudentProject newStudentProject(Student student) {
+		//
+		StudentProject project = new StudentProject();
+		project.setFileName(this.fileName);
+		project.setLecture(this.lecture);
+		project.setProjectName(this.projectName + "-" + student.getNickname());
+		project.setStudentId(student.getId());
+		project.setExerciseProjectId(this.id);
+		return project;
+	}
 	
 	
 }
