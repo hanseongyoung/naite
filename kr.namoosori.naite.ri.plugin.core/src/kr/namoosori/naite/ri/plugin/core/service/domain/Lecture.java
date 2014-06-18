@@ -87,7 +87,25 @@ public class Lecture {
 	public static Lecture createDomainByJson(String json) {
 		//
 		Gson gson = new Gson();
-		return gson.fromJson(json, Lecture.class);
+		Lecture lecture = gson.fromJson(json, Lecture.class);
+		if (lecture == null) {
+			return null;
+		}
+		
+		List<Textbook> textbooks = lecture.getTextbooks();
+		if (textbooks != null && textbooks.size() > 0) {
+			for (Textbook textbook : textbooks) {
+				textbook.setLecture(lecture);
+			}
+		}
+		
+		List<ExerciseProject> projects = lecture.getExerciseProjects();
+		if (projects != null && projects.size() > 0) {
+			for (ExerciseProject exerciseProject : projects) {
+				exerciseProject.setLecture(lecture);
+			}
+		}
+		return lecture;
 	}
 	
 	private static Lecture createDomain(String line) {

@@ -10,6 +10,9 @@ import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
+import kr.namoosori.naite.ri.plugin.core.service.domain.NaiteUser;
+import kr.namoosori.naite.ri.plugin.core.service.domain.StandardProject;
+import kr.namoosori.naite.ri.plugin.core.service.domain.StandardTextbook;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Student;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
 
@@ -264,6 +267,61 @@ public class NaiteInboundLogic implements NaiteService {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("id", id);
 		naiteContents.doPost("lectures/" + lectureId + "/projects/delete", params);
+	}
+
+	@Override
+	public List<StandardProject> findAllStandardProjects()
+			throws NaiteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void createExerciseProject(String standardProjectId, String lectureId)
+			throws NaiteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void createStandardProject(String projectFilePathName,
+			String projectName) throws NaiteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void createStandardTextbook(String textbookFilePathName)
+			throws NaiteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<StandardTextbook> findAllStandardTextbooks()
+			throws NaiteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void createTextbookByStandard(String standardTextbookId,
+			String lectureId) throws NaiteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<NaiteUser> findAllNaiteUsers() throws NaiteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void createNaiteUser(String name, String email, String password)
+			throws NaiteException {
+		// TODO Auto-generated method stub
+		
 	}
 
 	//--------------------------------------------------------------------------

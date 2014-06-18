@@ -8,6 +8,8 @@ public class Textbook {
 	private String id;
 	private String name;
 	
+	private String standardTextbookId;
+	
 	private Lecture lecture;
 	
 	public String getId() {
@@ -29,6 +31,12 @@ public class Textbook {
 		this.lecture = lecture;
 	}
 	
+	public String getStandardTextbookId() {
+		return standardTextbookId;
+	}
+	public void setStandardTextbookId(String standardTextbookId) {
+		this.standardTextbookId = standardTextbookId;
+	}
 	public static List<Textbook> createDomains(String str) {
 		//
 		if (str == null || str.length() <= 0) {

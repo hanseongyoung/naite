@@ -31,6 +31,7 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 public class NaiteContents {
@@ -82,7 +83,7 @@ public class NaiteContents {
 		request.setHeader(HttpHeaders.USER_AGENT, USER_AGENT_TYPE);
 		if (params != null && !params.isEmpty()) {
 			try {
-				request.setEntity(new UrlEncodedFormEntity(this.createNameValuePairs(params), "UTF-8"));
+				request.setEntity(new UrlEncodedFormEntity(this.createNameValuePairs(params), HTTP.UTF_8));//"UTF-8"
 			} catch (UnsupportedEncodingException e) {
 				throw new NaiteException("지원하지 않는 인코딩 타입입니다. charset : " + "UTF-8", e);
 			}

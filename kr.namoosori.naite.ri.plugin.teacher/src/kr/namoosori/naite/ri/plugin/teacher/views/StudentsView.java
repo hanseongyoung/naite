@@ -14,12 +14,14 @@ import kr.namoosori.naite.ri.plugin.netclient.facade.message.ClientMessage;
 import kr.namoosori.naite.ri.plugin.netserver.facade.ServerEventListener;
 import kr.namoosori.naite.ri.plugin.netserver.main.NaiteNetServer;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherContext;
+import kr.namoosori.naite.ri.plugin.teacher.dialogs.NaiteUserSelectDialog;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -82,6 +84,7 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 	}
 
 	private TableViewer studentListViewer;
+	private Button userSelectButton;
 	private Button registerButton;
 	private List<Student> students = new ArrayList<Student>();
 	private List<Student> tmpStudents = new ArrayList<Student>();
@@ -112,6 +115,7 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 		Table table = studentListViewer.getTable();
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 90;
+		data.verticalSpan = 2;
 		table.setLayoutData(data);
 		
 		TableColumn nameColumn = new TableColumn(table, SWT.LEFT);
@@ -137,6 +141,19 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 				registerButton.setEnabled(false);
 			}
 		});
+		
+		userSelectButton = toolkit.createButton(composite, "추가...", SWT.FLAT);
+		userSelectButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+		userSelectButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				NaiteUserSelectDialog dialog = new NaiteUserSelectDialog(getSite().getShell());
+				if (dialog.open() == Window.OK) {
+					refreshStudentViewer();
+				}
+			}
+		});
+		
 		
 		registerButton = toolkit.createButton(composite, "등록", SWT.FLAT);
 		registerButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
@@ -213,10 +230,32 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 		studentDetailSection.setClient(client);
 	}
 
+	private TableViewer studentDetailViewer;
 	private Composite createStudentDetailSectionClient(Section section) {
 		//
 		Composite composite = toolkit.createComposite(section);
-		composite.setLayout(new GridLayout(1, false));
+		composite.setLayout(new GridLayout(2, false));
+		
+		studentDetailViewer = new TableViewer(composite, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
+		Table table = studentDetailViewer.getTable();
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = 90;
+		data.verticalSpan = 2;
+		table.setLayoutData(data);
+		
+		TableColumn nameColumn = new TableColumn(table, SWT.LEFT);
+		nameColumn.setWidth(120);
+		
+		TableColumn emailColumn = new TableColumn(table, SWT.LEFT);
+		emailColumn.setWidth(200);
+		
+		studentDetailViewer.setContentProvider(new ArrayContentProvider());
+		studentDetailViewer.setLabelProvider(new StudentTableLabelProvider());
+		studentDetailViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+			}
+		});
 
 		return composite;
 	}

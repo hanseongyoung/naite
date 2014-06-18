@@ -12,8 +12,11 @@ import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.facade.RefreshListener;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherContext;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherPlugin;
+import kr.namoosori.naite.ri.plugin.teacher.dialogs.StandardProjectSelectDialog;
+import kr.namoosori.naite.ri.plugin.teacher.dialogs.StandardTextbookSelectDialog;
 import kr.namoosori.naite.ri.plugin.teacher.dialogs.TeacherInfoDialog;
 import kr.namoosori.naite.ri.plugin.teacher.dialogs.TeacherProjectUploadDialog;
+import kr.namoosori.naite.ri.plugin.teacher.util.DialogSettingsUtils;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -94,7 +97,7 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 				String lectureTitle = dialog.getValue();
 				NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 				try {
-					service.createLecture(lectureTitle, "hong@nextree.co.kr");
+					service.createLecture(lectureTitle, getTeacherEmail());
 					refresh();
 					refreshStudents();
 				} catch (NaiteException e) {
@@ -102,9 +105,15 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 				}
 			}
 		}
-		
 	}
 
+	private String getTeacherEmail() {
+		//
+		String teacherEmail = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_TEACHER, DialogSettingsUtils.KEY_EMAIL);
+		return teacherEmail;
+	}
+	
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		//
@@ -188,7 +197,7 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 		//
 		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 		try {
-			return service.getCurrentLecture("hong@nextree.co.kr");
+			return service.getCurrentLecture(getTeacherEmail());
 		} catch (NaiteException e) {
 			e.printStackTrace();
 		}
@@ -219,6 +228,22 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 		ToolBar toolbar = new ToolBar(section, SWT.FLAT | SWT.HORIZONTAL);
 		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
 		toolbar.setCursor(handCursor);
+		
+		//
+		ToolItem itemSelect = new ToolItem(toolbar, SWT.PUSH);
+		itemSelect.setToolTipText("강의교재 선택");
+		itemSelect.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_HELP_TOPIC));
+		itemSelect.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				StandardTextbookSelectDialog dialog = new StandardTextbookSelectDialog(getSite().getShell());
+				if (dialog.open() == Window.OK) {
+					TeacherContext.CURRENT_LECTURE = getCurrentLecture();
+					refreshBookSectionClient();
+					refreshStudents();
+				}
+			}
+		});
 		
 		//
 		ToolItem item = new ToolItem(toolbar, SWT.PUSH);
@@ -352,6 +377,23 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 		ToolBar toolbar = new ToolBar(section, SWT.FLAT | SWT.HORIZONTAL);
 		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
 		toolbar.setCursor(handCursor);
+		
+		ToolItem itemSelect = new ToolItem(toolbar, SWT.PUSH);
+		itemSelect.setToolTipText("실습예제 선택");
+		itemSelect.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_HELP_TOPIC));
+		itemSelect.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				StandardProjectSelectDialog dialog = new StandardProjectSelectDialog(getSite().getShell());
+				if (dialog.open() == Window.OK) {
+					TeacherContext.CURRENT_LECTURE = getCurrentLecture();
+					refreshExampleSectionClient();
+					refreshStudents();
+				}
+			}
+		});
+		
+		
 		ToolItem item = new ToolItem(toolbar, SWT.PUSH);
 		item.setToolTipText("실습예제 등록");
 		item.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_HELP_TOPIC));
@@ -409,6 +451,7 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 					project.create();
 				} catch (NaiteException e1) {
 					e1.printStackTrace();
+					MessageDialog.openWarning(getSite().getShell(), "실습예제 설치", e1.getMessage());
 				}
 			}
 		});

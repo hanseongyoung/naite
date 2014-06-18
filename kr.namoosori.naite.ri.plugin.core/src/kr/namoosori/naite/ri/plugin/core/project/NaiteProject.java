@@ -55,7 +55,7 @@ public class NaiteProject {
 	
 	public void create() throws NaiteException {
 		//
-		String serverPath = "lectures/" + exerciseProject.getLectureId() + "/projects/";
+		String serverPath = "lectures/" + exerciseProject.getLectureId() + "/exerciseprojects/";
 		createProjectContents(serverPath);
 		createProject();
 	}
@@ -111,6 +111,14 @@ public class NaiteProject {
 		} catch (IOException e) {
 			throw new NaiteException("Unzip 도중 문제발생", e);
 		}
+		
+		// targetDir 아래에 한 단계 디렉토리가 더 있는 경우 상위로 올린다.
+//		File[] subfiles = targetDir.listFiles();
+//		if (subfiles.length == 1 && subfiles[0].isDirectory()) {
+//			System.out.println("move dir...");
+//			boolean success = subfiles[0].renameTo(new File(targetDir.getAbsolutePath()));
+//			System.out.println("success:"+success);
+//		}
 	}
 	
 	private String packProjectContents() throws NaiteException {

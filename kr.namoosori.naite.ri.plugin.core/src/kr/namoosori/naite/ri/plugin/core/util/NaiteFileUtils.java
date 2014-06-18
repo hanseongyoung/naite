@@ -113,7 +113,8 @@ public class NaiteFileUtils {
 			throw new NaiteException("파일명이 없어 파일을 저장할 수 없습니다.");
 		}
 		
-		checkDir(saveFilePathName);
+		// 이미 존재하는 폴더를 선택하므로 체크할 필요 없음
+		//checkDir(saveFilePathName);
 
 		File file = null;
 		FileOutputStream fos = null;
@@ -123,6 +124,7 @@ public class NaiteFileUtils {
 			fos.write(fileContents);
 			fos.flush();
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new NaiteException("파일 저장중 오류가 발생했습니다.", e);
 		} finally {
 			try {

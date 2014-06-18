@@ -13,6 +13,7 @@ public class Student {
 	private String email;
 	private String name;
 	private String password;
+	
 	private List<ExerciseProject> exerciseProjects;
 	
 	// UI Setting
@@ -98,7 +99,6 @@ public class Student {
 		Type listType = new TypeToken<ArrayList<Student>>() {
         	}.getType();
         List<Student> students = new Gson().fromJson(jsonStr, listType);
-        System.out.println("**** students "+students.get(0).getEmail());
 		return students;
 	}
 	
