@@ -99,6 +99,7 @@ public class ExerciseProject {
 		StudentProject project = new StudentProject();
 		project.setFileName(this.fileName);
 		project.setLecture(this.lecture);
+		project.setLectureId(this.lecture.getId());
 		project.setProjectName(this.projectName + "-" + student.getNickname());
 		project.setStudentId(student.getId());
 		project.setExerciseProjectId(this.id);

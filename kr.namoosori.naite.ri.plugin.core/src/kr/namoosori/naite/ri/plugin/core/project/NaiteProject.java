@@ -166,7 +166,9 @@ public class NaiteProject {
 		String projectPath = project.getLocation().toString();
 		System.out.println(projectPath);
 		String fileName = project.getName() + ".zip";
-		exerciseProject.setFileName(fileName);
+		if (!(exerciseProject instanceof StudentProject)) {
+			exerciseProject.setFileName(fileName);
+		}
 		System.out.println(fileName);
 		String tempZipFilePathName = FileUtils.getTempDirectoryPath() + fileName;
 		System.out.println(tempZipFilePathName);

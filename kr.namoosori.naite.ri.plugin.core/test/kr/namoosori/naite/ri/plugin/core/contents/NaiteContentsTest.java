@@ -15,8 +15,8 @@ public class NaiteContentsTest {
 //		TestContext.getInstance().setServerPort(80);
 		
 		//createStudents();
-		createNaiteUsers();
-//		createStandardProjects();
+		//createNaiteUsers();
+		createStandardProjects();
 //		createStandardTextbook();
 	}
 
