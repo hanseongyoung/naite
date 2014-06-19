@@ -57,7 +57,14 @@ public class NaiteProject {
 	public void create() throws NaiteException {
 		//
 		checkCreated();
-		String serverPath = "lectures/" + exerciseProject.getLectureId() + "/exerciseprojects/";
+		
+		String serverPath = null;
+		if (exerciseProject instanceof StudentProject) {
+			StudentProject studentProject = (StudentProject) exerciseProject;
+			serverPath = "lectures/" + studentProject.getLectureId() + "/students/" + studentProject.getStudentId() + "/projects/";
+		} else {
+			serverPath = "lectures/" + exerciseProject.getLectureId() + "/exerciseprojects/";
+		}
 		createProjectContents(serverPath);
 		createProject();
 	}

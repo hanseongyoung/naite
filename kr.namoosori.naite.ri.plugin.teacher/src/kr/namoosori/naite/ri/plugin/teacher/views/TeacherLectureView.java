@@ -10,6 +10,7 @@ import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
 import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.facade.RefreshListener;
+import kr.namoosori.naite.ri.plugin.netclient.main.NaiteWSClient;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherContext;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherPlugin;
 import kr.namoosori.naite.ri.plugin.teacher.dialogs.StandardProjectSelectDialog;
@@ -129,6 +130,7 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 		
 		// event
 		EventManager.getInstance().addRefreshListener(this);
+		NaiteWSClient.getInstance().connect(getTeacherEmail());
 	}
 	
 	public void refreshStudents() {
@@ -144,6 +146,8 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 	 */
 	public void refresh() {
 		//
+		NaiteWSClient.getInstance().connect(getTeacherEmail());
+		
 		TeacherContext.CURRENT_LECTURE = getCurrentLecture();
 		
 		if (bookSection != null && !bookSection.isDisposed()) {

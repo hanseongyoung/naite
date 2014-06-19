@@ -40,6 +40,15 @@ public class TeacherContext extends CoreContext {
 	}
 	
 	@Override
+	public String getWSServerUrl() {
+		//
+		if (serverIp == null) {
+			return null;
+		}
+		return "ws://" + serverIp + ":" + serverPort + "/";
+	}
+	
+	@Override
 	public boolean hasServerUrl() {
 		//
 		return serverIp != null;

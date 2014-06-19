@@ -15,6 +15,7 @@ import kr.namoosori.naite.ri.plugin.netclient.facade.MessageListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.RefreshListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.ServerStateListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.message.ClientMessage;
+import kr.namoosori.naite.ri.plugin.netclient.main.NaiteWSClient;
 import kr.namoosori.naite.ri.plugin.student.StudentContext;
 import kr.namoosori.naite.ri.plugin.student.StudentPlugin;
 import kr.namoosori.naite.ri.plugin.student.dialogs.StudentInfoDialog;
@@ -117,6 +118,7 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
+				MessageDialog.openInformation(getSite().getShell(), "메시지", message.getSenderId() + " : " + message.getCommand());
 				if ("refresh".equals(message.getCommand())) {
 					refresh();
 				}
@@ -145,8 +147,6 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		EventManager.getInstance().addMessageListener(this);
 		EventManager.getInstance().addRefreshListener(this);
 		
-		// TODO
-		//NaiteWSClient.getInstance().start();
 		//NaiteWSClient.getInstance().send();
 		if (getStudentEmail() != null) {
 			refresh();
@@ -168,6 +168,8 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 	@Override
 	public void refresh() {
 		//
+		NaiteWSClient.getInstance().connect(getStudentEmail());
+		
 		StudentContext.CURRENT_LECTURE = getCurrentLecture();
 		
 		disposeSection();
@@ -382,7 +384,7 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 			toolkit.dispose();
 		}
 		
-		//NaiteWSClient.getInstance().stop();
+		NaiteWSClient.getInstance().close();
 		
 		super.dispose();
 	}

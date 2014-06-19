@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
+import kr.namoosori.naite.ri.plugin.core.project.NaiteProject;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Student;
@@ -12,11 +13,13 @@ import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.facade.MessageListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.RefreshListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.message.ClientMessage;
+import kr.namoosori.naite.ri.plugin.netclient.main.NaiteWSClient;
 import kr.namoosori.naite.ri.plugin.netserver.facade.ServerEventListener;
 import kr.namoosori.naite.ri.plugin.netserver.main.NaiteNetServer;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherContext;
 import kr.namoosori.naite.ri.plugin.teacher.dialogs.NaiteUserSelectDialog;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -234,6 +237,7 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 	}
 
 	private TableViewer studentDetailViewer;
+	private Button studentProjectImportButton;
 	private Composite createStudentDetailSectionClient(Section section) {
 		//
 		Composite composite = toolkit.createComposite(section);
@@ -257,6 +261,29 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 		studentDetailViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
+			}
+		});
+		
+		studentProjectImportButton = toolkit.createButton(composite, "가져오기", SWT.FLAT);
+		studentProjectImportButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+		studentProjectImportButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IStructuredSelection selection  = (IStructuredSelection) studentDetailViewer.getSelection();
+				StudentProject studentProject = (StudentProject) selection.getFirstElement();
+				if (studentProject == null) {
+					MessageDialog.openInformation(getSite().getShell(), "가져오기", "수강생 상세정보를 선택하세요");
+					return;
+				}
+				
+				// TODO 웹소켓 구현
+				//NaiteWSClient.getInstance().send("kang@nextree.co.kr:hello!");
+				NaiteProject project = new NaiteProject(studentProject);
+				try {
+					project.create();
+				} catch (NaiteException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 
@@ -288,15 +315,15 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				//MessageDialog.openInformation(getSite().getShell(), "메시지", message.getSenderId());
-				if (!existStudent(message.getSenderId())) {
-					Student student = new Student();
-					student.setEmail(message.getSenderId());
-					student.setName(message.getValue("name"));
-					student.setPassword(message.getValue("pass"));
-					studentListViewer.add(student);
-					tmpStudents.add(student);
-				}
+				MessageDialog.openInformation(getSite().getShell(), "메시지", message.getSenderId() + " : " + message.getCommand());
+//				if (!existStudent(message.getSenderId())) {
+//					Student student = new Student();
+//					student.setEmail(message.getSenderId());
+//					student.setName(message.getValue("name"));
+//					student.setPassword(message.getValue("pass"));
+//					studentListViewer.add(student);
+//					tmpStudents.add(student);
+//				}
 			}
 		});
 	}

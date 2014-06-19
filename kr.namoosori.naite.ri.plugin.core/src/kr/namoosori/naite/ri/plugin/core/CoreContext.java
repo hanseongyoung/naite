@@ -17,5 +17,6 @@ public abstract class CoreContext {
 	public static Lecture CURRENT_LECTURE;
 
 	public abstract String getServerUrl();
+	public abstract String getWSServerUrl();
 	public abstract boolean hasServerUrl();
 }

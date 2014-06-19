@@ -38,6 +38,15 @@ public class StudentContext extends CoreContext {
 		}
 		return "http://" + serverIp + ":" + serverPort + "/";
 	}
+	
+	@Override
+	public String getWSServerUrl() {
+		//
+		if (serverIp == null) {
+			return null;
+		}
+		return "ws://" + serverIp + ":" + serverPort + "/";
+	}
 
 	@Override
 	public boolean hasServerUrl() {
