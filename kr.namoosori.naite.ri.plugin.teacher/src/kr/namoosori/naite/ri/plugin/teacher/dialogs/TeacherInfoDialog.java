@@ -2,6 +2,7 @@ package kr.namoosori.naite.ri.plugin.teacher.dialogs;
 
 import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.main.NaiteNetClient;
+import kr.namoosori.naite.ri.plugin.netclient.main.NaiteWSClient;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherContext;
 import kr.namoosori.naite.ri.plugin.teacher.util.DialogSettingsUtils;
 
@@ -163,6 +164,7 @@ public class TeacherInfoDialog extends TitleAreaDialog {
 		if (!checkControl()) return;
 		saveData();
 		setContextData();
+		NaiteWSClient.getInstance().close();
 		EventManager.getInstance().invokeRefreshEvent();
 		super.okPressed();
 	}

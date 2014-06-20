@@ -53,7 +53,9 @@ public class StandardTextbookSelectDialog extends TitleAreaDialog {
 	private void createProjectListTable(Composite parent) {
 		//
 		tableViewer = CheckboxTableViewer.newCheckList(parent, SWT.BORDER);
-		tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = 200;
+		tableViewer.getTable().setLayoutData(data);
 		tableViewer.setContentProvider(new ArrayContentProvider());
 		tableViewer.setLabelProvider(new StandardProjectTableLabelProvider());
 		//List<NaiteProject> projects = NaiteWorkspace.getInstance().getProjects();

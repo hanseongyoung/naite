@@ -7,6 +7,7 @@ import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.StandardProject;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherContext;
+import kr.namoosori.naite.ri.plugin.teacher.TeacherPlugin;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -53,7 +54,9 @@ public class StandardProjectSelectDialog extends TitleAreaDialog {
 	private void createProjectListTable(Composite parent) {
 		//
 		tableViewer = CheckboxTableViewer.newCheckList(parent, SWT.BORDER);
-		tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = 200;
+		tableViewer.getTable().setLayoutData(data);
 		tableViewer.setContentProvider(new ArrayContentProvider());
 		tableViewer.setLabelProvider(new StandardProjectTableLabelProvider());
 		//List<NaiteProject> projects = NaiteWorkspace.getInstance().getProjects();
@@ -96,7 +99,7 @@ public class StandardProjectSelectDialog extends TitleAreaDialog {
 			//
 			if (element instanceof StandardProject) {
 				StandardProject project = (StandardProject) element;
-				//return provider.getImage(project.getResource());
+				return TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_PRJ);
 			}
 			return null;
 		}

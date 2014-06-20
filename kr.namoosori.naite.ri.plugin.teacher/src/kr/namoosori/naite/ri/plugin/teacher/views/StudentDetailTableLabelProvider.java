@@ -16,8 +16,7 @@ public class StudentDetailTableLabelProvider extends LabelProvider implements IT
 		if (element instanceof StudentProject) {
 			StudentProject project = (StudentProject) element;
 			if (columnIndex == 0) {
-				// TODO 이미지 선택
-				return TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_HELP_TOPIC);
+				return TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_PRJ);
 			}
 		}
 		return null;

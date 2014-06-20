@@ -236,7 +236,7 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 		//
 		ToolItem itemSelect = new ToolItem(toolbar, SWT.PUSH);
 		itemSelect.setToolTipText("강의교재 선택");
-		itemSelect.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_HELP_TOPIC));
+		itemSelect.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_CLOUD));
 		itemSelect.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -252,7 +252,7 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 		//
 		ToolItem item = new ToolItem(toolbar, SWT.PUSH);
 		item.setToolTipText("강의교재 등록");
-		item.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_HELP_TOPIC));
+		item.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_FOLDER));
 		item.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -384,7 +384,7 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 		
 		ToolItem itemSelect = new ToolItem(toolbar, SWT.PUSH);
 		itemSelect.setToolTipText("실습예제 선택");
-		itemSelect.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_HELP_TOPIC));
+		itemSelect.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_CLOUD));
 		itemSelect.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -400,7 +400,7 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 		
 		ToolItem item = new ToolItem(toolbar, SWT.PUSH);
 		item.setToolTipText("실습예제 등록");
-		item.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_HELP_TOPIC));
+		item.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_FOLDER));
 		item.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

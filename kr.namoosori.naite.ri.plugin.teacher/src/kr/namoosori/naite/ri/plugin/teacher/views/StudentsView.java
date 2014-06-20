@@ -252,8 +252,8 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 		TableColumn nameColumn = new TableColumn(table, SWT.LEFT);
 		nameColumn.setWidth(220);
 		
-		TableColumn emailColumn = new TableColumn(table, SWT.LEFT);
-		emailColumn.setWidth(100);
+//		TableColumn emailColumn = new TableColumn(table, SWT.LEFT);
+//		emailColumn.setWidth(50);
 		
 		studentDetailViewer.setContentProvider(new ArrayContentProvider());
 		studentDetailViewer.setLabelProvider(new StudentDetailTableLabelProvider());
