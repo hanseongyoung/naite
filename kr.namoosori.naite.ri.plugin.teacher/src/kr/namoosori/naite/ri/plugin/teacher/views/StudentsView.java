@@ -13,7 +13,6 @@ import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.facade.MessageListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.RefreshListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.message.ClientMessage;
-import kr.namoosori.naite.ri.plugin.netclient.main.NaiteWSClient;
 import kr.namoosori.naite.ri.plugin.netserver.facade.ServerEventListener;
 import kr.namoosori.naite.ri.plugin.netserver.main.NaiteNetServer;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherContext;
@@ -251,10 +250,10 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 		table.setLayoutData(data);
 		
 		TableColumn nameColumn = new TableColumn(table, SWT.LEFT);
-		nameColumn.setWidth(120);
+		nameColumn.setWidth(220);
 		
 		TableColumn emailColumn = new TableColumn(table, SWT.LEFT);
-		emailColumn.setWidth(200);
+		emailColumn.setWidth(100);
 		
 		studentDetailViewer.setContentProvider(new ArrayContentProvider());
 		studentDetailViewer.setLabelProvider(new StudentDetailTableLabelProvider());
@@ -272,7 +271,7 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 				IStructuredSelection selection  = (IStructuredSelection) studentDetailViewer.getSelection();
 				StudentProject studentProject = (StudentProject) selection.getFirstElement();
 				if (studentProject == null) {
-					MessageDialog.openInformation(getSite().getShell(), "가져오기", "수강생 상세정보를 선택하세요");
+					MessageDialog.openInformation(getSite().getShell(), "수강생 프로젝트 가져오기", "수강생 상세정보를 선택하세요");
 					return;
 				}
 				
@@ -280,7 +279,13 @@ public class StudentsView extends ViewPart implements MessageListener, ServerEve
 				//NaiteWSClient.getInstance().send("kang@nextree.co.kr:hello!");
 				NaiteProject project = new NaiteProject(studentProject);
 				try {
-					project.create();
+					if (project.exist()) {
+						project.update();
+						MessageDialog.openInformation(getSite().getShell(), "수강생 프로젝트 가져오기", "수강생 프로젝트가 업데이트되었습니다.");
+					} else {
+						project.create();
+						MessageDialog.openInformation(getSite().getShell(), "수강생 프로젝트 가져오기", "수강생 프로젝트가 설치되었습니다.");
+					}
 				} catch (NaiteException e1) {
 					e1.printStackTrace();
 				}

@@ -192,12 +192,83 @@ public class ZipUtils {
 		return targetFile;
 	}
 	
+	//----------------------------------------------------------------------------
+	public static void zip2(String sourcePath, String saveFileName) throws IOException {
+
+		// 압축 대상(sourcePath)이 디렉토리나 파일이 아니면 예외.
+		File sourceFile = new File(sourcePath);
+		if (!sourceFile.isFile() && !sourceFile.isDirectory()) {
+			throw new RuntimeException("압축 대상의 파일을 찾을 수가 없습니다.");
+		}
+
+		// output 의 확장자가 zip,cdbx,cdb 가 아니면 예외.
+		if (StringUtils.isBlank(saveFileName) || !ZIP_EXTENSIONS.contains(StringUtils.substringAfterLast(saveFileName, "."))) {
+			throw new RuntimeException("저장 파일명을 확인해주세요.");
+		}
+
+		FileOutputStream fos = null;
+		BufferedOutputStream bos = null;
+		ZipOutputStream zos = null;
+		try {
+			fos = new FileOutputStream(saveFileName); // FileOutputStream
+			bos = new BufferedOutputStream(fos); // BufferedStream
+			zos = new ZipOutputStream(bos); // ZipOutputStream
+			zos.setLevel(COMPRESSION_LEVEL); // 압축 레벨 - 최대 압축률은 9, 디폴트 8
+			zipEntry2(sourceFile, sourcePath, zos); // Zip 파일 생성
+			zos.finish(); // ZipOutputStream finish
+		} finally {
+			IOUtils.closeQuietly(zos);
+			IOUtils.closeQuietly(bos);
+			IOUtils.closeQuietly(fos);
+		}
+	}
+
+	
+	private static void zipEntry2(File sourceFile, String sourcePath, ZipOutputStream zos) throws IOException {
+		// sourceFile 이 디렉토리인 경우 하위 파일 리스트 가져와 재귀호출
+		if (sourceFile.isDirectory() && sourceFile.listFiles().length > 0) {
+			if (sourceFile.getName().equalsIgnoreCase(".metadata")) { // .metadata 디렉토리 return
+				return;
+			}
+			File[] fileArray = sourceFile.listFiles(); // sourceFile 의 하위 파일 리스트
+			for (int i = 0; i < fileArray.length; i++) {
+				zipEntry(fileArray[i], sourcePath, zos); // 재귀 호출
+			}
+		} else { // sourcehFile 이 디렉토리가 아닌 경우
+			BufferedInputStream bis = null;
+			try {
+				String sFilePath = sourceFile.getPath();
+				String zipEntryName = sFilePath.substring(sourcePath.length() + 1, sFilePath.length());
+
+				// Unix 및 Mac 과의 호환을 위해 File Separator 를 변경
+				zipEntryName = zipEntryName.replaceAll("\\\\", "/");
+				
+				bis = new BufferedInputStream(new FileInputStream(sourceFile));
+				ZipEntry zentry = new ZipEntry(zipEntryName);
+				zentry.setTime(sourceFile.lastModified());
+				zos.putNextEntry(zentry);
+
+				byte[] buffer = new byte[BUFFER_SIZE];
+				int cnt = 0;
+				while ((cnt = bis.read(buffer, 0, BUFFER_SIZE)) != -1) {
+					zos.write(buffer, 0, cnt);
+				}
+				zos.closeEntry();
+			} finally {
+				IOUtils.closeQuietly(bis);
+			}
+		}
+	}
+	//----------------------------------------------------------------------------
+	
 	public static void main(String[] args) throws Exception {
-		System.setProperty("file.separator", "/");
-		System.out.println("system seperator:"+System.getProperty("file.separator"));
-		System.out.println("seperator:"+File.separator);
+//		System.setProperty("file.separator", "/");
+//		System.out.println("system seperator:"+System.getProperty("file.separator"));
+//		System.out.println("seperator:"+File.separator);
+//		
+//		File file = new File("D:/work/test.txt");
+//		System.out.println("file:"+file.toString());
 		
-		File file = new File("D:/work/test.txt");
-		System.out.println("file:"+file.toString());
+		zip2("D:\\Project\\naitae\\workspaces\\naitae\\testZip", "D:\\testZip.zip");
 	}
 }

@@ -1,23 +1,19 @@
 package kr.namoosori.naite.ri.plugin.core.contents;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 
 public class NaiteContentsTest {
 	
 	public static void main(String[] args) throws Exception {
-		TestContext.getInstance().setServerIp("10.0.1.45");
-		TestContext.getInstance().setServerPort(9000);
-//		TestContext.getInstance().setServerIp("playapp-syhan.rhcloud.com");
-//		TestContext.getInstance().setServerPort(80);
+//		TestContext.getInstance().setServerIp("10.0.1.45");
+//		TestContext.getInstance().setServerPort(9000);
+		TestContext.getInstance().setServerIp("playapp-syhan.rhcloud.com");
+		TestContext.getInstance().setServerPort(80);
 		
-		//createStudents();
-		//createNaiteUsers();
+		createNaiteUsers();
 		createStandardProjects();
-//		createStandardTextbook();
+		createStandardTextbook();
 	}
 
 	private static void createNaiteUsers() throws Exception {
@@ -56,15 +52,5 @@ public class NaiteContentsTest {
 		service.createStandardProject("D:\\naite_test\\test_contents\\project\\namoo.club.util.zip", "namoo.club.util");
 	}
 
-	private static void createStudents() throws Exception {
-		NaiteContents naiteContents = new NaiteContents();
-		
-		Map<String, String> params = new HashMap<String, String>();
-		//params.put("id", id);
-		params.put("email", "son@nextree.co.kr");
-		params.put("name", "손문일");
-		params.put("password", "1234");
-		naiteContents.doPost("students", params);
-	}
-
+	
 }

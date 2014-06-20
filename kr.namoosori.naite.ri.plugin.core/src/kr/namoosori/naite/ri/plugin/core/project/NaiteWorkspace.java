@@ -48,6 +48,20 @@ public class NaiteWorkspace {
 		return naiteProjects;
 	}
 	
+	public boolean exist(String projectName) {
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		if (projects == null || projects.length <= 0) {
+			return false;
+		}
+		
+		for (IProject iProject : projects) {
+			if (iProject.getName().equals(projectName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public List<String> getProjectNames() {
 		//
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();

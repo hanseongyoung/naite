@@ -15,6 +15,7 @@ import kr.namoosori.naite.ri.plugin.core.util.ZipUtils;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -69,6 +70,19 @@ public class NaiteProject {
 		createProject();
 	}
 	
+	public void update() throws NaiteException {
+		//
+		String serverPath = null;
+		if (exerciseProject instanceof StudentProject) {
+			StudentProject studentProject = (StudentProject) exerciseProject;
+			serverPath = "lectures/" + studentProject.getLectureId() + "/students/" + studentProject.getStudentId() + "/projects/";
+		} else {
+			serverPath = "lectures/" + exerciseProject.getLectureId() + "/exerciseprojects/";
+		}
+		updateProjectContents(serverPath);
+		updateProject();
+	}
+	
 	// Workspace에 프로젝트가 이미 생성되었는지 체크 
 	private void checkCreated() throws NaiteException {
 		File workspaceDir = NaiteWorkspace.getInstance().getRootLocationAsFile();
@@ -109,6 +123,21 @@ public class NaiteProject {
 		service.createStudentProject(packedFilePathName, project.getName(), studentProject.getLectureId(), 
 				studentProject.getStudentId(), studentProject.getExerciseProjectId());
 	}
+	
+	public void exportToStudentProject() throws NaiteException {
+		if (!(exerciseProject instanceof StudentProject)) {
+			System.out.println("[NaiteProject.createAndExportToStudent] 올바르지 않은 요청임.");
+			return;
+		}
+		
+		StudentProject studentProject = (StudentProject) exerciseProject;
+		
+		// export to student
+		String packedFilePathName = packProjectContents();
+		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+		service.createStudentProject(packedFilePathName, project.getName(), studentProject.getLectureId(), 
+				studentProject.getStudentId(), studentProject.getExerciseProjectId());
+	}
 
 	private void createProject() throws NaiteException {
 		//
@@ -126,6 +155,14 @@ public class NaiteProject {
 			project.open(new NullProgressMonitor());
 		} catch (CoreException e) {
 			throw new NaiteException("프로젝트 오픈중 문제발생", e);
+		}
+	}
+	
+	private void updateProject() {
+		try {
+			project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+		} catch (CoreException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -162,6 +199,20 @@ public class NaiteProject {
 //		}
 	}
 	
+	private void updateProjectContents(String serverPath) throws NaiteException {
+		//
+		String zipFileName = exerciseProject.getFileName();
+		InputStream inputStream = contents.getInputStream(serverPath, zipFileName);
+		File workspaceDir = NaiteWorkspace.getInstance().getRootLocationAsFile();
+		File targetDir = new File(workspaceDir, project.getName());
+		
+		try {
+			ZipUtils.unzip(inputStream, targetDir, false);
+		} catch (IOException e) {
+			throw new NaiteException("Unzip 도중 문제발생", e);
+		}
+	}
+	
 	private String packProjectContents() throws NaiteException {
 		String projectPath = project.getLocation().toString();
 		System.out.println(projectPath);
@@ -186,6 +237,11 @@ public class NaiteProject {
 
 	public ExerciseProject getExerciseProject() {
 		return exerciseProject;
+	}
+
+	public boolean exist() {
+		//
+		return project.exists();
 	}
 	
 	

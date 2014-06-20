@@ -3,6 +3,7 @@ package kr.namoosori.naite.ri.plugin.student.views;
 import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
 import kr.namoosori.naite.ri.plugin.core.job.BusyUIIndicateJob;
 import kr.namoosori.naite.ri.plugin.core.project.NaiteProject;
+import kr.namoosori.naite.ri.plugin.core.project.NaiteWorkspace;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
@@ -31,6 +32,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.PlatformUI;
@@ -333,7 +335,7 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 	private Composite createExampleSectionClient(Section section) {
 		//
 		Composite composite = toolkit.createComposite(section);
-		composite.setLayout(new GridLayout(2, false));
+		composite.setLayout(new GridLayout(3, false));
 		Student currentStudent = findCurrentStudent(getStudentEmail());
 		
 		for (ExerciseProject exerciseProject : StudentContext.CURRENT_LECTURE.getExerciseProjects()) {
@@ -342,6 +344,15 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		}
 		
 		return composite;
+	}
+	
+	private void refreshExampleSectionClient() {
+		// TODO : 문제있음
+		Control client = exampleSection.getClient();
+		client.dispose();
+		Composite newClient = createExampleSectionClient(exampleSection);
+		exampleSection.setClient(newClient);
+		exampleSection.getParent().layout();
 	}
 
 	private void createExerciseProjectLink(Composite composite,
@@ -359,12 +370,32 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 				//
 				try {
 					project.createAndExportToStudent();
+					//refreshExampleSectionClient();
+					refresh();
 				} catch (NaiteException e1) {
 					e1.printStackTrace();
 					MessageDialog.openWarning(getSite().getShell(), "실습예제 설치", e1.getMessage());
 				}
 			}
 		});
+		
+		if (NaiteWorkspace.getInstance().exist(project.getName())) {
+			Hyperlink updateLink = toolkit.createHyperlink(composite, "업로드", SWT.WRAP);
+			updateLink.addHyperlinkListener(new HyperlinkAdapter(){
+				@Override
+				public void linkActivated(HyperlinkEvent e) {
+					try {
+						project.exportToStudentProject();
+						MessageDialog.openInformation(getSite().getShell(), "실습예제 업로드", "실습 예제가 나의 공간으로 업로드 되었습니다.");
+					} catch (NaiteException e1) {
+						e1.printStackTrace();
+						MessageDialog.openWarning(getSite().getShell(), "실습예제 업로드", e1.getMessage());
+					}
+				}
+			});
+		} else {
+			toolkit.createLabel(composite, "");
+		}
 	}
 
 	@Override
