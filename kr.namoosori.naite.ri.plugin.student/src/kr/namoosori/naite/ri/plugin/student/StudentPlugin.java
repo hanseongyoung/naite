@@ -51,20 +51,17 @@ public class StudentPlugin extends AbstractUIPlugin {
 		*/
 	}
 	
-	private static String DEFAULT_DOMAIN = "10.0.1.45";
-	private static int DEFAULT_PORT = 9000;
-	
 	private void setStudentContext() {
 		//
 		String domain = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_DOMAIN);
 		if (domain == null || domain.length() <= 0) {
-			domain = DEFAULT_DOMAIN;
+			domain = StudentContext.DEFAULT_DOMAIN;
 		}
 		StudentContext.getInstance().setServerIp(domain);
 		
 		String port = DialogSettingsUtils.get(DialogSettingsUtils.SECTION_STUDENT, DialogSettingsUtils.KEY_PORT);
 		if (port == null || port.length() <= 0) {
-			port = ""+DEFAULT_PORT;
+			port = ""+StudentContext.DEFAULT_PORT;
 		}
 		StudentContext.getInstance().setServerPort(parseInt(port));
 	}

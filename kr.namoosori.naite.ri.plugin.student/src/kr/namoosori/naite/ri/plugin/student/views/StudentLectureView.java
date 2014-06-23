@@ -191,6 +191,7 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		form.getParent().layout();
 		bookSection.getParent().layout();
 		exampleSection.getParent().layout();
+		form.reflow(true);
 	}
 	
 	private void disposeSection() {

@@ -127,6 +127,7 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 		// section
 		createBookSection(form);
 		createExampleSection(form);
+		form.reflow(true);
 		
 		// event
 		EventManager.getInstance().addRefreshListener(this);
@@ -172,6 +173,7 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 		form.getParent().layout();
 		bookSection.getParent().layout();
 		exampleSection.getParent().layout();
+		form.reflow(true);
 	}
 	
 	private void createForm(Composite parent) {
