@@ -339,6 +339,19 @@ public class NaiteInboundLogic implements NaiteService {
 		
 	}
 
+	@Override
+	public List<Lecture> getTeacherLectures(String teacherEmaile)
+			throws NaiteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Lecture getLecture(String lectureId) throws NaiteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	//--------------------------------------------------------------------------
 
 }

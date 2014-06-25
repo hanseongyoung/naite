@@ -1,5 +1,8 @@
 package kr.namoosori.naite.ri.plugin.teacher.views;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
 import kr.namoosori.naite.ri.plugin.core.job.BusyUIIndicateJob;
 import kr.namoosori.naite.ri.plugin.core.project.NaiteProject;
@@ -24,6 +27,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -38,6 +42,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -106,6 +111,56 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 강의 선택 액션
+	 */
+	class SelectLectureAction extends Action {
+		//
+		public SelectLectureAction() {
+			//
+			setId("selectLectureAction");
+			setImageDescriptor(TeacherPlugin.getDefault().getImageRegistry().getDescriptor(TeacherPlugin.IMG_HELP_TOPIC));
+			setToolTipText("강의선택");
+		}
+
+		@Override
+		public void run() {
+			//
+			NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+			List<Lecture> lectures = new ArrayList<Lecture>();
+			try {
+				lectures = service.getTeacherLectures(getTeacherEmail());
+			} catch (NaiteException e) {
+				e.printStackTrace();
+			}
+			
+			ElementListSelectionDialog dialog = new ElementListSelectionDialog(getSite().getShell(), new LabelProvider(){
+				@Override
+				public String getText(Object element) {
+					if (element == null) return "";
+					Lecture lecture = (Lecture) element;
+					return lecture.getName();
+				}
+			});
+			dialog.setElements(lectures.toArray());
+			dialog.setTitle("강의 선택");
+			dialog.setMessage("이전 강의를 선택하세요.");
+			
+			if (dialog.open() == Window.OK) {
+				Lecture selected = (Lecture) dialog.getResult()[0];
+				currentLectureId = selected.getId();
+				refresh();
+				refreshStudentsView();
+				refreshStudents();
+			}
+		}
+	}
+	
+	private void refreshStudentsView() {
+		StudentsView view = (StudentsView) getSite().getPage().findView(StudentsView.ID);
+		view.refresh();
 	}
 
 	private String getTeacherEmail() {
@@ -196,14 +251,25 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 		ToolBarManager toolbarManager = (ToolBarManager) form.getToolBarManager();
 		toolbarManager.add(new LoginStatusAction());
 		toolbarManager.add(new AddLectureAction());
+		toolbarManager.add(new SelectLectureAction());
 		toolbarManager.update(true);
 	}
+	
+	// 조회할 기준 강의 아이디
+	private String currentLectureId = null;
 	
 	private Lecture getCurrentLecture() {
 		//
 		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 		try {
-			return service.getCurrentLecture(getTeacherEmail());
+			Lecture lecture = null;
+			if (currentLectureId == null) {
+				lecture = service.getCurrentLecture(getTeacherEmail());
+				currentLectureId = lecture.getId();
+			} else {
+				lecture = service.getLecture(currentLectureId);
+			}
+			return lecture;
 		} catch (NaiteException e) {
 			e.printStackTrace();
 		}
@@ -299,6 +365,7 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 		Composite newClient = createBookSectionClient(bookSection);
 		bookSection.setClient(newClient);
 		bookSection.getParent().layout();
+		form.reflow(true);
 	}
 
 	private void createTextbookLink(Composite composite, final Textbook textbook) {
@@ -438,6 +505,7 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 		Composite newClient = createExampleSectionClient(exampleSection);
 		exampleSection.setClient(newClient);
 		exampleSection.getParent().layout();
+		form.reflow(true);
 	}
 
 	private void createExerciseProjectLink(Composite composite,

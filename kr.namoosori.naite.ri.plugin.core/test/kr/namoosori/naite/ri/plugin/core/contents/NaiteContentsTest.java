@@ -11,9 +11,10 @@ public class NaiteContentsTest {
 		TestContext.getInstance().setServerIp("playapp-syhan.rhcloud.com");
 		TestContext.getInstance().setServerPort(80);
 		
+		createNodejsUsers();
 		//createNaiteUsers();
 		//createStandardTextbook();
-		createStandardProjects();
+		//createStandardProjects();
 	}
 
 	private static void createNaiteUsers() throws Exception {
@@ -24,6 +25,29 @@ public class NaiteContentsTest {
 		service.createNaiteUser("이충헌", "chlee@nextree.co.kr", "1234");
 		service.createNaiteUser("최인혜", "choi@nextree.co.kr", "1234");
 		service.createNaiteUser("손문일", "son@nextree.co.kr", "1234");
+	}
+	
+	private static void createNodejsUsers() throws Exception {
+		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+		service.createNaiteUser("김민성", "kaver99@gmail.com", "1234");
+		service.createNaiteUser("김범주", "4xjida@naver.com", "1234");
+		service.createNaiteUser("김병태", "byeongtae.kim@sycns.co.kr", "1234");
+		service.createNaiteUser("김선미", "codus51251@naver.com", "1234");
+		service.createNaiteUser("김성미", "sungmiya@gmail.com", "1234");
+		service.createNaiteUser("김장우", "jwheat21c@hanmail.net", "1234");
+		service.createNaiteUser("김태윤", "kimtayoon@gmail.com", "1234");
+		service.createNaiteUser("노현주", "cutty1130@nate.com", "1234");
+		service.createNaiteUser("박경희", "pkh731@nate.com", "1234");
+		service.createNaiteUser("박새미", "zkdlffpem@naver.com", "1234");
+		service.createNaiteUser("박성훈", "endfirst@gmail.com", "1234");
+		service.createNaiteUser("박소영", "joynouchi@naver.com", "1234");
+		service.createNaiteUser("박태훈", "oldamigo9@gmail.com", "1234");
+		service.createNaiteUser("송준현", "hyun8510@empas.com", "1234");
+		service.createNaiteUser("우지환", "wjh0907@mnwise.com", "1234");
+		service.createNaiteUser("정규필", "darkstalker@nate.com", "1234");
+		service.createNaiteUser("조성재", "sjjoe74@naver.com", "1234");
+		service.createNaiteUser("최강남", "philastron@nate.com", "1234");
+		service.createNaiteUser("황성진", "hssj4543@naver.com", "1234");
 	}
 
 	private static void createStandardTextbook() throws Exception {

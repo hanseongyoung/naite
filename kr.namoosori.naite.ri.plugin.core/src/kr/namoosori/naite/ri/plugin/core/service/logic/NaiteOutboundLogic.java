@@ -37,6 +37,23 @@ public class NaiteOutboundLogic implements NaiteService {
 	}
 	
 	@Override
+	public Lecture getLecture(String lectureId) throws NaiteException {
+		//
+		String json = naiteContents.getContentsJson("lectures/"+lectureId);
+		Lecture lecture = Lecture.createDomainByJson(json);
+		return lecture;
+	}
+	
+	@Override
+	public List<Lecture> getTeacherLectures(String teacherEmail)
+			throws NaiteException {
+		//
+		String json = naiteContents.getContentsJson("teacherlectures/" + teacherEmail);
+		List<Lecture> lectures = Lecture.createDomainsByJson(json);
+		return lectures;
+	}
+	
+	@Override
 	public Lecture getCurrentLectureOfStudent(String studentEmail) throws NaiteException {
 		//
 		String currentJson = naiteContents.getContentsJson("currentlecture/students/"+studentEmail);
@@ -242,5 +259,7 @@ public class NaiteOutboundLogic implements NaiteService {
 		params.put("password", password);
 		naiteContents.doPost("naiteusers", params);
 	}
+
+	
 
 }

@@ -17,7 +17,11 @@ public interface NaiteService {
 	
 	public Lecture getCurrentLecture(String teacherEmail) throws NaiteException;
 	public Lecture getCurrentLectureOfStudent(String studentEmail) throws NaiteException;
+	public Lecture getLecture(String lectureId) throws NaiteException;
+	
+	public List<Lecture> getTeacherLectures(String teacherEmail) throws NaiteException;
 	public void createLecture(String name, String teacherEmail) throws NaiteException;
+	
 	public Student getCurrentStudent(String lectureId, String studentEmail) throws NaiteException;
 	public List<Student> findStudents(String lectureId) throws NaiteException;
 	public void createStudent(String lectureId, Student student) throws NaiteException;
@@ -31,24 +35,13 @@ public interface NaiteService {
 
 	// -------------------------------------------------------------------------
 	// file service
-	public void downloadTextbook(String downloadLocation, Textbook textbook)
-			throws NaiteException;
-
-	public void createTextbook(String textbookFilePathName, String lectureId)
-			throws NaiteException;
-	
-	public void createTextbookByStandard(String standardTextbookId, String lectureId)
-			throws NaiteException;
-
-	public void createExerciseProject(String projectFilePathName,
-			String projectName, String lectureId) throws NaiteException;
-	
+	public void downloadTextbook(String downloadLocation, Textbook textbook) throws NaiteException;
+	public void createTextbook(String textbookFilePathName, String lectureId) throws NaiteException;
+	public void createTextbookByStandard(String standardTextbookId, String lectureId) throws NaiteException;
+	public void createExerciseProject(String projectFilePathName, String projectName, String lectureId) throws NaiteException;
 	public void createStandardProject(String projectFilePathName, String projectName) throws NaiteException;
 	public void createStandardTextbook(String textbookFilePathName) throws NaiteException;
-	
-	public void createStudentProject(String projectFilePathName,
-			String projectName, String lectureId, String studentId, 
-			String exerciseProjectId) throws NaiteException;
+	public void createStudentProject(String projectFilePathName, String projectName, String lectureId, String studentId, String exerciseProjectId) throws NaiteException;
 
 	// -------------------------------------------------------------------------
 	/**

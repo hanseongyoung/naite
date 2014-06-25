@@ -1,9 +1,11 @@
 package kr.namoosori.naite.ri.plugin.core.service.domain;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class Lecture {
 	//
@@ -106,6 +108,14 @@ public class Lecture {
 			}
 		}
 		return lecture;
+	}
+	
+	public static List<Lecture> createDomainsByJson(String jsonStr) {
+		//
+		Type listType = new TypeToken<ArrayList<Lecture>>() {
+		}.getType();
+		List<Lecture> lectures = new Gson().fromJson(jsonStr, listType);
+		return lectures;
 	}
 	
 	private static Lecture createDomain(String line) {
