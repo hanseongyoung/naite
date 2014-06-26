@@ -123,6 +123,7 @@ public class TeacherPlugin extends AbstractUIPlugin {
 	public static final String IMG_PRJ = "prj"; //$NON-NLS-1$
 	public static final String IMG_CLOUD = "cloud"; //$NON-NLS-1$
 	public static final String IMG_FOLDER = "folder"; //$NON-NLS-1$
+	public static final String IMG_REFRESH = "refresh"; //$NON-NLS-1$
 	
 	protected void initializeImageRegistry(ImageRegistry registry) {
 		registerImage(registry, IMG_HELP_TOPIC, "help_topic.gif"); //$NON-NLS-1$
@@ -131,6 +132,7 @@ public class TeacherPlugin extends AbstractUIPlugin {
 		registerImage(registry, IMG_PRJ, "prj.png"); //$NON-NLS-1$
 		registerImage(registry, IMG_CLOUD, "cloud.png"); //$NON-NLS-1$
 		registerImage(registry, IMG_FOLDER, "folder.png"); //$NON-NLS-1$
+		registerImage(registry, IMG_REFRESH, "refresh_tab.gif"); //$NON-NLS-1$
 	}
 
 	private void registerImage(ImageRegistry registry, String key,

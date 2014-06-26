@@ -123,6 +123,25 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		}
 	}
 	
+	/**
+	 * Refresh 액션
+	 */
+	class RefreshAction extends Action {
+		//
+		public RefreshAction() {
+			//
+			setId("refreshAction");
+			setImageDescriptor(StudentPlugin.getDefault().getImageRegistry().getDescriptor(StudentPlugin.IMG_REFRESH));
+			setToolTipText("Refresh");
+		}
+
+		@Override
+		public void run() {
+			//
+			refresh();
+		}
+	}
+	
 	@Override
 	public void serverOn() {
 		System.out.println("[StudentLectureView] server on");
@@ -281,6 +300,7 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		ToolBarManager toolbarManager = (ToolBarManager) form.getToolBarManager();
 		toolbarManager.add(new LoginStatusAction());
 		toolbarManager.add(new SelectLectureAction());
+		toolbarManager.add(new RefreshAction());
 		toolbarManager.update(true);
 	}
 	
@@ -406,12 +426,14 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 	}
 	
 	private void refreshExampleSectionClient() {
-		// TODO : 문제있음
+		//
 		Control client = exampleSection.getClient();
 		client.dispose();
 		Composite newClient = createExampleSectionClient(exampleSection);
 		exampleSection.setClient(newClient);
 		exampleSection.getParent().layout();
+		exampleSection.layout();
+		form.reflow(true);
 	}
 
 	private void createExerciseProjectLink(Composite composite,
@@ -429,8 +451,7 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 				//
 				try {
 					project.createAndExportToStudent();
-					//refreshExampleSectionClient();
-					refresh();
+					refreshExampleSectionClient();
 				} catch (NaiteException e1) {
 					e1.printStackTrace();
 					MessageDialog.openWarning(getSite().getShell(), "실습예제 설치", e1.getMessage());

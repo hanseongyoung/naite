@@ -158,6 +158,25 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 		}
 	}
 	
+	/**
+	 * Refresh 액션
+	 */
+	class RefreshAction extends Action {
+		//
+		public RefreshAction() {
+			//
+			setId("refreshAction");
+			setImageDescriptor(TeacherPlugin.getDefault().getImageRegistry().getDescriptor(TeacherPlugin.IMG_REFRESH));
+			setToolTipText("Refresh");
+		}
+
+		@Override
+		public void run() {
+			//
+			refresh();
+		}
+	}
+	
 	private void refreshStudentsView() {
 		StudentsView view = (StudentsView) getSite().getPage().findView(StudentsView.ID);
 		view.refresh();
@@ -252,6 +271,7 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 		toolbarManager.add(new LoginStatusAction());
 		toolbarManager.add(new AddLectureAction());
 		toolbarManager.add(new SelectLectureAction());
+		toolbarManager.add(new RefreshAction());
 		toolbarManager.update(true);
 	}
 	

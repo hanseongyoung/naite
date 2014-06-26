@@ -141,11 +141,13 @@ public class StudentPlugin extends AbstractUIPlugin {
 	public static final String IMG_HELP_TOPIC = "helpTopic"; //$NON-NLS-1$
 	public static final String IMG_COG = "cog"; //$NON-NLS-1$
 	public static final String IMG_PRJ = "prj"; //$NON-NLS-1$
+	public static final String IMG_REFRESH = "refresh"; //$NON-NLS-1$
 	
 	protected void initializeImageRegistry(ImageRegistry registry) {
 		registerImage(registry, IMG_HELP_TOPIC, "help_topic.gif"); //$NON-NLS-1$
 		registerImage(registry, IMG_COG, "cog.png"); //$NON-NLS-1$
 		registerImage(registry, IMG_PRJ, "prj.png"); //$NON-NLS-1$
+		registerImage(registry, IMG_REFRESH, "refresh_tab.gif"); //$NON-NLS-1$
 	}
 
 	private void registerImage(ImageRegistry registry, String key,
