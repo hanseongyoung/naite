@@ -1,5 +1,8 @@
 package kr.namoosori.naite.ri.plugin.student.views;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
 import kr.namoosori.naite.ri.plugin.core.job.BusyUIIndicateJob;
 import kr.namoosori.naite.ri.plugin.core.project.NaiteProject;
@@ -23,11 +26,12 @@ import kr.namoosori.naite.ri.plugin.student.dialogs.StudentInfoDialog;
 import kr.namoosori.naite.ri.plugin.student.login.LoginListener;
 import kr.namoosori.naite.ri.plugin.student.login.LoginManager;
 import kr.namoosori.naite.ri.plugin.student.util.DialogSettingsUtils;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -36,6 +40,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -72,6 +77,49 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		public void run() {
 			StudentInfoDialog dialog = new StudentInfoDialog(getSite().getShell());
 			dialog.open();
+		}
+	}
+	
+	/**
+	 * 강의 선택 액션
+	 */
+	class SelectLectureAction extends Action {
+		//
+		public SelectLectureAction() {
+			//
+			setId("selectLectureAction");
+			setImageDescriptor(StudentPlugin.getDefault().getImageRegistry().getDescriptor(StudentPlugin.IMG_HELP_TOPIC));
+			setToolTipText("강의선택");
+		}
+
+		@Override
+		public void run() {
+			//
+			NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+			List<Lecture> lectures = new ArrayList<Lecture>();
+			try {
+				lectures = service.getStudentLectures(getStudentEmail());
+			} catch (NaiteException e) {
+				e.printStackTrace();
+			}
+			
+			ElementListSelectionDialog dialog = new ElementListSelectionDialog(getSite().getShell(), new LabelProvider(){
+				@Override
+				public String getText(Object element) {
+					if (element == null) return "";
+					Lecture lecture = (Lecture) element;
+					return lecture.getName();
+				}
+			});
+			dialog.setElements(lectures.toArray());
+			dialog.setTitle("강의 선택");
+			dialog.setMessage("이전 강의를 선택하세요.");
+			
+			if (dialog.open() == Window.OK) {
+				Lecture selected = (Lecture) dialog.getResult()[0];
+				currentLectureId = selected.getId();
+				refresh();
+			}
 		}
 	}
 	
@@ -232,14 +280,24 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		
 		ToolBarManager toolbarManager = (ToolBarManager) form.getToolBarManager();
 		toolbarManager.add(new LoginStatusAction());
+		toolbarManager.add(new SelectLectureAction());
 		toolbarManager.update(true);
 	}
+	
+	// 조회할 기준 강의 아이디
+	private String currentLectureId = null;
 
 	private Lecture getCurrentLecture() {
 		//
 		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 		try {
-			return service.getCurrentLectureOfStudent(getStudentEmail());
+			Lecture lecture = null;
+			if (currentLectureId == null) {
+				lecture = service.getCurrentLectureOfStudent(getStudentEmail());
+			} else {
+				lecture = service.getLecture(currentLectureId);
+			}
+			return lecture;
 		} catch (NaiteException e) {
 			e.printStackTrace();
 		}

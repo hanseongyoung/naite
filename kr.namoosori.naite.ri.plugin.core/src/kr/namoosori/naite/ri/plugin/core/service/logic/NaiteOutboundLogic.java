@@ -54,6 +54,15 @@ public class NaiteOutboundLogic implements NaiteService {
 	}
 	
 	@Override
+	public List<Lecture> getStudentLectures(String studentEmail)
+			throws NaiteException {
+		//
+		String json = naiteContents.getContentsJson("studentlectures/" + studentEmail);
+		List<Lecture> lectures = Lecture.createDomainsByJson(json);
+		return lectures;
+	}
+	
+	@Override
 	public Lecture getCurrentLectureOfStudent(String studentEmail) throws NaiteException {
 		//
 		String currentJson = naiteContents.getContentsJson("currentlecture/students/"+studentEmail);

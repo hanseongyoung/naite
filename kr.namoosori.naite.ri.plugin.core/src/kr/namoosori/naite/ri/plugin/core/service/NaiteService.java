@@ -20,6 +20,7 @@ public interface NaiteService {
 	public Lecture getLecture(String lectureId) throws NaiteException;
 	
 	public List<Lecture> getTeacherLectures(String teacherEmail) throws NaiteException;
+	public List<Lecture> getStudentLectures(String studentEmail) throws NaiteException;
 	public void createLecture(String name, String teacherEmail) throws NaiteException;
 	
 	public Student getCurrentStudent(String lectureId, String studentEmail) throws NaiteException;
