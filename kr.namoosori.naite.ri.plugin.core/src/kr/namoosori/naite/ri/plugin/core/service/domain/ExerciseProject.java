@@ -3,7 +3,9 @@ package kr.namoosori.naite.ri.plugin.core.service.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExerciseProject {
+import kr.namoosori.naite.ri.plugin.core.project.NaiteProjectObject;
+
+public class ExerciseProject implements NaiteProjectObject {
 	//
 	private String id;
 	private String fileName;
@@ -94,6 +96,13 @@ public class ExerciseProject {
 		return String.valueOf(id);
 	}
 
+	@Override
+	public String getServerPath() {
+		//
+		return "lectures/" + lecture.getId() + "/exerciseprojects";
+	}
+
+	/*
 	public StudentProject newStudentProject(Student student) {
 		//
 		StudentProject project = new StudentProject();
@@ -105,6 +114,7 @@ public class ExerciseProject {
 		project.setExerciseProjectId(this.id);
 		return project;
 	}
+	*/
 	
 	
 }

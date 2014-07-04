@@ -24,12 +24,15 @@ public abstract class BusyUIIndicateJob extends BusyJob {
     private Display display = Display.getCurrent();
     
     private IStatusLineManager manager;
+    private String displayMessage;
     
-    public BusyUIIndicateJob(IStatusLineManager manager) {
+    public BusyUIIndicateJob(IStatusLineManager manager, String displayMessage) {
     	this.manager = manager;
+    	this.displayMessage = displayMessage;
     }
 
     public abstract Object job();
+    public void doAfter(){}
 
     public Object start() {
         //
@@ -50,7 +53,7 @@ public abstract class BusyUIIndicateJob extends BusyJob {
                         public void run() {
                             // 검색 진행중임을 UI에 표현
                         	IProgressMonitor pm = manager.getProgressMonitor();
-                        	pm.beginTask("다운로드 중...", IProgressMonitor.UNKNOWN);
+                        	pm.beginTask(displayMessage, IProgressMonitor.UNKNOWN);
                         	//manager.setMessage("다운로드 중...");
                         }
                     });
@@ -64,7 +67,9 @@ public abstract class BusyUIIndicateJob extends BusyJob {
                         	//manager.setMessage(null);
                         	IProgressMonitor pm = manager.getProgressMonitor();
                         	pm.done();
-                        	MessageDialog.openInformation(getShell(), "완료", "완료되었습니다.");
+                        	//MessageDialog.openInformation(getShell(), "완료", "완료되었습니다.");
+                        	
+                        	doAfter();
                         }
                     });
                 } catch (RuntimeException e) {

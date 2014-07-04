@@ -9,8 +9,7 @@ import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
-import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
-import kr.namoosori.naite.ri.plugin.core.service.domain.StudentProject;
+import kr.namoosori.naite.ri.plugin.core.service.domain.student.StudentProject;
 import kr.namoosori.naite.ri.plugin.core.util.ZipUtils;
 
 import org.apache.commons.io.FileUtils;
@@ -25,21 +24,22 @@ public class NaiteProject {
 	private NaiteContents contents = new NaiteContents();
 	
 	private IProject project;
-	private ExerciseProject exerciseProject;
+	private NaiteProjectObject projectObject;
 	
 	public NaiteProject(){}
 	
-	public NaiteProject(ExerciseProject exerciseProject) {
+	public NaiteProject(NaiteProjectObject projectObject) {
 		//
-		this.exerciseProject = exerciseProject;
-		this.project = ResourcesPlugin.getWorkspace().getRoot().getProject(exerciseProject.getProjectName());
+		this.projectObject = projectObject;
+		this.project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectObject.getProjectName());
 	}
 	
-	public NaiteProject(IProject project, Lecture lecture) {
+	public NaiteProject(IProject project, NaiteProjectObject projectObject) {
 		//
 		this.project = project;
-		this.exerciseProject = new ExerciseProject(project.getName());
-		this.exerciseProject.setLecture(lecture);
+		this.projectObject = projectObject;
+//		this.exerciseProject = new ExerciseProject(project.getName());
+//		this.exerciseProject.setLecture(lecture);
 	}
 	
 	public String getName() {
@@ -50,6 +50,14 @@ public class NaiteProject {
 		return project.getName();
 	}
 	
+	public String getId() {
+		//
+		if (projectObject == null) {
+			return null;
+		}
+		return projectObject.getId();
+	}
+	
 	public IProject getResource() {
 		//
 		return project;
@@ -58,28 +66,14 @@ public class NaiteProject {
 	public void create() throws NaiteException {
 		//
 		checkCreated();
-		
-		String serverPath = null;
-		if (exerciseProject instanceof StudentProject) {
-			StudentProject studentProject = (StudentProject) exerciseProject;
-			serverPath = "lectures/" + studentProject.getLectureId() + "/students/" + studentProject.getStudentId() + "/projects/";
-		} else {
-			serverPath = "lectures/" + exerciseProject.getLectureId() + "/exerciseprojects/";
-		}
-		createProjectContents(serverPath);
+
+		createProjectContents(projectObject.getServerPath());
 		createProject();
 	}
 	
 	public void update() throws NaiteException {
 		//
-		String serverPath = null;
-		if (exerciseProject instanceof StudentProject) {
-			StudentProject studentProject = (StudentProject) exerciseProject;
-			serverPath = "lectures/" + studentProject.getLectureId() + "/students/" + studentProject.getStudentId() + "/projects/";
-		} else {
-			serverPath = "lectures/" + exerciseProject.getLectureId() + "/exerciseprojects/";
-		}
-		updateProjectContents(serverPath);
+		updateProjectContents(projectObject.getServerPath());
 		updateProject();
 	}
 	
@@ -94,13 +88,17 @@ public class NaiteProject {
 
 	public void export() throws NaiteException {
 		//
-		//String serverPath = "lectures/" + exerciseProject.getLectureId() + "/projects/";
 		String packedFilePathName = packProjectContents();
 		
 		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
-		service.createExerciseProject(packedFilePathName, project.getName(), exerciseProject.getLectureId());
+		if (projectObject instanceof ExerciseProject) {
+			service.uploadProject(packedFilePathName, (ExerciseProject)projectObject);
+		} else if (projectObject instanceof StudentProject) {
+			service.uploadProject(packedFilePathName, (StudentProject)projectObject);
+		}
 	}
 	
+	/* FIXME
 	public void createAndExportToStudent() throws NaiteException {
 		//
 		//checkCreated();
@@ -123,7 +121,9 @@ public class NaiteProject {
 		service.createStudentProject(packedFilePathName, project.getName(), studentProject.getLectureId(), 
 				studentProject.getStudentId(), studentProject.getExerciseProjectId());
 	}
+	*/
 	
+	/* FIXME
 	public void exportToStudentProject() throws NaiteException {
 		if (!(exerciseProject instanceof StudentProject)) {
 			System.out.println("[NaiteProject.createAndExportToStudent] 올바르지 않은 요청임.");
@@ -138,6 +138,7 @@ public class NaiteProject {
 		service.createStudentProject(packedFilePathName, project.getName(), studentProject.getLectureId(), 
 				studentProject.getStudentId(), studentProject.getExerciseProjectId());
 	}
+	*/
 
 	private void createProject() throws NaiteException {
 		//
@@ -168,7 +169,7 @@ public class NaiteProject {
 
 	private void createProjectContents(String serverPath) throws NaiteException {
 		//
-		String zipFileName = exerciseProject.getFileName();
+		String zipFileName = projectObject.getFileName();
 		InputStream inputStream = contents.getInputStream(serverPath, zipFileName);
 		File workspaceDir = NaiteWorkspace.getInstance().getRootLocationAsFile();
 		File targetDir = new File(workspaceDir, project.getName());
@@ -201,8 +202,8 @@ public class NaiteProject {
 	
 	private void updateProjectContents(String serverPath) throws NaiteException {
 		//
-		String zipFileName = exerciseProject.getFileName();
-		InputStream inputStream = contents.getInputStream(serverPath, zipFileName);
+		String zipFileName = projectObject.getFileName();
+		InputStream inputStream = contents.getInputStream(serverPath + "/", zipFileName);
 		File workspaceDir = NaiteWorkspace.getInstance().getRootLocationAsFile();
 		File targetDir = new File(workspaceDir, project.getName());
 		
@@ -217,9 +218,9 @@ public class NaiteProject {
 		String projectPath = project.getLocation().toString();
 		System.out.println(projectPath);
 		String fileName = project.getName() + ".zip";
-		if (!(exerciseProject instanceof StudentProject)) {
-			exerciseProject.setFileName(fileName);
-		}
+//		if (!(exerciseProject instanceof StudentProject)) {
+//			exerciseProject.setFileName(fileName);
+//		}
 		System.out.println(fileName);
 		String tempZipFilePathName = FileUtils.getTempDirectoryPath() + fileName;
 		System.out.println(tempZipFilePathName);
@@ -235,8 +236,8 @@ public class NaiteProject {
 		return tempZipFilePathName;
 	}
 
-	public ExerciseProject getExerciseProject() {
-		return exerciseProject;
+	public NaiteProjectObject getProjectObject() {
+		return projectObject;
 	}
 
 	public boolean exist() {

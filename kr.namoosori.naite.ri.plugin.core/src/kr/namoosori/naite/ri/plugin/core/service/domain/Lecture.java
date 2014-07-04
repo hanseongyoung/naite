@@ -7,7 +7,7 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-public class Lecture {
+public class Lecture extends AbstractLecture {
 	//
 	private String id;
 	private String name;

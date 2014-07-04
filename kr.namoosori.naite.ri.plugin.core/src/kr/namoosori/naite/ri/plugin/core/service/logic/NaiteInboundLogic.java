@@ -15,6 +15,9 @@ import kr.namoosori.naite.ri.plugin.core.service.domain.StandardProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.StandardTextbook;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Student;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
+import kr.namoosori.naite.ri.plugin.core.service.domain.student.StudentLecture;
+import kr.namoosori.naite.ri.plugin.core.service.domain.student.StudentProject;
+import kr.namoosori.naite.ri.plugin.core.service.domain.student.StudentTextbook;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -214,13 +217,12 @@ public class NaiteInboundLogic implements NaiteService {
 	}
 	
 	@Override
-	public void createExerciseProject(String filePathName, String projectName,
-			String lectureId) throws NaiteException {
+	public void uploadProject(String filePathName, ExerciseProject project) throws NaiteException {
 		//
 		String fileName = StringUtils.substringAfterLast(filePathName, "\\");
 		
-		registerExerciseProject(lectureId, fileName, projectName);
-		uploadExerciseProject(lectureId, fileName, filePathName);
+		registerExerciseProject(project.getLectureId(), fileName, project.getFileName());
+		uploadExerciseProject(project.getLectureId(), fileName, filePathName);
 	}
 	
 	private void registerExerciseProject(String lectureId, String name, String projectName) throws NaiteException {
@@ -324,21 +326,9 @@ public class NaiteInboundLogic implements NaiteService {
 		
 	}
 
-	@Override
-	public Lecture getCurrentLectureOfStudent(String studentEmail)
-			throws NaiteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
-	@Override
-	public void createStudentProject(String projectFilePathName,
-			String projectName, String lectureId, String studentId,
-			String exerciseProjectId) throws NaiteException {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 	@Override
 	public List<Lecture> getTeacherLectures(String teacherEmaile)
 			throws NaiteException {
@@ -357,6 +347,48 @@ public class NaiteInboundLogic implements NaiteService {
 			throws NaiteException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public StudentLecture getStudentLecture(String studentEmail,
+			String lectureId) throws NaiteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void downloadTextbook(String downloadLocation,
+			StudentTextbook textbook) throws NaiteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public StudentLecture getCurrentLectureOfStudent(String studentEmail)
+			throws NaiteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void publishTextbook(String textbookId, String lectureId, List<String> studentEmails)
+			throws NaiteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void publishExerciseProject(String exerciseProjectId,
+			String lectureId, List<String> studentEmails) throws NaiteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void uploadProject(String projectFilePathName, StudentProject project)
+			throws NaiteException {
+		// TODO Auto-generated method stub
+		
 	}
 
 	//--------------------------------------------------------------------------

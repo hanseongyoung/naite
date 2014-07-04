@@ -1,6 +1,6 @@
 package kr.namoosori.naite.ri.plugin.core;
 
-import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
+import kr.namoosori.naite.ri.plugin.core.service.domain.AbstractLecture;
 
 
 public abstract class CoreContext {
@@ -14,7 +14,7 @@ public abstract class CoreContext {
 		return instance;
 	}
 	
-	public static Lecture CURRENT_LECTURE;
+	public static AbstractLecture CURRENT_LECTURE;
 
 	public abstract String getServerUrl();
 	public abstract String getWSServerUrl();

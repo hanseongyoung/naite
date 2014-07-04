@@ -21,6 +21,7 @@ Export-Package: kr.namoosori.naite.ri.plugin.core,
  kr.namoosori.naite.ri.plugin.core.project,
  kr.namoosori.naite.ri.plugin.core.service,
  kr.namoosori.naite.ri.plugin.core.service.domain,
+ kr.namoosori.naite.ri.plugin.core.service.domain.student,
  kr.namoosori.naite.ri.plugin.core.util
 Bundle-ClassPath: .,
  lib/commons-io-2.0.jar,

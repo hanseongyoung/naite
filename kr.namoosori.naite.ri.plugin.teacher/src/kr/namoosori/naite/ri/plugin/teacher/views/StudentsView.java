@@ -8,7 +8,7 @@ import kr.namoosori.naite.ri.plugin.core.project.NaiteProject;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Student;
-import kr.namoosori.naite.ri.plugin.core.service.domain.StudentProject;
+import kr.namoosori.naite.ri.plugin.core.service.domain.student.StudentProject;
 import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.facade.MessageListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.RefreshListener;

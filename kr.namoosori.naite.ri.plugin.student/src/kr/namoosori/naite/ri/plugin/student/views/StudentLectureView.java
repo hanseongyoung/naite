@@ -9,11 +9,11 @@ import kr.namoosori.naite.ri.plugin.core.project.NaiteProject;
 import kr.namoosori.naite.ri.plugin.core.project.NaiteWorkspace;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteServiceFactory;
-import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Student;
-import kr.namoosori.naite.ri.plugin.core.service.domain.StudentProject;
-import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
+import kr.namoosori.naite.ri.plugin.core.service.domain.student.StudentLecture;
+import kr.namoosori.naite.ri.plugin.core.service.domain.student.StudentProject;
+import kr.namoosori.naite.ri.plugin.core.service.domain.student.StudentTextbook;
 import kr.namoosori.naite.ri.plugin.netclient.event.EventManager;
 import kr.namoosori.naite.ri.plugin.netclient.facade.MessageListener;
 import kr.namoosori.naite.ri.plugin.netclient.facade.RefreshListener;
@@ -26,6 +26,7 @@ import kr.namoosori.naite.ri.plugin.student.dialogs.StudentInfoDialog;
 import kr.namoosori.naite.ri.plugin.student.login.LoginListener;
 import kr.namoosori.naite.ri.plugin.student.login.LoginManager;
 import kr.namoosori.naite.ri.plugin.student.util.DialogSettingsUtils;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -307,15 +308,15 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 	// 조회할 기준 강의 아이디
 	private String currentLectureId = null;
 
-	private Lecture getCurrentLecture() {
+	private StudentLecture getCurrentLecture() {
 		//
 		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 		try {
-			Lecture lecture = null;
+			StudentLecture lecture = null;
 			if (currentLectureId == null) {
 				lecture = service.getCurrentLectureOfStudent(getStudentEmail());
 			} else {
-				lecture = service.getLecture(currentLectureId);
+				lecture = service.getStudentLecture(getStudentEmail(), currentLectureId);
 			}
 			return lecture;
 		} catch (NaiteException e) {
@@ -350,14 +351,15 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		Composite composite = toolkit.createComposite(section);
 		composite.setLayout(new GridLayout(2, false));
 		
-		for (Textbook textbook : StudentContext.CURRENT_LECTURE.getTextbooks()) {
+		StudentLecture studentLecture = (StudentLecture) StudentContext.CURRENT_LECTURE;
+		for (StudentTextbook textbook : studentLecture.getTextbooks()) {
 			createTextbookLink(composite, textbook);
 		}
 		
 		return composite;
 	}
 	
-	private void createTextbookLink(Composite composite, final Textbook textbook) {
+	private void createTextbookLink(Composite composite, final StudentTextbook textbook) {
 		//
 		ImageHyperlink image = toolkit.createImageHyperlink(composite, SWT.NONE);
 		image.setImage(StudentPlugin.getDefault().getImageRegistry().get(StudentPlugin.IMG_HELP_TOPIC));
@@ -376,22 +378,7 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
                 final String fileSelected = fileDialog.open();
                 if (fileSelected == null || fileSelected.length() <= 0) return;
                 
-                IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
-				BusyUIIndicateJob job = new BusyUIIndicateJob(manager) {
-					@Override
-					public Object job() {
-						//
-						NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
-						try {
-							service.downloadTextbook(fileSelected, textbook);
-						} catch (NaiteException e) {
-							e.printStackTrace();
-						}
-						return null;
-					}
-				};
-				job.start();
-				
+                downloadTextbook(fileSelected, textbook);
 			}
 		});
 	}
@@ -417,8 +404,10 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		composite.setLayout(new GridLayout(3, false));
 		Student currentStudent = findCurrentStudent(getStudentEmail());
 		
-		for (ExerciseProject exerciseProject : StudentContext.CURRENT_LECTURE.getExerciseProjects()) {
-			StudentProject studentProject = exerciseProject.newStudentProject(currentStudent);
+		StudentLecture studentLecture = (StudentLecture) StudentContext.CURRENT_LECTURE;
+		
+		for (StudentProject studentProject : studentLecture.getProjects()) {
+			//StudentProject studentProject = exerciseProject.newStudentProject(currentStudent);
 			createExerciseProjectLink(composite, new NaiteProject(studentProject));
 		}
 		
@@ -448,14 +437,7 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		link.addHyperlinkListener(new HyperlinkAdapter(){
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				//
-				try {
-					project.createAndExportToStudent();
-					refreshExampleSectionClient();
-				} catch (NaiteException e1) {
-					e1.printStackTrace();
-					MessageDialog.openWarning(getSite().getShell(), "실습예제 설치", e1.getMessage());
-				}
+				createProject(project);
 			}
 		});
 		
@@ -465,12 +447,13 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 				@Override
 				public void linkActivated(HyperlinkEvent e) {
 					try {
-						project.exportToStudentProject();
+						project.export();
 						MessageDialog.openInformation(getSite().getShell(), "실습예제 업로드", "실습 예제가 나의 공간으로 업로드 되었습니다.");
 					} catch (NaiteException e1) {
 						e1.printStackTrace();
 						MessageDialog.openWarning(getSite().getShell(), "실습예제 업로드", e1.getMessage());
 					}
+					
 				}
 			});
 		} else {
@@ -500,4 +483,60 @@ public class StudentLectureView extends ViewPart implements LoginListener, Serve
 		super.dispose();
 	}
 
+	//--------------------------------------------------------------------------
+	// execute job process
+	//--------------------------------------------------------------------------
+	/**
+	 * 강의교재 다운로드 job
+	 * @param fileSelected 다운로드될 대상 파일명
+	 * @param textbook 교재객체
+	 */
+	private void downloadTextbook(final String fileSelected, final StudentTextbook textbook) {
+		//
+		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
+		BusyUIIndicateJob job = new BusyUIIndicateJob(manager, "다운로드 중...") {
+			@Override
+			public Object job() {
+				//
+				NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+				try {
+					service.downloadTextbook(fileSelected, textbook);
+				} catch (NaiteException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+		};
+		job.start();
+	}
+	
+	/**
+	 * 프로젝트 설치 job
+	 * @param project 프로젝트 객체
+	 */
+	private void createProject(final NaiteProject project) {
+		//
+		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
+		BusyUIIndicateJob job = new BusyUIIndicateJob(manager, "실습예제 설치 중...") {
+			@Override
+			public Object job() {
+				//
+				try {
+					project.create();
+				} catch (NaiteException e1) {
+					e1.printStackTrace();
+					MessageDialog.openWarning(getSite().getShell(), "실습예제 설치", e1.getMessage());
+				}
+				return null;
+			}
+
+			@Override
+			public void doAfter() {
+				refreshExampleSectionClient();
+			}
+		};
+		job.start();
+		
+	}
+	
 }

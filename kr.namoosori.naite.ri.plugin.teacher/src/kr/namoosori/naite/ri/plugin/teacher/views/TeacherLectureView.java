@@ -16,6 +16,7 @@ import kr.namoosori.naite.ri.plugin.netclient.facade.RefreshListener;
 import kr.namoosori.naite.ri.plugin.netclient.main.NaiteWSClient;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherContext;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherPlugin;
+import kr.namoosori.naite.ri.plugin.teacher.dialogs.ContentsPublishDialog;
 import kr.namoosori.naite.ri.plugin.teacher.dialogs.StandardProjectSelectDialog;
 import kr.namoosori.naite.ri.plugin.teacher.dialogs.StandardTextbookSelectDialog;
 import kr.namoosori.naite.ri.plugin.teacher.dialogs.TeacherInfoDialog;
@@ -285,7 +286,9 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 			Lecture lecture = null;
 			if (currentLectureId == null) {
 				lecture = service.getCurrentLecture(getTeacherEmail());
-				currentLectureId = lecture.getId();
+				if (lecture != null) {
+					currentLectureId = lecture.getId();
+				}
 			} else {
 				lecture = service.getLecture(currentLectureId);
 			}
@@ -350,27 +353,23 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
                 fileDialog.setText("등록할 강의교재 선택");
                 String fileSelected = fileDialog.open();
                 if (fileSelected == null || fileSelected.length() <= 0) return;
-                NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
-				try {
-					service.createTextbook(fileSelected, TeacherContext.CURRENT_LECTURE.getId());
-					TeacherContext.CURRENT_LECTURE = getCurrentLecture();
-					refreshBookSectionClient();
-					refreshStudents();
-				} catch (NaiteException e1) {
-					e1.printStackTrace();
-				}
+                
+                createTextbook(fileSelected, TeacherContext.CURRENT_LECTURE.getId());
 			}
 		});
 		return toolbar;
 	}
+	
+	
 
 	private Composite createBookSectionClient(Section section) {
 		//
 		Composite composite = toolkit.createComposite(section);
-		composite.setLayout(new GridLayout(3, false));
+		composite.setLayout(new GridLayout(4, false));
 		
 		if (TeacherContext.CURRENT_LECTURE != null) {
-			for (Textbook textbook : TeacherContext.CURRENT_LECTURE.getTextbooks()) {
+			Lecture lecture = (Lecture) TeacherContext.CURRENT_LECTURE;
+			for (Textbook textbook : lecture.getTextbooks()) {
 				createTextbookLink(composite, textbook);
 			}
 		}
@@ -407,44 +406,40 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
                 final String fileSelected = fileDialog.open();
                 if (fileSelected == null || fileSelected.length() <= 0) return;
                 
-                IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
-                BusyUIIndicateJob job = new BusyUIIndicateJob(manager) {
-					@Override
-					public Object job() {
-						//
-						NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
-						try {
-							service.downloadTextbook(fileSelected, textbook);
-						} catch (NaiteException e1) {
-							e1.printStackTrace();
-						}
-						return null;
-					}
-				};
-				job.start();
-				
+                downloadTextbook(fileSelected, textbook);
 			}
 		});
 		
-		Hyperlink delLink = toolkit.createHyperlink(composite, "삭제", SWT.WRAP);
+		ImageHyperlink pubLink = toolkit.createImageHyperlink(composite, SWT.WRAP);
+		pubLink.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_USER_GO));
+		pubLink.setToolTipText("강의교재 배포");
+		pubLink.addHyperlinkListener(new HyperlinkAdapter(){
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				ContentsPublishDialog dialog = new ContentsPublishDialog(getSite().getShell());
+				if (dialog.open() == Window.OK) {
+					List<String> checkedStudentEmails = dialog.getCheckedStudentEmails();
+					
+					publishTextbook(textbook.getId(), TeacherContext.CURRENT_LECTURE.getId(), checkedStudentEmails);
+				}
+			}
+		});
+		
+		ImageHyperlink delLink = toolkit.createImageHyperlink(composite, SWT.WRAP);
+		delLink.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_REMOVE));
+		delLink.setToolTipText("강의교재 삭제");
 		delLink.addHyperlinkListener(new HyperlinkAdapter(){
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				boolean confirm = MessageDialog.openConfirm(getSite().getShell(), "강의교재 삭제", "강의교재를 삭제하시겠습니까?");
 				if (confirm) {
-					NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
-					try {
-						service.deleteTextbook(textbook);
-						TeacherContext.CURRENT_LECTURE = getCurrentLecture();
-						refreshBookSectionClient();
-						refreshStudents();
-					} catch (NaiteException e1) {
-						e1.printStackTrace();
-					}
+					deleteTextbook(textbook);
 				}
 			}
 		});
 	}
+	
+	
 	
 	private Section exampleSection;
 
@@ -507,10 +502,11 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 	private Composite createExampleSectionClient(Section section) {
 		//
 		Composite composite = toolkit.createComposite(section);
-		composite.setLayout(new GridLayout(3, false));
+		composite.setLayout(new GridLayout(4, false));
 		
 		if (TeacherContext.CURRENT_LECTURE != null) {
-			for (ExerciseProject exerciseProject : TeacherContext.CURRENT_LECTURE.getExerciseProjects()) {
+			Lecture lecture = (Lecture) TeacherContext.CURRENT_LECTURE;
+			for (ExerciseProject exerciseProject : lecture.getExerciseProjects()) {
 				createExerciseProjectLink(composite, new NaiteProject(exerciseProject));
 			}
 		}
@@ -550,7 +546,24 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 			}
 		});
 		
-		Hyperlink delLink = toolkit.createHyperlink(composite, "삭제", SWT.WRAP);
+		ImageHyperlink pubLink = toolkit.createImageHyperlink(composite, SWT.WRAP);
+		pubLink.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_USER_GO));
+		pubLink.setToolTipText("실습예제 배포");
+		pubLink.addHyperlinkListener(new HyperlinkAdapter(){
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				ContentsPublishDialog dialog = new ContentsPublishDialog(getSite().getShell());
+				if (dialog.open() == Window.OK) {
+					List<String> checkedStudentEmails = dialog.getCheckedStudentEmails();
+					
+					publishExerciseProject(project.getId(), TeacherContext.CURRENT_LECTURE.getId(), checkedStudentEmails);
+				}
+			}
+		});
+		
+		ImageHyperlink delLink = toolkit.createImageHyperlink(composite, SWT.WRAP);
+		delLink.setImage(TeacherPlugin.getDefault().getImageRegistry().get(TeacherPlugin.IMG_REMOVE));
+		delLink.setToolTipText("실습예제 삭제");
 		delLink.addHyperlinkListener(new HyperlinkAdapter(){
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
@@ -558,7 +571,7 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 				if (confirm) {
 					NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 					try {
-						service.deleteExerciseProject(project.getExerciseProject());
+						service.deleteExerciseProject((ExerciseProject) project.getProjectObject());
 						TeacherContext.CURRENT_LECTURE = getCurrentLecture();
 						refreshExampleSectionClient();
 						refreshStudents();
@@ -586,5 +599,132 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 		}
 		super.dispose();
 	}
-
+	
+	//--------------------------------------------------------------------------
+	// execute job process
+	//--------------------------------------------------------------------------
+	/**
+	 * 강의교재 업로드 및 등록 job
+	 * @param fileSelected 등록할 강의교재 파일명
+	 * @param lectureId 강의아이디
+	 */
+	private void createTextbook(final String fileSelected, final String lectureId) {
+		//
+		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
+        BusyUIIndicateJob job = new BusyUIIndicateJob(manager, "업로드 중...") {
+			@Override
+			public Object job() {
+				//
+				NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+				try {
+					service.createTextbook(fileSelected, lectureId);
+					TeacherContext.CURRENT_LECTURE = getCurrentLecture();
+					refreshBookSectionClient();
+					refreshStudents();
+				} catch (NaiteException e1) {
+					e1.printStackTrace();
+				}
+				return null;
+			}
+		};
+		job.start();
+	}
+	
+	/**
+	 * 강의교재 다운로드 job
+	 * @param fileSelected 다운로드될 대상 파일명
+	 * @param textbook 교재객체
+	 */
+	private void downloadTextbook(final String fileSelected, final Textbook textbook) {
+		//
+		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
+        BusyUIIndicateJob job = new BusyUIIndicateJob(manager, "다운로드 중...") {
+			@Override
+			public Object job() {
+				//
+				NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+				try {
+					service.downloadTextbook(fileSelected, textbook);
+				} catch (NaiteException e1) {
+					e1.printStackTrace();
+				}
+				return null;
+			}
+		};
+		job.start();
+	}
+	
+	/**
+	 * 강의교재 배포 job
+	 * @param textbookId 교재 아이디
+	 * @param studentEmails 배포 대상 수강생 이메일 목록
+	 */
+	private void publishTextbook(final String textbookId, final String lectureId, final List<String> studentEmails) {
+		//
+		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
+        BusyUIIndicateJob job = new BusyUIIndicateJob(manager, "강의교재 배포중...") {
+			@Override
+			public Object job() {
+				//
+				NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+				try {
+					service.publishTextbook(textbookId, lectureId, studentEmails);
+				} catch (NaiteException e1) {
+					e1.printStackTrace();
+				}
+				return null;
+			}
+		};
+		job.start();
+	}
+	
+	/**
+	 * 강의교재 삭제 job
+	 * @param textbook 삭제할 강의교재 객체
+	 */
+	private void deleteTextbook(final Textbook textbook) {
+		//
+		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
+        BusyUIIndicateJob job = new BusyUIIndicateJob(manager, "삭제중...") {
+			@Override
+			public Object job() {
+				//
+				NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+				try {
+					service.deleteTextbook(textbook);
+					TeacherContext.CURRENT_LECTURE = getCurrentLecture();
+					refreshBookSectionClient();
+					refreshStudents();
+				} catch (NaiteException e1) {
+					e1.printStackTrace();
+				}
+				return null;
+			}
+		};
+		job.start();
+	}
+	
+	/**
+	 * 강의 실습예제 배포 job
+	 * @param textbookId 교재 아이디
+	 * @param studentEmails 배포 대상 수강생 이메일 목록
+	 */
+	private void publishExerciseProject(final String exerciseProjectId, final String lectureId, final List<String> studentEmails) {
+		//
+		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
+        BusyUIIndicateJob job = new BusyUIIndicateJob(manager, "실습예제 배포중...") {
+			@Override
+			public Object job() {
+				//
+				NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+				try {
+					service.publishExerciseProject(exerciseProjectId, lectureId, studentEmails);
+				} catch (NaiteException e1) {
+					e1.printStackTrace();
+				}
+				return null;
+			}
+		};
+		job.start();
+	}
 }

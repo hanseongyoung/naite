@@ -1,6 +1,6 @@
 package kr.namoosori.naite.ri.plugin.teacher.views;
 
-import kr.namoosori.naite.ri.plugin.core.service.domain.StudentProject;
+import kr.namoosori.naite.ri.plugin.core.service.domain.student.StudentProject;
 import kr.namoosori.naite.ri.plugin.teacher.TeacherPlugin;
 
 import org.eclipse.jface.viewers.ITableLabelProvider;

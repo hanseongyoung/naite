@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-
 import kr.namoosori.naite.ri.plugin.core.contents.NaiteContents;
 import kr.namoosori.naite.ri.plugin.core.exception.NaiteException;
 import kr.namoosori.naite.ri.plugin.core.service.NaiteService;
@@ -17,6 +15,13 @@ import kr.namoosori.naite.ri.plugin.core.service.domain.StandardProject;
 import kr.namoosori.naite.ri.plugin.core.service.domain.StandardTextbook;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Student;
 import kr.namoosori.naite.ri.plugin.core.service.domain.Textbook;
+import kr.namoosori.naite.ri.plugin.core.service.domain.student.StudentLecture;
+import kr.namoosori.naite.ri.plugin.core.service.domain.student.StudentProject;
+import kr.namoosori.naite.ri.plugin.core.service.domain.student.StudentTextbook;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.google.gson.Gson;
 
 public class NaiteOutboundLogic implements NaiteService {
 	//
@@ -45,6 +50,14 @@ public class NaiteOutboundLogic implements NaiteService {
 	}
 	
 	@Override
+	public StudentLecture getStudentLecture(String studentEmail, String lectureId) throws NaiteException {
+		//
+		String json = naiteContents.getContentsJson("students/"+studentEmail+"/lectures/"+lectureId);
+		StudentLecture lecture = StudentLecture.createDomainByJson(json);
+		return lecture;
+	}
+	
+	@Override
 	public List<Lecture> getTeacherLectures(String teacherEmail)
 			throws NaiteException {
 		//
@@ -63,7 +76,7 @@ public class NaiteOutboundLogic implements NaiteService {
 	}
 	
 	@Override
-	public Lecture getCurrentLectureOfStudent(String studentEmail) throws NaiteException {
+	public StudentLecture getCurrentLectureOfStudent(String studentEmail) throws NaiteException {
 		//
 		String currentJson = naiteContents.getContentsJson("currentlecture/students/"+studentEmail);
 		Lecture current = Lecture.createDomainByJson(currentJson);
@@ -71,8 +84,8 @@ public class NaiteOutboundLogic implements NaiteService {
 			return null;
 		}
 		
-		String json = naiteContents.getContentsJson("lectures/"+current.getId());
-		Lecture lecture = Lecture.createDomainByJson(json);
+		String json = naiteContents.getContentsJson("students/" + studentEmail + "/lectures/" +current.getId());
+		StudentLecture lecture = StudentLecture.createDomainByJson(json);
 		return lecture;
 	}
 
@@ -137,6 +150,19 @@ public class NaiteOutboundLogic implements NaiteService {
 			naiteContents.download(downloadLocation, "lectures/" + lectureId + "/textbooks/file/", serverFileName);
 		}
 	}
+	
+	@Override
+	public void downloadTextbook(String downloadLocation, StudentTextbook textbook)
+			throws NaiteException {
+		String lectureId = textbook.getLectureId();
+		String serverFileName = textbook.getName();
+		String standardTextbookId = textbook.getStandardTextbookId();
+		if (standardTextbookId != null && standardTextbookId.length() > 0) {
+			naiteContents.download(downloadLocation, "standardtextbooks/file/", serverFileName);
+		} else {
+			naiteContents.download(downloadLocation, "lectures/" + lectureId + "/textbooks/file/", serverFileName);
+		}
+	}
 
 	@Override
 	public void createTextbook(String textbookFilePathName, String lectureId)
@@ -193,39 +219,39 @@ public class NaiteOutboundLogic implements NaiteService {
 	}
 
 	@Override
-	public void createExerciseProject(String projectFilePathName,
-			String projectName, String lectureId) throws NaiteException {
+	public void uploadProject(String projectFilePathName, ExerciseProject project) throws NaiteException {
 		String fileName = StringUtils.substringAfterLast(projectFilePathName, "\\");
 		
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("fileName", fileName);
-		params.put("projectName", projectName);
-		params.put("lectureId", lectureId);
+		params.put("projectName", project.getProjectName());
+		params.put("lectureId", project.getLectureId());
 		
 		Map<String, File> fileParams = new HashMap<String, File>();
 		fileParams.put("file", new File(projectFilePathName));
 		
-		naiteContents.doMultipartPost("lectures/" + lectureId + "/exerciseprojects", params, fileParams);
+		//"lectures/" + lectureId + "/exerciseprojects"
+		naiteContents.doMultipartPost(project.getServerPath(), params, fileParams);
 	}
 	
 	@Override
-	public void createStudentProject(String projectFilePathName,
-			String projectName, String lectureId, String studentId, 
-			String exerciseProjectId) throws NaiteException {
+	public void uploadProject(String projectFilePathName, StudentProject project) throws NaiteException {
 		String fileName = StringUtils.substringAfterLast(projectFilePathName, "\\");
 		
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("fileName", fileName);
-		params.put("projectName", projectName);
-		params.put("lectureId", lectureId);
-		params.put("studentId", studentId);
-		params.put("exerciseProjectId", exerciseProjectId);
+		params.put("projectName", project.getProjectName());
+		params.put("lectureId", project.getLectureId());
+		params.put("studentId", project.getStudentId());
+		params.put("exerciseProjectId", project.getExerciseProjectId());
 		
 		Map<String, File> fileParams = new HashMap<String, File>();
 		fileParams.put("file", new File(projectFilePathName));
 		
-		naiteContents.doMultipartPost("lectures/" + lectureId + "/students/" +studentId + "/projects", params, fileParams);
+		//"lectures/" + lectureId + "/students/" +studentId + "/projects"
+		naiteContents.doMultipartPost(project.getServerPath(), params, fileParams);
 	}
+	
 	
 	@Override
 	public void createExerciseProject(String standardProjectId, String lectureId)
@@ -267,6 +293,24 @@ public class NaiteOutboundLogic implements NaiteService {
 		params.put("email", email);
 		params.put("password", password);
 		naiteContents.doPost("naiteusers", params);
+	}
+
+	@Override
+	public void publishTextbook(String textbookId, String lectureId, List<String> studentEmails)
+			throws NaiteException {
+		Map<String, String> params = new HashMap<String, String>();
+		Gson gson = new Gson();
+		params.put("emails", gson.toJson(studentEmails));
+		naiteContents.doPost("lectures/" + lectureId + "/textbooks/" + textbookId + "/publish", params);
+	}
+
+	@Override
+	public void publishExerciseProject(String exerciseProjectId,
+			String lectureId, List<String> studentEmails) throws NaiteException {
+		Map<String, String> params = new HashMap<String, String>();
+		Gson gson = new Gson();
+		params.put("emails", gson.toJson(studentEmails));
+		naiteContents.doPost("lectures/" + lectureId + "/exerciseprojects/" + exerciseProjectId + "/publish", params);
 	}
 
 	

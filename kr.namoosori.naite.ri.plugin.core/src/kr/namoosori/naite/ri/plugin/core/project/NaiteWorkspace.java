@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.namoosori.naite.ri.plugin.core.CoreContext;
+import kr.namoosori.naite.ri.plugin.core.service.domain.ExerciseProject;
+import kr.namoosori.naite.ri.plugin.core.service.domain.Lecture;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -43,7 +45,9 @@ public class NaiteWorkspace {
 		}
 		List<NaiteProject> naiteProjects = new ArrayList<NaiteProject>();
 		for (IProject iProject : projects) {
-			naiteProjects.add(new NaiteProject(iProject, CoreContext.CURRENT_LECTURE));
+			ExerciseProject exerciseProject = new ExerciseProject(iProject.getName());
+			exerciseProject.setLecture((Lecture)CoreContext.CURRENT_LECTURE);
+			naiteProjects.add(new NaiteProject(iProject, exerciseProject));
 		}
 		return naiteProjects;
 	}
