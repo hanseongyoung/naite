@@ -11,10 +11,18 @@ public class NaiteContentsTest {
 		TestContext.getInstance().setServerIp("playapp-syhan.rhcloud.com");
 		TestContext.getInstance().setServerPort(80);
 		
-		createNodejsUsers();
+		createTestUser();
+		//createNodejsUsers();
 		//createNaiteUsers();
 		//createStandardTextbook();
 		//createStandardProjects();
+	}
+
+	private static void createTestUser() throws Exception {
+		TestContext.getInstance().setServerIp("10.0.1.45");
+		TestContext.getInstance().setServerPort(8888);
+		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+		service.createNaiteUser("한성영", "syhan@nextree.co.kr", "1234");
 	}
 
 	private static void createNaiteUsers() throws Exception {
