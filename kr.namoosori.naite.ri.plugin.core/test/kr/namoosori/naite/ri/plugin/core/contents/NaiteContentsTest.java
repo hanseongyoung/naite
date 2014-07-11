@@ -8,18 +8,28 @@ public class NaiteContentsTest {
 	public static void main(String[] args) throws Exception {
 //		TestContext.getInstance().setServerIp("10.0.1.45");
 //		TestContext.getInstance().setServerPort(9000);
-		TestContext.getInstance().setServerIp("playapp-syhan.rhcloud.com");
-		TestContext.getInstance().setServerPort(80);
+		//TestContext.getInstance().setServerIp("naiteapi.appspot.com");
+		//TestContext.getInstance().setServerPort(80);
+		TestContext.getInstance().setServerIp("localhost");
+		TestContext.getInstance().setServerPort(8888);
+		//TestContext.getInstance().setServerIp("playapp-syhan.rhcloud.com");
+		//TestContext.getInstance().setServerPort(80);
 		
-		createTestUser();
+		//createTestUser();
+		createTestTextbook();
 		//createNodejsUsers();
 		//createNaiteUsers();
 		//createStandardTextbook();
 		//createStandardProjects();
 	}
 
+	private static void createTestTextbook() throws Exception{
+		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
+		service.createStandardTextbook("/Users/daniel/Downloads/397989.jpg");
+	}
+
 	private static void createTestUser() throws Exception {
-		TestContext.getInstance().setServerIp("10.0.1.45");
+		TestContext.getInstance().setServerIp("localhost");
 		TestContext.getInstance().setServerPort(8888);
 		NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 		service.createNaiteUser("한성영", "syhan@nextree.co.kr", "1234");

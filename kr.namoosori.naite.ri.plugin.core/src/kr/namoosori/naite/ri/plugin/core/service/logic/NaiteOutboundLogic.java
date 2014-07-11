@@ -192,7 +192,7 @@ public class NaiteOutboundLogic implements NaiteService {
 	@Override
 	public void createStandardTextbook(String textbookFilePathName)
 			throws NaiteException {
-		String textbookFileName = StringUtils.substringAfterLast(textbookFilePathName, "\\");
+		String textbookFileName = StringUtils.substringAfterLast(textbookFilePathName, File.separator);
 		
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("name", textbookFileName);
