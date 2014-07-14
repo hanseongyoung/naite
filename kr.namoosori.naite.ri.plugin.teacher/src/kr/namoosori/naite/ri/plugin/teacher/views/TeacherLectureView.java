@@ -618,13 +618,17 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 				NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 				try {
 					service.createTextbook(fileSelected, lectureId);
-					TeacherContext.CURRENT_LECTURE = getCurrentLecture();
-					refreshBookSectionClient();
-					refreshStudents();
 				} catch (NaiteException e1) {
 					e1.printStackTrace();
 				}
 				return null;
+			}
+			
+			@Override
+			public void doAfter() {
+				TeacherContext.CURRENT_LECTURE = getCurrentLecture();
+				refreshBookSectionClient();
+				refreshStudents();
 			}
 		};
 		job.start();
@@ -692,13 +696,17 @@ public class TeacherLectureView extends ViewPart implements RefreshListener {
 				NaiteService service = NaiteServiceFactory.getInstance().getNaiteService();
 				try {
 					service.deleteTextbook(textbook);
-					TeacherContext.CURRENT_LECTURE = getCurrentLecture();
-					refreshBookSectionClient();
-					refreshStudents();
 				} catch (NaiteException e1) {
 					e1.printStackTrace();
 				}
 				return null;
+			}
+			
+			@Override
+			public void doAfter() {
+				TeacherContext.CURRENT_LECTURE = getCurrentLecture();
+				refreshBookSectionClient();
+				refreshStudents();
 			}
 		};
 		job.start();
